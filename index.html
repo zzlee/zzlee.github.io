@@ -1,3 +1,188 @@
-Hello, World!!
-Updated again
-again
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alex Lee | Personal Website</title>
+    <meta
+      name="description"
+      content="Personal website of Alex Lee: software engineer, builder, and lifelong learner."
+    />
+    <style>
+      :root {
+        --bg: #0b1020;
+        --card: #111831;
+        --text: #e9ecf5;
+        --muted: #b8c0da;
+        --accent: #7cc7ff;
+        --accent-2: #8ef5d0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      .container {
+        width: min(1000px, 92%);
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 5rem 0 2.5rem;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 4.5vw, 3.5rem);
+        line-height: 1.15;
+      }
+
+      .subtitle {
+        margin-top: 1rem;
+        color: var(--muted);
+        max-width: 65ch;
+      }
+
+      .actions {
+        margin-top: 1.75rem;
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 0.7rem 1rem;
+        border-radius: 0.6rem;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #0f1530;
+      }
+
+      .btn-secondary {
+        border: 1px solid #3a4774;
+        color: var(--text);
+      }
+
+      main {
+        padding-bottom: 4rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        background: color-mix(in srgb, var(--card), #000 10%);
+        border: 1px solid #2f3b69;
+        border-radius: 0.9rem;
+        padding: 1rem 1.1rem;
+      }
+
+      .card h2 {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+      }
+
+      .card p,
+      .card li {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      ul {
+        padding-left: 1rem;
+        margin: 0;
+      }
+
+      footer {
+        border-top: 1px solid #2f3b69;
+        padding: 1rem 0 2.5rem;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <p>👋 Hi, I’m</p>
+        <h1>Alex Lee</h1>
+        <p class="subtitle">
+          I build clean, user-friendly software and love turning ideas into practical products.
+          This is my little corner of the internet where I share what I’m building and what I’m
+          learning.
+        </p>
+        <div class="actions">
+          <a class="btn btn-primary" href="mailto:alex@example.com">Contact Me</a>
+          <a class="btn btn-secondary" href="#projects">View Projects</a>
+        </div>
+      </header>
+
+      <main>
+        <section class="grid" id="projects" aria-label="Site sections">
+          <article class="card">
+            <h2>About</h2>
+            <p>
+              Software engineer focused on full-stack web development, automation, and delightful
+              user experiences.
+            </p>
+          </article>
+
+          <article class="card">
+            <h2>Current Focus</h2>
+            <ul>
+              <li>Building simple productivity tools</li>
+              <li>Learning cloud architecture patterns</li>
+              <li>Writing about developer workflows</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h2>Recent Projects</h2>
+            <ul>
+              <li>Habit tracker web app</li>
+              <li>Automated portfolio deployment</li>
+              <li>CLI utilities for daily tasks</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <h2>Find Me Online</h2>
+            <ul>
+              <li><a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a></li>
+              <li><a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a></li>
+              <li><a href="https://x.com" target="_blank" rel="noreferrer">X / Twitter</a></li>
+            </ul>
+          </article>
+        </section>
+      </main>
+
+      <footer>
+        © <span id="year">2026</span> Alex Lee. Built with plain HTML & CSS.
+      </footer>
+    </div>
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
