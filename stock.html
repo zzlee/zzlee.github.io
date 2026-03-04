@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>台股個股本月走勢圖</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --card: #111831;
+        --text: #e9ecf5;
+        --muted: #b8c0da;
+        --accent: #7cc7ff;
+        --accent-2: #8ef5d0;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+      }
+
+      .container {
+        width: min(1000px, 92%);
+        margin: 0 auto;
+        padding: 2rem 0 3rem;
+      }
+
+      .card {
+        background: color-mix(in srgb, var(--card), #000 10%);
+        border: 1px solid #2f3b69;
+        border-radius: 0.9rem;
+        padding: 1.25rem;
+      }
+
+      h1 {
+        margin-top: 0;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        align-items: end;
+        margin-bottom: 1rem;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      label {
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      input,
+      button {
+        border-radius: 0.55rem;
+        border: 1px solid #3a4774;
+        padding: 0.55rem 0.7rem;
+        font-size: 1rem;
+        background: #131d3f;
+        color: var(--text);
+      }
+
+      button {
+        cursor: pointer;
+        font-weight: 600;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #0f1530;
+        border: none;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .error {
+        color: #ffadad;
+      }
+
+      .chart-wrap {
+        width: 100%;
+        min-height: 380px;
+      }
+
+      canvas {
+        width: 100%;
+        height: 380px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p><a href="./index.html">← 回首頁</a></p>
+      <div class="card">
+        <h1>台股個股本月股價走勢</h1>
+        <p class="muted">資料來源：臺灣證券交易所公開 API（當月每日收盤價）。</p>
+
+        <div class="controls">
+          <div class="field">
+            <label for="stockNo">股票代號</label>
+            <input id="stockNo" type="text" value="2330" maxlength="6" />
+          </div>
+          <button id="loadBtn" type="button">載入走勢圖</button>
+        </div>
+
+        <p id="status" class="muted">請輸入股票代號後載入。</p>
+        <div class="chart-wrap">
+          <canvas id="stockChart" aria-label="本月股價走勢圖" role="img"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const statusEl = document.getElementById("status");
+      const stockInput = document.getElementById("stockNo");
+      const loadBtn = document.getElementById("loadBtn");
+      const canvas = document.getElementById("stockChart");
+      let chart;
+
+      function getMonthStartDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        return `${year}${month}01`;
+      }
+
+      async function loadStock() {
+        const stockNo = stockInput.value.trim();
+        if (!/^\d{4,6}$/.test(stockNo)) {
+          statusEl.textContent = "請輸入正確股票代號（4~6 位數字）。";
+          statusEl.className = "error";
+          return;
+        }
+
+        statusEl.textContent = "載入資料中...";
+        statusEl.className = "muted";
+
+        const monthStart = getMonthStartDate();
+        const url = `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=${monthStart}&stockNo=${stockNo}&response=json`;
+
+        try {
+          const res = await fetch(url);
+          const json = await res.json();
+
+          if (json.stat !== "OK" || !Array.isArray(json.data) || json.data.length === 0) {
+            throw new Error("查無資料");
+          }
+
+          const labels = json.data.map((row) => row[0]);
+          const prices = json.data.map((row) => Number(String(row[6]).replace(/,/g, "")));
+
+          if (chart) chart.destroy();
+
+          chart = new Chart(canvas, {
+            type: "line",
+            data: {
+              labels,
+              datasets: [
+                {
+                  label: `${stockNo} 本月收盤價`,
+                  data: prices,
+                  borderColor: "#7cc7ff",
+                  backgroundColor: "rgba(124,199,255,0.2)",
+                  borderWidth: 2,
+                  pointRadius: 3,
+                  tension: 0.25,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              scales: {
+                y: {
+                  ticks: { color: "#e9ecf5" },
+                  grid: { color: "#2f3b69" },
+                },
+                x: {
+                  ticks: { color: "#e9ecf5", maxRotation: 60, minRotation: 45 },
+                  grid: { color: "#2f3b69" },
+                },
+              },
+              plugins: {
+                legend: { labels: { color: "#e9ecf5" } },
+                tooltip: {
+                  callbacks: {
+                    label(context) {
+                      return `收盤價：${context.raw} 元`;
+                    },
+                  },
+                },
+              },
+            },
+          });
+
+          statusEl.textContent = `已載入 ${stockNo} 本月 ${prices.length} 筆資料。`;
+          statusEl.className = "muted";
+        } catch (error) {
+          statusEl.textContent = `載入失敗：${error.message}`;
+          statusEl.className = "error";
+        }
+      }
+
+      loadBtn.addEventListener("click", loadStock);
+      loadStock();
+    </script>
+  </body>
+</html>
