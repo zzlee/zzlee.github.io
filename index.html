@@ -1,198 +1,525 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alex Lee | Personal Website</title>
-    <meta
-      name="description"
-      content="Personal website of Alex Lee: software engineer, builder, and lifelong learner."
-    />
-    <style>
-      :root {
-        --bg: #0b1020;
-        --card: #111831;
-        --text: #e9ecf5;
-        --muted: #b8c0da;
-        --accent: #7cc7ff;
-        --accent-2: #8ef5d0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZzLee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f5f3ee;
+      --paper-2: #edeae2;
+      --muted: #888880;
+      --accent: #c0392b;
+      --accent-soft: rgba(192,57,43,0.08);
+      --rule: rgba(26,26,24,0.10);
+    }
 
-      * {
-        box-sizing: border-box;
-      }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      body {
-        margin: 0;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-          Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-        background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
-        color: var(--text);
-        line-height: 1.6;
-      }
+    html { scroll-behavior: smooth; }
 
-      .container {
-        width: min(1000px, 92%);
-        margin: 0 auto;
-      }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace;
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+      /* subtle grain */
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #f9f7f2 0%, #f0ede6 100%);
+    }
 
-      header {
-        padding: 5rem 0 2.5rem;
-      }
+    /* ─── LAYOUT ─── */
+    .page { width: min(760px, 92%); margin: 0 auto; }
 
-      h1 {
-        margin: 0;
-        font-size: clamp(2rem, 4.5vw, 3.5rem);
-        line-height: 1.15;
-      }
+    /* ─── HEADER ─── */
+    header {
+      padding: 5rem 0 3rem;
+      border-bottom: 1px solid var(--rule);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 2rem;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: rise 0.7s ease forwards 0.1s;
+    }
 
-      .subtitle {
-        margin-top: 1rem;
-        color: var(--muted);
-        max-width: 65ch;
-      }
+    .name-block {}
 
-      .actions {
-        margin-top: 1.75rem;
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-      }
+    .eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
 
-      .btn {
-        display: inline-block;
-        padding: 0.7rem 1rem;
-        border-radius: 0.6rem;
-        text-decoration: none;
-        font-weight: 600;
-      }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 7vw, 5rem);
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+    }
 
-      .btn-primary {
-        background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        color: #0f1530;
-      }
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
 
-      .btn-secondary {
-        border: 1px solid #3a4774;
-        color: var(--text);
-      }
+    .tagline {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      max-width: 42ch;
+    }
 
-      main {
-        padding-bottom: 4rem;
-      }
+    .header-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
 
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-        gap: 1rem;
-      }
+    .nav-link {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--accent); }
 
-      .card {
-        background: color-mix(in srgb, var(--card), #000 10%);
-        border: 1px solid #2f3b69;
-        border-radius: 0.9rem;
-        padding: 1rem 1.1rem;
-      }
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 3rem 0;
+      border-bottom: 1px solid var(--rule);
+      opacity: 0;
+      transform: translateY(14px);
+    }
 
-      .card h2 {
-        margin: 0 0 0.5rem;
-        font-size: 1.1rem;
-      }
+    section.visible {
+      animation: rise 0.55s ease forwards;
+    }
 
-      .card p,
-      .card li {
-        color: var(--muted);
-        margin: 0;
-      }
+    .section-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-label::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 3rem;
+      background: var(--accent);
+      opacity: 0.4;
+    }
 
-      ul {
-        padding-left: 1rem;
-        margin: 0;
-      }
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
 
-      footer {
-        border-top: 1px solid #2f3b69;
-        padding: 1rem 0 2.5rem;
-        color: var(--muted);
-        font-size: 0.95rem;
-      }
+    p { color: #3d3d38; font-size: 0.92rem; max-width: 58ch; }
 
-      a {
-        color: var(--accent);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <header>
-        <p>👋 Hi, I’m</p>
-        <h1>Alex Lee</h1>
-        <p class="subtitle">
-          I build clean, user-friendly software and love turning ideas into practical products.
-          This is my little corner of the internet where I share what I’m building and what I’m
-          learning.
-        </p>
-        <div class="actions">
-          <a class="btn btn-primary" href="mailto:alex@example.com">Contact Me</a>
-          <a class="btn btn-secondary" href="#projects">View Projects</a>
-          <a class="btn btn-secondary" href="./stock.html">台股本月走勢</a>
-        </div>
-      </header>
+    /* ─── ABOUT ─── */
+    .about-quote {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+      font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+      line-height: 1.4;
+      color: var(--ink);
+      border-left: 2px solid var(--accent);
+      padding-left: 1.25rem;
+      margin-bottom: 0;
+      max-width: none;
+    }
 
-      <main>
-        <section class="grid" id="projects" aria-label="Site sections">
-          <article class="card">
-            <h2>About</h2>
-            <p>
-              Software engineer focused on full-stack web development, automation, and delightful
-              user experiences.
-            </p>
-          </article>
+    /* ─── PROJECTS ─── */
+    .projects-grid {
+      display: grid;
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+    }
 
-          <article class="card">
-            <h2>Current Focus</h2>
-            <ul>
-              <li>Building simple productivity tools</li>
-              <li>Learning cloud architecture patterns</li>
-              <li>Writing about developer workflows</li>
-            </ul>
-          </article>
+    .project-item {
+      background: var(--paper);
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1.25rem;
+      align-items: start;
+      transition: background 0.2s;
+    }
+    .project-item:hover { background: var(--accent-soft); }
 
-          <article class="card">
-            <h2>Recent Projects</h2>
-            <ul>
-              <li>Habit tracker web app</li>
-              <li>Automated portfolio deployment</li>
-              <li>CLI utilities for daily tasks</li>
-            </ul>
-          </article>
+    .project-num {
+      font-size: 0.68rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      padding-top: 0.15rem;
+      font-weight: 500;
+    }
 
+    .project-name {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.05rem;
+      margin-bottom: 0.2rem;
+    }
 
-          <article class="card">
-            <h2>台股本月走勢圖</h2>
-            <p>
-              查看台股個股在本月每日收盤價的折線圖，支援輸入股票代號快速查詢。
-            </p>
-            <p><a href="./stock.html">前往查看 →</a></p>
-          </article>
+    .project-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      max-width: none;
+    }
 
-          <article class="card">
-            <h2>Find Me Online</h2>
-            <ul>
-              <li><a href="https://github.com" target="_blank" rel="noreferrer">GitHub</a></li>
-              <li><a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a></li>
-              <li><a href="https://x.com" target="_blank" rel="noreferrer">X / Twitter</a></li>
-            </ul>
-          </article>
-        </section>
-      </main>
+    /* ─── SKILLS ─── */
+    .skills-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
 
-      <footer>
-        © <span id="year">2026</span> Alex Lee. Built with plain HTML & CSS.
-      </footer>
+    .skill-row {
+      display: grid;
+      grid-template-columns: 10rem 1fr;
+      gap: 1rem;
+      align-items: baseline;
+      font-size: 0.85rem;
+    }
+
+    .skill-cat {
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 0.2rem 0.55rem;
+      border: 1px solid var(--rule);
+      border-radius: 2px;
+      font-size: 0.78rem;
+      color: var(--ink);
+      background: var(--paper-2);
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── BLOG ─── */
+    .blog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .blog-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.9rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: var(--ink);
+      transition: color 0.2s;
+    }
+    .blog-item:last-child { border-bottom: none; }
+    .blog-item:hover .blog-title { color: var(--accent); }
+
+    .blog-title { font-size: 0.92rem; }
+    .blog-date { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
+
+    /* ─── RESUME ─── */
+    .resume-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .resume-text { font-size: 0.88rem; color: var(--muted); }
+
+    .btn {
+      display: inline-block;
+      padding: 0.55rem 1.1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      font-weight: 500;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--ink);
+      color: var(--paper);
+    }
+    .btn-primary:hover { background: var(--accent); }
+
+    /* ─── CONTACT ─── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .contact-item {
+      background: var(--paper);
+      padding: 1.25rem;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .contact-item:hover { background: var(--accent-soft); }
+
+    .contact-type {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    .contact-val {
+      font-size: 0.88rem;
+      color: var(--ink);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 2rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes rise {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 560px) {
+      header { grid-template-columns: 1fr; }
+      .header-links { flex-direction: row; align-items: flex-start; }
+      .skill-row { grid-template-columns: 1fr; gap: 0.4rem; }
+      .resume-bar { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="name-block">
+      <p class="eyebrow">Personal Site</p>
+      <h1>Zz<em>Lee</em></h1>
+      <p class="tagline">look at the world silently</p>
     </div>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
-  </body>
+    <nav class="header-links" aria-label="Page sections">
+      <a class="nav-link" href="#about">About</a>
+      <a class="nav-link" href="#projects">Projects</a>
+      <a class="nav-link" href="#skills">Skills</a>
+      <a class="nav-link" href="#blog">Writing</a>
+      <a class="nav-link" href="#resume">Resume</a>
+      <a class="nav-link" href="#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <p class="section-label">About</p>
+      <p class="about-quote">"Look at the world silently."</p>
+      <p style="margin-top:1.5rem;">
+        I'm ZzLee — a systems-oriented engineer who finds clarity in quiet observation.
+        My work lives at the intersection of audio, video, and networking, built close to
+        the metal with C/C++ and shaped by a habit of watching things carefully before
+        reaching for a solution.
+      </p>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects">
+      <p class="section-label">Projects</p>
+      <h2>Current Focus</h2>
+      <div class="projects-grid">
+        <div class="project-item">
+          <span class="project-num">01</span>
+          <div>
+            <p class="project-name">Audio Engineering</p>
+            <p class="project-desc">Low-level audio processing, codec work, and real-time pipelines in C/C++.</p>
+          </div>
+        </div>
+        <div class="project-item">
+          <span class="project-num">02</span>
+          <div>
+            <p class="project-name">Video Systems</p>
+            <p class="project-desc">Video capture, encoding, and playback tooling with a focus on performance and correctness.</p>
+          </div>
+        </div>
+        <div class="project-item">
+          <span class="project-num">03</span>
+          <div>
+            <p class="project-name">Networking</p>
+            <p class="project-desc">Network-layer utilities and protocol work — building reliable, efficient data paths.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <p class="section-label">Skills</p>
+      <h2>Toolbox</h2>
+      <div class="skills-list">
+        <div class="skill-row">
+          <span class="skill-cat">Core</span>
+          <div class="skill-tags">
+            <span class="tag">C</span>
+            <span class="tag">C++</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-cat">Scripting</span>
+          <div class="skill-tags">
+            <span class="tag">JavaScript</span>
+            <span class="tag">Python</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-cat">Hardware</span>
+          <div class="skill-tags">
+            <span class="tag">Verilog</span>
+            <span class="tag">Vivado</span>
+          </div>
+        </div>
+        <div class="skill-row">
+          <span class="skill-cat">Domains</span>
+          <div class="skill-tags">
+            <span class="tag">Audio</span>
+            <span class="tag">Video</span>
+            <span class="tag">Networking</span>
+            <span class="tag">Systems Programming</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOG -->
+    <section id="blog">
+      <p class="section-label">Writing</p>
+      <h2>Notes &amp; Observations</h2>
+      <div class="blog-list">
+        <a class="blog-item" href="#">
+          <span class="blog-title">On writing C that stays readable under pressure</span>
+          <span class="blog-date">Coming soon</span>
+        </a>
+        <a class="blog-item" href="#">
+          <span class="blog-title">What network latency teaches you about patience</span>
+          <span class="blog-date">Coming soon</span>
+        </a>
+        <a class="blog-item" href="#">
+          <span class="blog-title">Audio buffers and the art of just-in-time thinking</span>
+          <span class="blog-date">Coming soon</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- RESUME -->
+    <section id="resume">
+      <p class="section-label">Resume</p>
+      <div class="resume-bar">
+        <div>
+          <p class="project-name" style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:0.3rem;">Experience &amp; Background</p>
+          <p class="resume-text">Systems engineer focused on audio, video, and networking. Available upon request.</p>
+        </div>
+        <a class="btn btn-primary" href="#">Download CV</a>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <p class="section-label">Contact</p>
+      <h2>Get in touch</h2>
+      <div class="contact-grid">
+        <a class="contact-item" href="https://github.com/zzlee" target="_blank" rel="noreferrer">
+          <p class="contact-type">GitHub</p>
+          <p class="contact-val">github.com/zzlee</p>
+        </a>
+        <a class="contact-item" href="mailto:zzlee@example.com">
+          <p class="contact-type">Email</p>
+          <p class="contact-val">zzlee@example.com</p>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>© <span id="yr"></span> ZzLee</span>
+    <span>Built with plain HTML &amp; CSS</span>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Scroll-triggered section reveals
+  const sections = document.querySelectorAll('section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
 </html>
