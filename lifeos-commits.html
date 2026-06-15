@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lifeos Commits</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --card: #111831;
+    --text: #e9ecf5;
+    --muted: #b8c0da;
+    --accent: #7cc7ff;
+    --accent-2: #8ef5d0;
+  }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    width: min(1000px, 92%);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .controls {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  input[type="text"] {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #3a4774;
+    background: #131d3f;
+    color: var(--text);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .commit {
+    background: color-mix(in srgb, var(--card), #000 10%);
+    border: 1px solid #2f3b69;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .commit-header {
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--card);
+  }
+  .commit-header:hover {
+    background: color-mix(in srgb, var(--card), #fff 5%);
+  }
+  .hash { font-family: monospace; color: var(--accent-2); flex-shrink: 0; }
+  .subject { font-weight: bold; flex-grow: 1; }
+  .toggle-icon { color: var(--muted); }
+
+  .commit-body {
+    padding: 1rem;
+    border-top: 1px solid #2f3b69;
+    color: var(--muted);
+    font-size: 0.9em;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .commit.expanded .commit-body {
+    display: block;
+  }
+  .commit.expanded .toggle-icon {
+    transform: rotate(180deg);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <p><a href="./index.html">← 回首頁</a></p>
+  <h1>lifeos Commits</h1>
+  <p class="muted">此專案的開發時間線。</p>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="搜尋 commits...">
+  </div>
+
+  <div id="commitsContainer">
+
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">365c3e5</div>
+        <div class="subject">Merge pull request #58 from zzlee/jules-api-keys-update-4501810978020034284</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add modify and delete functions to api key</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">1dc1a0a</div>
+        <div class="subject">feat: add modify and delete functions to api key</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b5c44f6</div>
+        <div class="subject">Merge pull request #56 from zzlee/update-line-bot-reply-2317853695110699428</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Update LINE Bot Reply</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">a9bb779</div>
+        <div class="subject">feat: update line bot to reply "收到" to text and image messages</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">dd96725</div>
+        <div class="subject">Merge pull request #55 from zzlee/fix-agent-expense-time-10308309144386805360</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Fix agent date/time handling for external accounting mutations</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">cbbcfe3</div>
+        <div class="subject">fix(agent): require time component for external accounting mutations</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Updated the agent's `create_expense` and `update_expense` tool descriptions and system instructions to explicitly require the time component in ISO timestamps for mutations in the external accounting system. If a user only provides a date, the agent is now instructed to append the current local time.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3e825b7</div>
+        <div class="subject">Merge pull request #54 from zzlee/redesign-app-icon-13852087404618014112</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Redesign app icon</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ada70cb</div>
+        <div class="subject">Update app icon\n\nRedesigned the app icon to feature a central sparkle on a rounded blue gradient background to represent the AI nature of the app. Generated new 192x192 and 512x512 PNG assets.</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d1b9384</div>
+        <div class="subject">fix(app): ensure global sync/refresh button triggers re-fetches for all pages including external accounting-dev transactions</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d58293e</div>
+        <div class="subject">fix(api): remove custom X-LifeOS-User-Id header from deleteAccountingTransaction to prevent CORS preflight blocking</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">637db7d</div>
+        <div class="subject">chore(agent): clarify create/update expense parameter descriptions for item_name vs note</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7ff6b10</div>
+        <div class="subject">fix(agent): normalize query result dates to user's local timezone instead of raw UTC calendar date</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">f3ef006</div>
+        <div class="subject">chore(agent): add clear local date-time parameter formatting instructions to system prompt</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d9b27ec</div>
+        <div class="subject">fix(timezone): align agent queries, mutations, and CLI/MCP default dates with user local timezone</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">55d9287</div>
+        <div class="subject">feat(agent): add interactive tool call debug visualizer</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Add toolCalls array to AgentCommandResponse schema and route response.
+- Track name, args, and results of all subrequests and D1 queries executed inside worker/agent.ts.
+- Design an elegant, collapsible Tool Execution Debug View in the React chatbot UI to display formatted JSON parameters, tool responses, and system prompt contexts.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d7d3062</div>
+        <div class="subject">fix(agent): normalize date-range filters to full UTC days</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Implement normalizeStartDate and normalizeEndDate helpers in worker/agent.ts.
+- Automatically expand YYYY-MM-DD strings (e.g. 2026-05-26) to full ISO 8601 UTC bounds (T00:00:00.000Z and T23:59:59.999Z).
+- Apply to query_expenses, query_health, and query_journals executors to prevent date-time records from being incorrectly filtered out by SQLite/API date boundaries.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">33cea81</div>
+        <div class="subject">fix(ui): sync overview finance stats and chart with selected month</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Update Overview's 'This Month Expenses' stat card to aggregate both local and external transactions (allTransactions) instead of just D1 DB expenses.
+- Rename Overview's chart header from 'This Week' to 'This Month's Consumption Structure' to reflect monthly data aggregation consistency.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">0720080</div>
+        <div class="subject">fix(agent): resolve cloudflare subrequest block</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Add global_fetch_strictly_public compatibility flag to wrangler.toml to resolve same-account subrequest blocks (Error 1042).
+- Clean up temporary Agent debug logging.
+- Remove the toggleable 'Show Debug Information' panel from the client interface.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3fbe3f5</div>
+        <div class="subject">fix: validate agent user ids</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Ensure external accounting requests use a positive integer user ID so invalid, null, or missing values do not leak into API calls.
+
+Add a shared helper and apply it consistently to transaction create, update, delete, fetch, and category fetch paths.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">8e57972</div>
+        <div class="subject">fix: include accounting API user filters</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Document the accounting API contract so consumers can align with the supported transaction, category, and user endpoints.
+
+Pass the configured user id through category fetches and transaction deletes, and keep full start/end date values when proxying transaction filters so the backend receives scoped, precise queries.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">49d2371</div>
+        <div class="subject">Merge pull request #53 from zzlee/feat/agent-debug-ui-9603562355502641617</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add Agent Debug UI for System Prompts and Errors</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c20242d</div>
+        <div class="subject">feat(agent): add debug UI for system prompt and external API errors</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Extends `AgentCommandResponse` to include `systemInstruction` and `agentDebugError`.
+- Modifies `runLifeAgentLoop` to capture the dynamic system prompt.
+- Wraps external accounting category fetching in a try-catch block to prevent 500 errors and capture connection issues as debug errors.
+- Updates the frontend `AgentChat` interface to include a toggleable debug section displaying the system prompt and any connection errors.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">bbb09f8</div>
+        <div class="subject">Merge pull request #52 from zzlee/fix-openapi-user-id-17169290276841574821</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>fix: Update accounting API calls to include correct user_id in payloads and queries</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">0859749</div>
+        <div class="subject">fix: update agent api calls to comply with accounting OpenAPI spec</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Inject `user_id` into the JSON body payload for `createExternalTransaction` and `updateExternalTransaction` (matching TransactionInput schema).
+- Append `user-id` as a query parameter for `deleteExternalTransaction` and `fetchAccountingCategories` (matching GET/DELETE request parameters).
+- Pass `accountingUserId` downwards to fetch categories properly.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">67c06cd</div>
+        <div class="subject">Merge pull request #51 from zzlee/feat/external-accounting-delete-13202176163359017584</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add delete button for external accounting records and update agent prompt</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">f282c1a</div>
+        <div class="subject">feat: add delete button for external accounting records and update agent prompt\n\n- Added `deleteAccountingTransaction` API utility and `handleDeleteAccountingTransaction` handler in `App.tsx`.\n- Conditionally render delete button in `FinanceRow` for external records.\n- Updated `create_expense` tool JSON schema in `worker/agent.ts` to strictly require external category IDs to ensure AI populates them by default.</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">bf5b0e8</div>
+        <div class="subject">Merge pull request #50 from zzlee/fix-ai-agent-accounting-14029098685106226984</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Feat: Fix AI agent integration with accounting-dev API</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7a10f0d</div>
+        <div class="subject">feat: inject accounting categories to agent and fix external CRUD tools</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Implemented `fetchAccountingCategories` in `worker/agent.ts` to dynamically fetch `item-categories` and `payment-categories` from the external accounting service and map them as `id:name`.
+- Injected the fetched category mappings into the AI agent's `systemInstruction` so it knows the valid choices.
+- Updated `create_expense` and `update_expense` tool parameters to specify requirements for `item_name`, `item_category_id`, and `payment_category_id` when acting on the external accounting database (and made the `category` property optional unless acting locally).
+- Adjusted the `execute` functions of both tools to construct the proper payload matched to the `AccountingTransactionInput` for the external HTTP requests.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">dc01e83</div>
+        <div class="subject">debug: add test-external endpoint</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d0c86e1</div>
+        <div class="subject">feat: instruct agent explicitly to call query tools and use wide/empty date bounds for query integrations</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">59cc7ec</div>
+        <div class="subject">feat: route accountingUserId dynamically from frontend to unified query_expenses and CRUD tools</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">0655686</div>
+        <div class="subject">feat: unify transaction CRUD tools under a single set and add query_journals tool</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">258b7f8</div>
+        <div class="subject">fix: remove GEMINI_MODEL from wrangler.toml to prevent overwriting dashboard environment settings</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">91b94cd</div>
+        <div class="subject">debug: add logs and error catching to diagnose second-turn chat failures</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">2fb238b</div>
+        <div class="subject">feat: inject user local time and timezone into systemInstruction for relative date parsing</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">9c7274c</div>
+        <div class="subject">feat: add chat input box and auto-scroll within AI Agent dialog modal for multi-turn support</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d283d3a</div>
+        <div class="subject">feat: restructure agent context, add query tools, and set default external routing</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">bc2423d</div>
+        <div class="subject">feat: improve AI agent chat UI to be an exclusive modal and clear messages on close</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">5f282de</div>
+        <div class="subject">feat: integrate Google GenAI SDK, add CLI backward compatibility, and sync lockfile</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Replace legacy agent loop with Google GenAI SDK (@google/genai)
+- Update /api/agent Hono route and shared contracts to maintain backward compatibility with older CLI commands
+- Add backward-compatible config set and ls commands to the Node CLI
+- Add GEMINI_MODEL environment variable in wrangler.toml
+- Sync package-lock.json with the new dependencies</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b5e0999</div>
+        <div class="subject">Merge pull request #49 from zzlee/codex/gemni-api</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Integrate Google GenAI SDK and add structured toolset for LifeOS agent</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">4682a55</div>
+        <div class="subject">Merge branch 'master' of github.com-zzlee:zzlee/lifeos</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'># Conflicts:
+#	health-modal-mobile.png</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7330c57</div>
+        <div class="subject">chore: Remove stale local artifacts</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Remove outdated planning notes, a local development log, and a transient screenshot from version control.
+
+This keeps the repository focused on source and documentation that are still maintained.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">cb4c1e0</div>
+        <div class="subject">Use Google GenAI SDK tool calling in agent loop</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7eac1fa</div>
+        <div class="subject">Merge pull request #48 from zzlee/codex/integrate-google-gemini-api-and-ai-agent-loop</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat(agent): integrate Gemini-powered LifeOS agent loop with tool use and chat modal UX</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">5be4279</div>
+        <div class="subject">feat(agent): integrate Gemini loop with tool calls and chat modal</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">11a7e30</div>
+        <div class="subject">Merge pull request #47 from zzlee/update-buttons-to-icons-8148915129567705636</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Refactor Buttons to Icons</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">18a1be1</div>
+        <div class="subject">feat(ui): update refresh and expense buttons to icon-only</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Updated the "重整" (Refresh) button to use the `.icon-button` class with a `🔄` icon and `aria-label`.
+- Updated the "新增消費" (New Expense) button to use `.icon-button` with a `💳` icon and `aria-label`.
+- Updated the "新增外部記帳" (New External Accounting) button to use `.icon-button` with a `🏦` icon and `aria-label`.
+- Removed the text from these buttons to simplify the UI while keeping them accessible and informative through titles and aria-labels.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">919a505</div>
+        <div class="subject">Improve accounting modal input UX and clean finance chart header</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">9d74be3</div>
+        <div class="subject">Fix accounting datetime timezone handling for UTC API</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b4d6eca</div>
+        <div class="subject">Merge branch 'master' of github.com-zzlee:zzlee/lifeos</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    const text = e.target.value.toLowerCase();
+    const commits = document.querySelectorAll('.commit');
+    commits.forEach(c => {
+      const content = c.textContent.toLowerCase();
+      if(content.includes(text)) {
+        c.style.display = 'block';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  });
+
+  document.querySelectorAll('.commit-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const commit = header.parentElement;
+      commit.classList.toggle('expanded');
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>z-code Commits</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --card: #111831;
+    --text: #e9ecf5;
+    --muted: #b8c0da;
+    --accent: #7cc7ff;
+    --accent-2: #8ef5d0;
+  }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    width: min(1000px, 92%);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .controls {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  input[type="text"] {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #3a4774;
+    background: #131d3f;
+    color: var(--text);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .commit {
+    background: color-mix(in srgb, var(--card), #000 10%);
+    border: 1px solid #2f3b69;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .commit-header {
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--card);
+  }
+  .commit-header:hover {
+    background: color-mix(in srgb, var(--card), #fff 5%);
+  }
+  .hash { font-family: monospace; color: var(--accent-2); flex-shrink: 0; }
+  .subject { font-weight: bold; flex-grow: 1; }
+  .toggle-icon { color: var(--muted); }
+
+  .commit-body {
+    padding: 1rem;
+    border-top: 1px solid #2f3b69;
+    color: var(--muted);
+    font-size: 0.9em;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .commit.expanded .commit-body {
+    display: block;
+  }
+  .commit.expanded .toggle-icon {
+    transform: rotate(180deg);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <p><a href="./index.html">← 回首頁</a></p>
+  <h1>z-code Commits</h1>
+  <p class="muted">此專案的開發時間線。</p>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="搜尋 commits...">
+  </div>
+
+  <div id="commitsContainer">
+
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b1579a0</div>
+        <div class="subject">chore(deps): update esbuild packages to 0.28.1</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Bump @esbuild/* platform packages from 0.27.7 to 0.28.1 in package-lock.json, likely as a result of npm install or npm update.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">432b237</div>
+        <div class="subject">feat: add z-dotenv tool to load .env and exec commands</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add a Python script that loads environment variables from ~/.env
+(or Z_DOTENV_FILE override) and execs a command with those variables.
+Supports double-quoted values with escape sequences, single-quoted
+values, comments, and export keyword stripping.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">629c4b7</div>
+        <div class="subject">feat: add install script for z-* helpers</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add scripts/install.sh to automate deployment of z-* helper scripts to ~/.local/bin.
+
+Supports --provider/--model overrides (with env var fallback) and a
+--bare flag to copy sources as-is without injecting defaults. Uses awk
+to insert the provider/model flags after 'exec pi \' and skip any
+pre-existing override lines, making re-runs idempotent.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">93ce585</div>
+        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d575fe7</div>
+        <div class="subject">feat: add AI helper scripts</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add wrapper scripts for common AI-assisted workflows so translation, technical writing, and git commit generation can be invoked consistently from the command line.
+
+Each script embeds a focused system prompt, forwards optional arguments into the user prompt, and executes pi with isolated sessions and explicit tool settings.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">08eb70f</div>
+        <div class="subject">docs: add repository agent guide</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Document the repository structure and common commands so agents can quickly understand how to work in this codebase.
+
+Add AGENTS.md with build commands, architecture notes, agent behavior, provider support, and file attachment details.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">705f5da</div>
+        <div class="subject">docs: add workflow documentation for common z-code tasks</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add a comprehensive WORKFLOW.md covering practical workflows for
+code review, debugging, refactoring, planning, bash automation,
+git operations, web-enhanced development, translation,
+communication polish, session management, and extensibility.
+
+This provides users with ready-to-use command examples for
+everyday development tasks using z-code.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">af17c47</div>
+        <div class="subject">feat: add media file support to file refs</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add MIME type mappings for common media formats (images, audio, video, PDF).
+
+Refactor file reading to handle different content types:
+- Text/JSON files are embedded as code blocks with file path
+- Images are embedded as base64 data URIs
+- Other files are embedded as base64 URIs with media type
+
+Also improve session loading error handling to skip corrupted sessions gracefully.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c6e76b3</div>
+        <div class="subject">Merge pull request #8 from zzlee/codex/create-branch-for-chat-history-tool</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add chat history compact tool</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">5744174</div>
+        <div class="subject">feat: add list-agents CLI command</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add --list-agents flag to display available agents from prompts/ and prompts/commands/ directories.
+
+- Implement listAgents() in prompt.ts that scans both directories for .md files
+- Parse YAML front matter for agent descriptions
+- Command files take precedence over prompt files
+- Display agents sorted by name with optional description</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3ab3661</div>
+        <div class="subject">Add chat history compact tool</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">e4148fd</div>
+        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">e0b9290</div>
+        <div class="subject">refactor: improve error handling and update .gitignore</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Update .gitignore to exclude .opencode/ directory.
+- Refine error messages in src/agent/prompt.ts for better consistency.
+- Implement nested try-catch blocks in src/index.ts to ensure errors during agent execution are caught and reported without crashing the process unexpectedly.
+- Standardize fatal error logging in the main entry point.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">6f671ba</div>
+        <div class="subject">docs: refine git-commit prompt wording</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">1bb6d53</div>
+        <div class="subject">feat: add x-code coding agent prompts</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Introduce the x-code agent configuration and its core mandates. This includes guidelines for brevity, task workflow, and tooling strategy to ensure concise and efficient coding assistance.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">bb1ff62</div>
+        <div class="subject">feat: add execute_bash tool and bash prompts</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Implement ExecuteBashTool for system shell access and add corresponding agent prompts for bash automation and git commits.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3b57dea</div>
+        <div class="subject">feat: add GrepTool to bash tools list</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">48f9342</div>
+        <div class="subject">refactor: condense prompts and tool definitions</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Simplified system prompts and tool descriptions to be more concise. This reduces token consumption and noise while preserving all critical constraints and workflows, improving overall prompt adherence.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">01daed3</div>
+        <div class="subject">docs: refactor system prompt for brevity</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Restructure the system prompt to reduce token overhead and eliminate verbose responses. The update introduces "Core Mandates" and a "Task Workflow" to provide a clearer operational framework, while strictly enforcing brevity and removing redundant preamble/postamble.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c26e06f</div>
+        <div class="subject">refactor: update verbose tool logging format</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">77bfd62</div>
+        <div class="subject">style: improve tool call logging format</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">456c10f</div>
+        <div class="subject">refactor: categorize tools in getToolsList</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Organize tools into functional groups (file, bash, web, skill) to allow for flexible toolset configurations. Update getToolsList to return basicTools by default instead of the full list.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">81cf944</div>
+        <div class="subject">refactor: rename parameters to inputSchema</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">4fd0546</div>
+        <div class="subject">feat: add apply_patch tool for file editing</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Implemented a new apply_patch tool to enable precise, multi-file edits using a structured patch format. This includes a custom parser in patch.ts to handle additions, updates, and deletions, and the ApplyPatchTool implementation in apply_patch.ts for system integration.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">cf77624</div>
+        <div class="subject">feat: add support for OpenAI-compatible providers</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Integrate @ai-sdk/openai-compatible to allow the agent to utilize LLM providers that implement the OpenAI API specification. This includes updating the model selection logic in getModel to support the new provider type.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">022a08b</div>
+        <div class="subject">chore: update ai dependency to 6.0.175</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Update the 'ai' package from 6.0.174 to 6.0.175 and update the corresponding lockfile.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">1855bdc</div>
+        <div class="subject">docs: add section on referencing files</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">06fe5c5</div>
+        <div class="subject">feat: log token usage when verbose is enabled</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c82a7c5</div>
+        <div class="subject">feat: enhance edit tool with robust replacement</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>The previous replacement logic relied on exact string matches, which often failed due to minor whitespace or indentation differences. This update introduces a series of specialized Replacer strategies (e.g., BlockAnchorReplacer, WhitespaceNormalizedReplacer) and fuzzy matching via Levenshtein distance to make the replace function more resilient and flexible when editing files.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">abf565c</div>
+        <div class="subject">feat: display loaded skills in verbose mode</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">4cc527e</div>
+        <div class="subject">feat: include AGENTS.md in system prompt</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">63380ef</div>
+        <div class="subject">Merge pull request #6 from zzlee/feat/mcp-client-support-1651220017482135157</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add Model Context Protocol (MCP) client support</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">f748760</div>
+        <div class="subject">feat: enhance tool call and result display</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Improve the verbosity and detail of tool-related logs in the agent. Tool calls now display their input arguments, and tool results show a concise preview of the output. Additionally, output formatting is now correctly guarded by the verbose flag.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">f515ccc</div>
+        <div class="subject">refactor: remove apply_patch tool</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Remove the apply_patch tool implementation, its documentation text file, and its registration in the tools index to streamline the toolset.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">1554d9b</div>
+        <div class="subject">feat: add ApplyPatchTool and reasoning-end newline</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7bb713b</div>
+        <div class="subject">refactor: remove file refs from user prompt</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7c6c739</div>
+        <div class="subject">feat: introduce lang agent for translations</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Create prompts/lang.md to define a specialized polyglot translator agent.
+- Update translate-en and translate-zh commands to use the new lang agent.
+- Rename translation command files for brevity (translate- to trans-).
+- Refine instructions in prompts/git-commit.md regarding the commit process.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ce51340</div>
+        <div class="subject">feat: add Model Context Protocol (MCP) client support</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Adds `@modelcontextprotocol/sdk` dependency.
+- Extends configuration schema to support `mcp_servers` configuration.
+- Implement dynamic loading and wrapping of MCP tools with native Vercel AI SDK tools using `jsonSchema`.
+- Includes lifecycle management via `client.close()` inside a finally block to prevent connection hangs.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">01e887c</div>
+        <div class="subject">feat: add Model Context Protocol (MCP) client support</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Adds `@modelcontextprotocol/sdk` dependency.
+- Extends configuration schema to support `mcp_servers` configuration.
+- Implement dynamic loading and wrapping of MCP tools with native Vercel AI SDK tools using `jsonSchema`.
+- Includes lifecycle management via `client.close()` inside a finally block to prevent connection hangs.
+
+Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ffedcdb</div>
+        <div class="subject">feat: implement file referencing and add README</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Implement `@filePath` syntax to allow users to provide file context to the agent. The CLI now reads referenced files and includes them as part of the message content with appropriate MIME types.
+
+Also add a comprehensive README.md and improve verbose logging for tool calls.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">92b940c</div>
+        <div class="subject">docs: refine git-commit prompt instructions</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3dd5ebb</div>
+        <div class="subject">chore: add cheerio, node-fetch and cleanup exports</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Added cheerio and node-fetch for HTML parsing and fetching capabilities.
+
+Cleaned up syntax errors in src/tools/index.ts by removing dangling identifiers.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">4b9626a</div>
+        <div class="subject">Merge pull request #5 from zzlee/feature/web-tools</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add web_search and web_fetch tools for web research</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">cd8e78a</div>
+        <div class="subject">feat: add web_search and web_fetch tools for web research</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">073c878</div>
+        <div class="subject">refactor: remove ApplyPatchTool and pin zod version</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">6d26e08</div>
+        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3a11b29</div>
+        <div class="subject">Merge pull request #4 from zzlee/feat/add-ollama-support-1953265423726513928</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add ollama support</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c0e1dbf</div>
+        <div class="subject">Merge branch 'master' into feat/add-ollama-support-1953265423726513928</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>沒有其他描述。</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c7b58fe</div>
+        <div class="subject">feat: add skill directory tracking and file listing</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Update the Skill interface and loadSkill function to track the base directory of a skill. Enhance LoadSkillTool to list files in the skill directory, enabling the agent to discover available resources. Additionally, remove pptxgenjs and add project metadata to package.json.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b93b610</div>
+        <div class="subject">feat: add ollama support\n\nAdd `ollama-ai-provider-v2` dependency and integrate the `ollama` provider in `src/agent/agent.ts`.</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    const text = e.target.value.toLowerCase();
+    const commits = document.querySelectorAll('.commit');
+    commits.forEach(c => {
+      const content = c.textContent.toLowerCase();
+      if(content.includes(text)) {
+        c.style.display = 'block';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  });
+
+  document.querySelectorAll('.commit-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const commit = header.parentElement;
+      commit.classList.toggle('expanded');
+    });
+  });
+</script>
+</body>
+</html>
