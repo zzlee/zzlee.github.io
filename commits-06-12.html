@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>zstreamer Commits: 06-12</title>
+<style>
+  :root {
+    --bg: #0b1020;
+    --card: #111831;
+    --text: #e9ecf5;
+    --muted: #b8c0da;
+    --accent: #7cc7ff;
+    --accent-2: #8ef5d0;
+  }
+  body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+  }
+  .container {
+    width: min(1000px, 92%);
+    margin: 0 auto;
+    padding: 2rem 0;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .controls {
+    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+  }
+  input[type="text"] {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #3a4774;
+    background: #131d3f;
+    color: var(--text);
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .commit {
+    background: color-mix(in srgb, var(--card), #000 10%);
+    border: 1px solid #2f3b69;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .commit-header {
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--card);
+  }
+  .commit-header:hover {
+    background: color-mix(in srgb, var(--card), #fff 5%);
+  }
+  .hash { font-family: monospace; color: var(--accent-2); flex-shrink: 0; }
+  .subject { font-weight: bold; flex-grow: 1; }
+  .toggle-icon { color: var(--muted); }
+
+  .commit-body {
+    padding: 1rem;
+    border-top: 1px solid #2f3b69;
+    color: var(--muted);
+    font-size: 0.9em;
+    display: none;
+    white-space: pre-wrap;
+  }
+  .commit.expanded .commit-body {
+    display: block;
+  }
+  .commit.expanded .toggle-icon {
+    transform: rotate(180deg);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <p><a href="./index.html">← Back to Home</a></p>
+  <h1>zstreamer Commits: 06-12</h1>
+  <p class="muted">A timeline of development for this period.</p>
+
+  <div class="controls">
+    <input type="text" id="searchInput" placeholder="Search commits...">
+  </div>
+
+  <div id="commitsContainer">
+
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d997929</div>
+        <div class="subject">fix: harden topology buffer pool sizing</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">e8ce85e</div>
+        <div class="subject">Implement advanced pipeline features and H265 controls</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">59dbbf1</div>
+        <div class="subject">docs: update status and planned elements</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Mark bins, pad probes, and segment seeking as completed</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">af78492</div>
+        <div class="subject">feat: add RTSP auth, reconnection, keepalive and NTP sync</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Implement major enhancements across RTSP source/sink and RTMP source:</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">700b83a</div>
+        <div class="subject">docs: correct pipeline examples to use videotestsrc</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d545ba0</div>
+        <div class="subject">test: add element bin EOS passthrough and convergence unit tests</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Added unit tests `test_bin_eos_passthrough` and `test_bin_eos_convergence` in `tests/test_core.c` to verify that `zst_bin_t` correctly proxies End-Of-Stream (EOS) buffers through ghost pads and aggregates multiple sink branches properly before signaling EOS on its bus.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">0798ef9</div>
+        <div class="subject">Merge pull request #35 from zzlee/add-element-bin-eos-tests-13907539720597889011</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add unit tests for Element Bin EOS passthrough and convergence</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">e790035</div>
+        <div class="subject">feat: add SRT source and sink elements</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add Secure Reliable Transport (SRT) source (srtsrc) and sink (srtsink)</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b1ccd6a</div>
+        <div class="subject">Merge remote-tracking branch &#x27;refs/remotes/origin/main&#x27;</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ccb51a5</div>
+        <div class="subject">feat: add MPEG-TS muxer/demuxer + RTMP hardening</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Implement MPEG-TS muxer and demuxer elements for transport stream</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">046e4da</div>
+        <div class="subject">feat(tests): add use cases for pad blocking and probes</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Add 4 test cases simulating real-world pad blocking and probe use cases:</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">5a7ec66</div>
+        <div class="subject">test: add use case tests for element bin</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Added integration-style unit tests verifying Element Bin functionality across three key use cases:</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">9546bf2</div>
+        <div class="subject">Add test_allocator_pool_recycle_loop unit test and update wiki</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Add `test_allocator_pool_recycle_loop` in `tests/test_core.c` that validates repeated acquire/release cycles do not leak</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ebccdae</div>
+        <div class="subject">Merge pull request #37 from zzlee/add-element-bin-eos-tests-13907539720597889011</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>test: add use case tests for element bin</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">bd0279e</div>
+        <div class="subject">Merge pull request #36 from zzlee/pad-blocking-use-cases-13052778409774947164</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat(tests): add pad blocking and probes use cases</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7a63b51</div>
+        <div class="subject">Merge pull request #4 from yuan88yuan/add-recycle-loop-test-7338193845854552057</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add test_allocator_pool_recycle_loop unit test</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7eb7bdc</div>
+        <div class="subject">Merge branch &#x27;zzlee:main&#x27; into main</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">59e8599</div>
+        <div class="subject">test: add pool drain/flush unit test</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Added `test_allocator_pool_drain` to `tests/test_core.c` to test `zst_buffer_pool_drain()`</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">8c53370</div>
+        <div class="subject">test: add pool config get/set unit test</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: Bill &lt;bill@yuan.com.tw&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3e26de8</div>
+        <div class="subject">Merge pull request #38 from zzlee/pool-tests-sync</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Sync: add 3 buffer pool unit tests from yuan88yuan</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">007ae72</div>
+        <div class="subject">feat: implement MP4 demuxer element</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add a new mp4demux element backed by FFmpeg libavformat with two operational modes:</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">ddb915c</div>
+        <div class="subject">feat: implement dmabuf allocator using memfd_create fallback</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>This commit introduces a Linux DMABUF allocator fallback implementation.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">6ed653c</div>
+        <div class="subject">Merge pull request #39 from zzlee/feat/dmabuf-allocator-1943151027485825003</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: implement dmabuf allocator</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">6cde1e4</div>
+        <div class="subject">test: add tests for Segment Seeking use cases</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Adds 4 integration tests reflecting the advanced usage of</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">706ed33</div>
+        <div class="subject">Merge pull request #40 from zzlee/segment-seeking-use-cases-8539508752679024534</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>test: implement Segment Seeking use cases</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">841cbad</div>
+        <div class="subject">style(test): fix minor blank line formatting in segment seeking tests</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>No additional description.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">9a66bcc</div>
+        <div class="subject">test: add buffer pool unit tests for blocking acquire, timeout expiry, and unref pool recycling</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Added `test_allocator_pool_blocking_acquire` to ensure acquire unblocks properly.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c660a7b</div>
+        <div class="subject">Merge pull request #41 from zzlee/unit-tests-allocator-pool-17716454294086687038</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>test: buffer pool acquire blocking, timeout expiry, and unref recycle unit tests</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">448296b</div>
+        <div class="subject">refactor: compute absolute timeout before acquire loop</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Compute the absolute timeout once before entering the wait loop to</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">d123291</div>
+        <div class="subject">feat: add zero-malloc integration test for pipeline</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>The test sets up a videotestsrc-&gt;queue-&gt;filesink pipeline, intercepts</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">fe8c87c</div>
+        <div class="subject">feat: add caps and property metadata to elements</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Replace &#x27;ANY&#x27; pad caps with specific MIME types across all</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">3d210d0</div>
+        <div class="subject">feat: implement HTTP Source element (httpsrc)</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Add a new HTTP/HTTPS source element that reads buffers from remote</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b81cede</div>
+        <div class="subject">feat: add macros for netsink and netsrc properties and pads</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Added convenience macros (e.g. ZST_NET_SINK_PROP_HOST, ZST_NET_SOURCE_PAD_SRC) to</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">09f8e50</div>
+        <div class="subject">refactor: extract common test plugin path logic</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Pull duplicated plugin directory fallback resolution into a shared</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">815a502</div>
+        <div class="subject">Merge pull request #42 from zzlee/feat/netsink-netsource-macros-2776103341215820652</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: add convenience macros for netsink and netsrc</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">b1ce5b5</div>
+        <div class="subject">test: implement unit tests for SRT Subtitle Parser</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Added `test_srt_parser()` function in `tests/test_core.c` to verify parsing of SRT files, segment timing, and correct PTS/duration propagation.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">9811a66</div>
+        <div class="subject">Merge pull request #43 from zzlee/srt-parser-tests-2717210476474566068</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>test: add unit tests for SRT subtitle parser</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">29b3f3e</div>
+        <div class="subject">feat: implement Vulkan memory allocator</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Adds `zst_allocator_vulkan_create` to the zstreamer framework, allowing</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">7877b0f</div>
+        <div class="subject">Merge pull request #44 from zzlee/feat/vulkan-allocator-5501506945794684923</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>feat: implement Vulkan memory allocator</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">4d77b37</div>
+        <div class="subject">feat(allocator): implement CUDA memory allocator\n\nAdd `zst_allocator_cuda_create()` to support CUDA device memory allocation. Conditionally compiled using `#ifdef HAS_CUDA` if `CUDAToolkit` is found by CMake. Updated tests to cover the allocator initialization and allocation functionality.</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">e90f3a6</div>
+        <div class="subject">test: implement clock precision test</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Added `test_clock_precision` to `tests/test_core.c` to evaluate system clock precision, resolution, and `zst_clock_wait` accuracy.</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">c8f4eed</div>
+        <div class="subject">Merge pull request #46 from zzlee/jules-clock-precision-test-3412512879311118392</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>test: implement clock precision test</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">086c66f</div>
+        <div class="subject">Fix and complete element convenience headers</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>- Ensure ZST_*_FACTORY macros are placed correctly outside of extern &quot;C&quot; blocks</div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="hash">841e8b4</div>
+        <div class="subject">Merge pull request #47 from zzlee/fix-element-convenience-headers-14171932719626752368</div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>Complete convenience headers for rtsp_server and other elements</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('searchInput').addEventListener('input', function(e) {
+    const text = e.target.value.toLowerCase();
+    const commits = document.querySelectorAll('.commit');
+    commits.forEach(c => {
+      const content = c.textContent.toLowerCase();
+      if(content.includes(text)) {
+        c.style.display = 'block';
+      } else {
+        c.style.display = 'none';
+      }
+    });
+  });
+
+  document.querySelectorAll('.commit-header').forEach(header => {
+    header.addEventListener('click', () => {
+      const commit = header.parentElement;
+      commit.classList.toggle('expanded');
+    });
+  });
+</script>
+</body>
+</html>
