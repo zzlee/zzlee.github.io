@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>粒子效果展示</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #111;
+        }
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const CELL_SIZE = 40; // 粒子的網格大小 (寬高)
+        const PARTICLE_RADIUS = 10; // 粒子半徑
+        const SPAWN_INTERVAL = 1000; // 一秒生產一個
+        const SPEED = 200; // 每秒移動的像素速度
+
+        let cols, rows, totalParticles;
+        let particles = [];
+
+        let lastSpawnTime = 0;
+        let currentIndex = 0;
+        let mode = 'filling'; // 'filling', 'waiting_to_empty', 'emptying', 'waiting_to_fill'
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            cols = Math.floor(width / CELL_SIZE);
+            rows = Math.floor(height / CELL_SIZE);
+            totalParticles = cols * rows;
+
+            // Recalculate destinations for existing particles
+            for (let i = 0; i < particles.length; i++) {
+                const p = particles[i];
+                const dest = getDestination(p.index);
+                p.destX = dest.x;
+                p.destY = dest.y;
+            }
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        function getDestination(index) {
+            const c = (cols - 1) - Math.floor(index / rows);
+            const r = index % rows;
+            return {
+                x: c * CELL_SIZE + CELL_SIZE / 2,
+                y: r * CELL_SIZE + CELL_SIZE / 2
+            };
+        }
+
+        class Particle {
+            constructor(index) {
+                this.index = index;
+                const dest = getDestination(index);
+                this.destX = dest.x;
+                this.destY = dest.y;
+
+                this.startX = -PARTICLE_RADIUS * 2;
+                this.startY = Math.random() * height;
+
+                this.x = this.startX;
+                this.y = this.startY;
+
+                this.state = 'flying_in'; // 'flying_in', 'assembled', 'flying_out'
+
+                this.floatPhase = Math.random() * Math.PI * 2;
+                this.floatAmp = 20 + Math.random() * 15;
+                this.floatFreq = 0.003 + Math.random() * 0.002;
+            }
+
+            update(dt, timeMs) {
+                if (this.state === 'flying_in') {
+                    let dx = this.destX - this.x;
+                    let dy = this.destY - this.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    let moveDist = SPEED * (dt / 1000);
+
+                    if (moveDist >= dist) {
+                        this.x = this.destX;
+                        this.y = this.destY;
+                        this.state = 'assembled';
+                    } else {
+                        // Move horizontally and vertically linearly
+                        this.x += (dx / dist) * moveDist;
+                        let progress = Math.max(0, Math.min(1, (this.x - this.startX) / (this.destX - this.startX)));
+
+                        let baseY = this.startY + (this.destY - this.startY) * progress;
+
+                        // Floating effect dampens as it reaches destination
+                        let floatEffect = Math.sin(timeMs * this.floatFreq + this.floatPhase) * this.floatAmp * (1 - progress);
+                        this.y = baseY + floatEffect;
+                    }
+                } else if (this.state === 'assembled') {
+                    this.x = this.destX;
+                    this.y = this.destY;
+                } else if (this.state === 'flying_out') {
+                    this.x -= SPEED * (dt / 1000);
+                    // Add some gentle floating while flying out
+                    let floatEffect = Math.sin(timeMs * this.floatFreq + this.floatPhase) * this.floatAmp;
+                    this.y += floatEffect * 0.02; // Small drift
+                }
+            }
+
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, PARTICLE_RADIUS, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(150, 200, 255, 0.9)';
+                ctx.shadowColor = 'rgba(150, 200, 255, 0.5)';
+                ctx.shadowBlur = 10;
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+
+        let lastTime = performance.now();
+
+        function loop(timeMs) {
+            let dt = timeMs - lastTime;
+            lastTime = timeMs;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Logic handling
+            if (mode === 'filling') {
+                if (timeMs - lastSpawnTime >= SPAWN_INTERVAL) {
+                    if (currentIndex < totalParticles) {
+                        particles.push(new Particle(currentIndex));
+                        currentIndex++;
+                        lastSpawnTime = timeMs;
+                    } else {
+                        mode = 'waiting_to_empty';
+                    }
+                }
+            } else if (mode === 'waiting_to_empty') {
+                // Wait until all particles have assembled
+                let allAssembled = particles.every(p => p.state === 'assembled');
+                if (allAssembled) {
+                    mode = 'emptying';
+                    currentIndex = totalParticles - 1; // Start emptying from the highest index (leftmost)
+                    lastSpawnTime = timeMs; // Reset timer for emptying
+                }
+            } else if (mode === 'emptying') {
+                if (timeMs - lastSpawnTime >= SPAWN_INTERVAL) {
+                    if (currentIndex >= 0) {
+                        particles[currentIndex].state = 'flying_out';
+                        currentIndex--;
+                        lastSpawnTime = timeMs;
+                    } else {
+                        mode = 'waiting_to_fill';
+                    }
+                }
+            } else if (mode === 'waiting_to_fill') {
+                // Wait until all particles are off-screen
+                let allOffScreen = particles.every(p => p.x < -PARTICLE_RADIUS * 2);
+                if (allOffScreen) {
+                    particles = [];
+                    currentIndex = 0;
+                    mode = 'filling';
+                    lastSpawnTime = timeMs;
+                }
+            }
+
+            // Update and Draw
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update(dt, timeMs);
+                particles[i].draw(ctx);
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+
+    </script>
+</body>
+</html>
