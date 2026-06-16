@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rubik's Cube</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #222;
+      color: white;
+      font-family: sans-serif;
+    }
+    #ui-container {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px;
+      border-radius: 8px;
+      pointer-events: auto;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .controls-row {
+      margin-bottom: 10px;
+    }
+    #message {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ffcc00;
+    }
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
+      display: block;
+    }
+    a.back-link {
+      color: #aaa;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+    }
+    a.back-link:hover {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui-container">
+    <a href="../index.html" class="back-link">← Back to Home</a>
+    <h2>Rubik's Cube</h2>
+    <div class="controls-row">
+      <button id="btn-shuffle">Shuffle</button>
+      <button id="btn-solve">Hint / Solve</button>
+    </div>
+    <div class="controls-row">
+      <button id="btn-blank">Custom (Blank) Cube</button>
+      <button id="btn-reset">Reset to Solved</button>
+    </div>
+    <div id="message">Use mouse to rotate camera. Click and drag on cube faces to rotate slices.</div>
+  </div>
+
+  <div id="canvas-container"></div>
+
+  <!-- Include Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Include OrbitControls -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Include Tween.js for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+  <!-- Include cubejs -->
+  <script src="cube.js"></script>
+  <script src="solve.js"></script>
+
+  <!-- Main logic -->
+  <script src="main.js"></script>
+</body>
+</html>
