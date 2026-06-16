@@ -159,8 +159,8 @@
                     // Breathing effect for size and alpha
                     let pulse = Math.sin(timeMs * this.pulseFreq + this.pulsePhase);
 
-                    // Base size 3, oscillates from 2 to 5 depending on pulse
-                    currentSize = 3 + pulse * 2 * (1 - this.progress);
+                    // Base size 3, oscillates more prominently depending on pulse
+                    currentSize = 3 + pulse * 5 * (1 - this.progress);
 
                     // Alpha oscillates
                     currentAlpha = 0.5 + pulse * 0.5; // ranges 0.0 to 1.0
