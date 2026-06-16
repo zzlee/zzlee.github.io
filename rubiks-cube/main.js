@@ -115,6 +115,12 @@ function getIntersect(event) {
 
 window.addEventListener('mousedown', (event) => {
   if (isAnimating || event.button !== 0 || event.target.tagName !== 'CANVAS') return;
+
+  if (event.ctrlKey) {
+    // If Ctrl is pressed, let OrbitControls handle it (do nothing here)
+    return;
+  }
+
   const intersect = getIntersect(event);
   if (intersect) {
     if (isBlankMode) {
@@ -128,11 +134,13 @@ window.addEventListener('mousedown', (event) => {
 });
 
 let dragStartPoint = new THREE.Vector3();
+let hoveredIntersect = null;
 
 window.addEventListener('mousemove', (event) => {
-  if (!isDragging || !startIntersect || isAnimating) return;
-
   const currentIntersect = getIntersect(event);
+  hoveredIntersect = currentIntersect;
+
+  if (!isDragging || !startIntersect || isAnimating) return;
   if (!currentIntersect) return;
 
   if (!dragAxis) {
@@ -268,7 +276,7 @@ window.addEventListener('mouseup', (event) => {
                       // If the user rotates the middle slice, it's equivalent to rotating the two outer slices in the opposite direction
                       // and rotating the whole cube. This invalidates standard state tracking.
                       // For simplicity, we just disallow middle slice logical tracking and snap it back or warn.
-                      document.getElementById('message').innerText = "Warning: Middle slice moves not logically tracked. Solver may fail.";
+                      document.getElementById('message').innerText = "警告：不追蹤中間層的旋轉，求解器可能會失敗。";
                   }
               }
 
@@ -296,6 +304,29 @@ function handleClick(intersect) {
     mat.color.setHex(colorValues[currIdx]);
 }
 
+window.addEventListener('keydown', (event) => {
+    if (!isBlankMode || !hoveredIntersect) return;
+
+    const obj = hoveredIntersect.object;
+    const faceIndex = Math.floor(hoveredIntersect.faceIndex / 2);
+    const mat = obj.material[faceIndex];
+
+    if (mat.color.getHex() === COLORS.BLANK) return;
+
+    const keyMap = {
+        'r': COLORS.R,
+        'o': COLORS.L,
+        'y': COLORS.D,
+        'g': COLORS.F,
+        'b': COLORS.B,
+        'w': COLORS.U
+    };
+
+    const key = event.key.toLowerCase();
+    if (keyMap[key] !== undefined) {
+        mat.color.setHex(keyMap[key]);
+    }
+});
 
 // Initialize Cube solver
 Cube.initSolver();
@@ -395,7 +426,7 @@ async function executeSequence(sequenceStr, duration = 300) {
 // UI Handlers
 document.getElementById('btn-shuffle').addEventListener('click', async () => {
     if (isAnimating) return;
-    document.getElementById('message').innerText = "Shuffling...";
+    document.getElementById('message').innerText = "打亂中...";
     const rCube = Cube.random();
     // To animate a shuffle, we can just solve it from solved to random, but cube.js random() just creates state.
     // Instead, let's generate 20 random moves and apply them.
@@ -405,34 +436,34 @@ document.getElementById('btn-shuffle').addEventListener('click', async () => {
         scramble.push(moveKeys[Math.floor(Math.random() * moveKeys.length)]);
     }
     await executeSequence(scramble.join(' '), 150); // fast shuffle
-    document.getElementById('message').innerText = "Shuffled!";
+    document.getElementById('message').innerText = "已打亂！";
 });
 
 document.getElementById('btn-solve').addEventListener('click', async () => {
     if (isAnimating) return;
     if (isBlankMode) {
-        document.getElementById('message').innerText = "Cannot auto-solve in Blank Custom mode.";
+        document.getElementById('message').innerText = "無法在自訂空白模式下自動求解。";
         return;
     }
-    document.getElementById('message').innerText = "Solving...";
+    document.getElementById('message').innerText = "求解中...";
 
     // Check if already solved
     if (internalCube.isSolved()) {
-        document.getElementById('message').innerText = "Cube is already solved!";
+        document.getElementById('message').innerText = "魔方已經解開了！";
         return;
     }
 
     try {
         const solution = internalCube.solve();
         if (solution) {
-            document.getElementById('message').innerText = `Solution: ${solution}`;
+            document.getElementById('message').innerText = `解法: ${solution}`;
             await executeSequence(solution, 400);
-            document.getElementById('message').innerText = "Solved!";
+            document.getElementById('message').innerText = "已解開！";
         } else {
-             document.getElementById('message').innerText = "Could not find solution.";
+             document.getElementById('message').innerText = "找不到解法。";
         }
     } catch(e) {
-        document.getElementById('message').innerText = "Error solving: " + e.message;
+        document.getElementById('message').innerText = "求解發生錯誤: " + e.message;
     }
 });
 
@@ -441,8 +472,8 @@ document.getElementById('btn-blank').addEventListener('click', () => {
     isBlankMode = !isBlankMode;
     const btn = document.getElementById('btn-blank');
     if (isBlankMode) {
-        btn.innerText = "Exit Custom Mode";
-        document.getElementById('message').innerText = "Custom Mode: Click facelets to change colors.";
+        btn.innerText = "退出自訂模式";
+        document.getElementById('message').innerText = "自訂模式：點擊方塊表面以更改顏色，或使用按鍵 (R紅, O橘, Y黃, G綠, B藍, W白) 快速設定。";
         // Set all to white
         cubelets.forEach(c => {
             c.material.forEach(m => {
@@ -453,7 +484,7 @@ document.getElementById('btn-blank').addEventListener('click', () => {
         });
     } else {
 
-        btn.innerText = "Custom (Blank) Cube";
+        btn.innerText = "自訂 (空白) 魔方";
 
         // Sync custom colors back to logical state
         // The cube.js facelet string order is U1..U9, R1..R9, F1..F9, D1..D9, L1..L9, B1..B9
@@ -527,9 +558,9 @@ document.getElementById('btn-blank').addEventListener('click', () => {
 
             let newCube = Cube.fromString(faceletStr);
             internalCube = newCube;
-            document.getElementById('message').innerText = "Custom state loaded! You can now solve it.";
+            document.getElementById('message').innerText = "已載入自訂狀態！現在可以開始求解。";
         } catch(e) {
-            document.getElementById('message').innerText = "Invalid custom cube state! (Cannot solve this configuration)";
+            document.getElementById('message').innerText = "無效的自訂魔方狀態！(無法求解此配置)";
         }
 
         /* message is set by raycast logic above */
