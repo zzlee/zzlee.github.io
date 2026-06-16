@@ -113,7 +113,7 @@ function getIntersect(event) {
 }
 
 
-window.addEventListener('mousedown', (event) => {
+renderer.domElement.addEventListener('pointerdown', (event) => {
   if (isAnimating || event.button !== 0 || event.target.tagName !== 'CANVAS') return;
 
   if (event.ctrlKey) {
@@ -130,13 +130,14 @@ window.addEventListener('mousedown', (event) => {
     controls.enabled = false;
     isDragging = true;
     startIntersect = intersect;
+    event.stopPropagation();
   }
-});
+}, { capture: true });
 
 let dragStartPoint = new THREE.Vector3();
 let hoveredIntersect = null;
 
-window.addEventListener('mousemove', (event) => {
+window.addEventListener('pointermove', (event) => {
   const currentIntersect = getIntersect(event);
   hoveredIntersect = currentIntersect;
 
@@ -231,7 +232,7 @@ function getLogicalMove(axis, sliceVal, angle) {
     return moveStr;
 }
 
-window.addEventListener('mouseup', (event) => {
+window.addEventListener('pointerup', (event) => {
   if (isDragging) {
     isDragging = false;
     controls.enabled = true;
