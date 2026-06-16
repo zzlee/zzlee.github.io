@@ -104,6 +104,11 @@
                 this.floatPhase = Math.random() * Math.PI * 2;
                 this.floatAmp = 20 + Math.random() * 15;
                 this.floatFreq = 0.003 + Math.random() * 0.002;
+
+                this.progress = 0;
+                this.pulsePhase = Math.random() * Math.PI * 2;
+                this.pulseFreq = 0.005 + Math.random() * 0.005;
+                this.startHue = Math.random() * 360;
             }
 
             update(dt, timeMs) {
@@ -118,34 +123,54 @@
                         this.x = this.destX;
                         this.y = this.destY;
                         this.state = 'assembled';
+                        this.progress = 1;
                     } else {
                         // Move horizontally and vertically linearly
                         this.x += (dx / dist) * moveDist;
-                        let progress = Math.max(0, Math.min(1, (this.x - this.startX) / (this.destX - this.startX)));
+                        this.progress = Math.max(0, Math.min(1, (this.x - this.startX) / (this.destX - this.startX)));
 
-                        let baseY = this.startY + (this.destY - this.startY) * progress;
+                        let baseY = this.startY + (this.destY - this.startY) * this.progress;
 
                         // Floating effect dampens as it reaches destination
-                        let floatEffect = Math.sin(timeMs * this.floatFreq + this.floatPhase) * this.floatAmp * (1 - progress);
+                        let floatEffect = Math.sin(timeMs * this.floatFreq + this.floatPhase) * this.floatAmp * (1 - this.progress);
                         this.y = baseY + floatEffect;
                     }
                 } else if (this.state === 'assembled') {
                     this.x = this.destX;
                     this.y = this.destY;
+                    this.progress = 1;
                     this.glowAlpha = Math.max(0, this.glowAlpha - (dt / 1000));
                 } else if (this.state === 'flying_out') {
                     this.x -= SPEED * (dt / 1000);
+                    this.progress = 1;
                     // Add some gentle floating while flying out
                     let floatEffect = Math.sin(timeMs * this.floatFreq + this.floatPhase) * this.floatAmp;
                     this.y += floatEffect * 0.02; // Small drift
                 }
             }
 
-            draw(ctx) {
+            draw(ctx, timeMs) {
+                let currentHue = this.startHue * (1 - this.progress);
+                let currentSize = 3;
+                let currentAlpha = 1;
+                let shadowAlpha = this.glowAlpha;
+
+                if (this.state === 'flying_in') {
+                    // Breathing effect for size and alpha
+                    let pulse = Math.sin(timeMs * this.pulseFreq + this.pulsePhase);
+
+                    // Base size 3, oscillates from 2 to 5 depending on pulse
+                    currentSize = 3 + pulse * 2 * (1 - this.progress);
+
+                    // Alpha oscillates
+                    currentAlpha = 0.5 + pulse * 0.5; // ranges 0.0 to 1.0
+                    shadowAlpha = currentAlpha;
+                }
+
                 ctx.beginPath();
-                ctx.rect(this.x - 1.5, this.y - 1.5, 3, 3);
-                ctx.fillStyle = 'rgba(255, 0, 0, 1)';
-                ctx.shadowColor = `rgba(255, 0, 0, ${this.glowAlpha})`;
+                ctx.rect(this.x - currentSize / 2, this.y - currentSize / 2, currentSize, currentSize);
+                ctx.fillStyle = `hsla(${currentHue}, 100%, 50%, ${currentAlpha})`;
+                ctx.shadowColor = `hsla(${currentHue}, 100%, 50%, ${shadowAlpha})`;
                 ctx.shadowBlur = 10;
                 ctx.fill();
                 ctx.closePath();
@@ -207,7 +232,7 @@
             // Update and Draw
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update(dt, timeMs);
-                particles[i].draw(ctx);
+                particles[i].draw(ctx, timeMs);
             }
 
             requestAnimationFrame(loop);
