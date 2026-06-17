@@ -97,6 +97,7 @@ const mouse = new THREE.Vector2();
 let isDragging = false;
 let startIntersect = null;
 let dragAxis = null;
+let dragPlane = null;
 let activeCubelets = [];
 let rotationPivot = new THREE.Group();
 scene.add(rotationPivot);
@@ -130,6 +131,9 @@ renderer.domElement.addEventListener('pointerdown', (event) => {
     controls.enabled = false;
     isDragging = true;
     startIntersect = intersect;
+    // Create a plane for the dragged face to intersect with during pointermove
+    const normal = intersect.face.normal.clone().transformDirection(intersect.object.matrixWorld).normalize();
+    dragPlane = new THREE.Plane().setFromNormalAndCoplanarPoint(normal, intersect.point);
     event.stopPropagation();
   }
 }, { capture: true });
@@ -138,15 +142,24 @@ let dragStartPoint = new THREE.Vector3();
 let hoveredIntersect = null;
 
 window.addEventListener('pointermove', (event) => {
-  const currentIntersect = getIntersect(event);
-  hoveredIntersect = currentIntersect;
+  let currentPoint = null;
 
-  if (!isDragging || !startIntersect || isAnimating) return;
-  if (!currentIntersect) return;
+  if (!isDragging) {
+    hoveredIntersect = getIntersect(event);
+  } else if (!isAnimating && startIntersect && dragPlane) {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    raycaster.setFromCamera(mouse, camera);
+    const intersectPoint = new THREE.Vector3();
+    if (raycaster.ray.intersectPlane(dragPlane, intersectPoint)) {
+      currentPoint = intersectPoint;
+    }
+  }
+
+  if (!isDragging || !startIntersect || isAnimating || !currentPoint) return;
 
   if (!dragAxis) {
     const startPoint = startIntersect.point;
-    const currentPoint = currentIntersect.point;
     const dx = currentPoint.x - startPoint.x;
     const dy = currentPoint.y - startPoint.y;
     const dz = currentPoint.z - startPoint.z;
@@ -182,7 +195,6 @@ window.addEventListener('pointermove', (event) => {
   } else {
       // dynamic dragging visual update
       const normal = startIntersect.face.normal.clone().transformDirection(startIntersect.object.matrixWorld).round();
-      const currentPoint = currentIntersect.point;
       const dx = currentPoint.x - dragStartPoint.x;
       const dy = currentPoint.y - dragStartPoint.y;
       const dz = currentPoint.z - dragStartPoint.z;
@@ -282,10 +294,13 @@ window.addEventListener('pointerup', (event) => {
               }
 
               dragAxis = null;
+              dragPlane = null;
               activeCubelets = [];
               isAnimating = false;
           })
           .start();
+    } else {
+      dragPlane = null;
     }
   }
 });
