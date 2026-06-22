@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebRTC Jitter Buffer 展示</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f5f3ee;
+      --paper-2: #edeae2;
+      --muted: #888880;
+      --accent: #c0392b;
+      --accent-soft: rgba(192,57,43,0.08);
+      --rule: rgba(26,26,24,0.10);
+      --audio-color: #2980b9;
+      --video-color: #27ae60;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace, sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #f9f7f2 0%, #f0ede6 100%);
+      padding-bottom: 2rem;
+    }
+
+    .page { width: min(860px, 92%); margin: 0 auto; padding-top: 3rem; }
+
+    .back-link {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .description {
+      font-size: 0.95rem;
+      color: #3d3d38;
+      margin-bottom: 2rem;
+    }
+
+    .description p { margin-bottom: 1rem; }
+
+    .controls-container {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .control-group input[type="range"] {
+      width: 100%;
+    }
+
+    .checkbox-group {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+
+    .canvas-container {
+      width: 100%;
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 400px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+    .color-audio { background: var(--audio-color); }
+    .color-video { background: var(--video-color); }
+
+  </style>
+</head>
+<body>
+<div class="page">
+  <a href="index.html" class="back-link">← 返回首頁</a>
+
+  <h1>WebRTC Jitter Buffer</h1>
+
+  <div class="description">
+    <p>在即時通訊（如 WebRTC）中，網路傳輸速度往往會因為壅塞、路由變化等因素產生浮動，導致封包到達的時間不規律，這種現象稱為 <strong>Jitter (抖動)</strong>。</p>
+    <p><strong>Jitter Buffer (抖動緩衝區)</strong> 位於接收端，用來暫存提早到達的封包，讓延遲的封包有時間到達，再以平穩的速率送給播放器，從而避免播放卡頓。</p>
+    <p>此外，影音同步（A/V Sync）也是即時通訊的重要課題。我們通常以音訊的播放時間為基準（因為人耳對聲音的斷斷續續更敏感），調整視訊的顯示時機，確保畫面的嘴型與聲音一致。</p>
+  </div>
+
+  <div class="controls-container">
+    <div class="control-group">
+      <label for="jitterSlider">網路延遲與抖動 (Network Jitter): <span id="jitterVal">中等</span></label>
+      <input type="range" id="jitterSlider" min="0" max="100" value="50">
+    </div>
+    <div class="control-group">
+      <label for="bufferSlider">緩衝區延遲 (Buffer Delay): <span id="bufferVal">300ms</span></label>
+      <input type="range" id="bufferSlider" min="50" max="1000" value="300" step="50">
+    </div>
+    <div class="control-group checkbox-group">
+      <input type="checkbox" id="syncCheckbox" checked>
+      <label for="syncCheckbox">啟用影音同步 (A/V Sync)</label>
+    </div>
+  </div>
+
+  <div class="canvas-container">
+    <canvas id="simCanvas" width="800" height="400"></canvas>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-color color-audio"></div> 音訊封包 (Audio)</div>
+    <div class="legend-item"><div class="legend-color color-video"></div> 視訊封包 (Video)</div>
+  </div>
+</div>
+
+<script>
+  // UI 更新邏輯
+  const jitterSlider = document.getElementById('jitterSlider');
+  const jitterVal = document.getElementById('jitterVal');
+  const bufferSlider = document.getElementById('bufferSlider');
+  const bufferVal = document.getElementById('bufferVal');
+  const syncCheckbox = document.getElementById('syncCheckbox');
+
+  function updateJitterText() {
+    const val = parseInt(jitterSlider.value);
+    if (val < 20) jitterVal.textContent = "極低";
+    else if (val < 40) jitterVal.textContent = "低";
+    else if (val < 70) jitterVal.textContent = "中等";
+    else if (val < 90) jitterVal.textContent = "高";
+    else jitterVal.textContent = "嚴重";
+  }
+
+  jitterSlider.addEventListener('input', updateJitterText);
+  bufferSlider.addEventListener('input', (e) => {
+    bufferVal.textContent = e.target.value + 'ms';
+  });
+  updateJitterText();
+
+  // Canvas 初始化
+  const canvas = document.getElementById('simCanvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    canvas.width = canvas.parentElement.clientWidth;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // 模擬常數
+  const PACKET_INTERVAL_AUDIO = 20; // ms
+  const PACKET_INTERVAL_VIDEO = 33; // ms (~30fps)
+  const NETWORK_BASE_DELAY = 100; // ms
+
+  // 佈局參數
+  const LAYOUT = {
+    SENDER_X: 50,
+    NETWORK_START_X: 100,
+    NETWORK_END_X: canvas.width - 250,
+    BUFFER_X: canvas.width - 200,
+    PLAYBACK_X: canvas.width - 50,
+    AUDIO_Y: 100,
+    VIDEO_Y: 250,
+    PACKET_SIZE: 14
+  };
+
+  window.addEventListener('resize', () => {
+    LAYOUT.NETWORK_END_X = canvas.width - 250;
+    LAYOUT.BUFFER_X = canvas.width - 200;
+    LAYOUT.PLAYBACK_X = canvas.width - 50;
+  });
+
+  class Packet {
+    constructor(type, seq, sendTime) {
+      this.type = type; // 'audio' or 'video'
+      this.seq = seq;
+      this.sendTime = sendTime;
+      this.networkDelay = 0;
+      this.receiveTime = 0;
+      this.playTime = 0;
+      this.state = 'network'; // 'network', 'buffer', 'played', 'dropped'
+      this.yOffset = (Math.random() - 0.5) * 20; // Visual spread in network
+    }
+  }
+
+  // 系統狀態
+  let simTime = 0;
+  let lastFrameTime = performance.now();
+  let audioSeq = 0;
+  let videoSeq = 0;
+  let nextAudioSendTime = 0;
+  let nextVideoSendTime = 0;
+
+  let packets = [];
+  let audioBuffer = [];
+  let videoBuffer = [];
+
+  let currentAudioPlayTime = 0;
+
+  // 繪製輔助函數
+  function drawPacket(p, x, y, size) {
+    ctx.fillStyle = p.type === 'audio' ? '#2980b9' : '#27ae60';
+    if (p.state === 'dropped') {
+      ctx.fillStyle = '#e74c3c'; // Red for dropped
+    }
+
+    ctx.fillRect(x - size/2, y - size/2, size, size);
+
+    // Draw sequence number
+    ctx.fillStyle = '#fff';
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(p.seq % 100, x, y);
+  }
+
+  function drawSystem() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw background zones
+    ctx.fillStyle = 'rgba(0,0,0,0.02)';
+    ctx.fillRect(LAYOUT.NETWORK_START_X, 0, LAYOUT.NETWORK_END_X - LAYOUT.NETWORK_START_X, canvas.height);
+
+    ctx.fillStyle = 'rgba(46, 204, 113, 0.05)';
+    ctx.fillRect(LAYOUT.BUFFER_X - 20, 0, LAYOUT.PLAYBACK_X - LAYOUT.BUFFER_X + 20, canvas.height);
+
+    // Draw Labels
+    ctx.fillStyle = '#888';
+    ctx.font = '14px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText("Sender", LAYOUT.SENDER_X, 30);
+    ctx.fillText("Network", (LAYOUT.NETWORK_START_X + LAYOUT.NETWORK_END_X) / 2, 30);
+    ctx.fillText("Jitter Buffer", LAYOUT.BUFFER_X + 40, 30);
+    ctx.fillText("Playback", LAYOUT.PLAYBACK_X, 30);
+
+    ctx.textAlign = 'left';
+    ctx.fillText("Audio Channel", 10, LAYOUT.AUDIO_Y - 40);
+    ctx.fillText("Video Channel", 10, LAYOUT.VIDEO_Y - 40);
+
+    // Draw connecting lines
+    ctx.strokeStyle = '#ddd';
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(LAYOUT.SENDER_X, LAYOUT.AUDIO_Y);
+    ctx.lineTo(LAYOUT.PLAYBACK_X, LAYOUT.AUDIO_Y);
+    ctx.moveTo(LAYOUT.SENDER_X, LAYOUT.VIDEO_Y);
+    ctx.lineTo(LAYOUT.PLAYBACK_X, LAYOUT.VIDEO_Y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw Packets
+    const bufferDelayMs = parseInt(bufferSlider.value);
+
+    // We only keep a limited history to avoid memory leak
+    const visiblePackets = packets.filter(p => simTime - (p.playTime || p.receiveTime || p.sendTime) < 2000);
+
+    // Draw Jitter Buffer Slots
+    ctx.strokeStyle = '#ccc';
+    ctx.strokeRect(LAYOUT.BUFFER_X, LAYOUT.AUDIO_Y - 20, 100, 40);
+    ctx.strokeRect(LAYOUT.BUFFER_X, LAYOUT.VIDEO_Y - 20, 100, 40);
+
+    visiblePackets.forEach(p => {
+      const baseY = p.type === 'audio' ? LAYOUT.AUDIO_Y : LAYOUT.VIDEO_Y;
+
+      if (p.state === 'network') {
+        // Calculate position based on progress through network
+        const progress = (simTime - p.sendTime) / p.networkDelay;
+        const x = LAYOUT.NETWORK_START_X + progress * (LAYOUT.NETWORK_END_X - LAYOUT.NETWORK_START_X);
+        drawPacket(p, x, baseY + p.yOffset, LAYOUT.PACKET_SIZE);
+      } else if (p.state === 'buffer') {
+        // Draw in buffer queue. Sort by sequence number visually if possible, but simple stacking is fine.
+        const bufferArr = p.type === 'audio' ? audioBuffer : videoBuffer;
+        const index = bufferArr.indexOf(p);
+        if (index !== -1) {
+          // Calculate expected playtime
+          const expectedPlayTime = p.receiveTime + bufferDelayMs;
+          const timeToPlay = expectedPlayTime - simTime;
+          // Progress from 1 to 0
+          const bufferProgress = Math.max(0, Math.min(1, timeToPlay / bufferDelayMs));
+
+          const x = LAYOUT.BUFFER_X + 10 + (1 - bufferProgress) * 80; // Move towards right
+          drawPacket(p, x, baseY, LAYOUT.PACKET_SIZE);
+        }
+      } else if (p.state === 'played' || p.state === 'dropped') {
+        // Flash at playback position, then fade/move right
+        const timeSincePlay = simTime - p.playTime;
+        if (timeSincePlay < 500) {
+          const x = LAYOUT.PLAYBACK_X + (timeSincePlay / 500) * 50;
+          ctx.globalAlpha = 1 - (timeSincePlay / 500);
+          drawPacket(p, x, baseY, LAYOUT.PACKET_SIZE * (p.state === 'played' ? 1.5 : 1));
+          ctx.globalAlpha = 1.0;
+        }
+      }
+    });
+
+    // Clean up old packets from main array
+    packets = packets.filter(p => simTime - (p.playTime || p.receiveTime || p.sendTime) < 3000);
+  }
+
+  function updateSimulation(dt) {
+    simTime += dt;
+
+    const jitterLevel = parseInt(jitterSlider.value); // 0 to 100
+    const bufferDelayMs = parseInt(bufferSlider.value);
+    const syncEnabled = syncCheckbox.checked;
+
+    // 1. Sender: Generate Packets
+    if (simTime >= nextAudioSendTime) {
+      const p = new Packet('audio', audioSeq++, nextAudioSendTime);
+      // Base delay + random jitter
+      p.networkDelay = NETWORK_BASE_DELAY + (Math.random() * jitterLevel * 3);
+      p.receiveTime = p.sendTime + p.networkDelay;
+      packets.push(p);
+      nextAudioSendTime += PACKET_INTERVAL_AUDIO;
+    }
+
+    if (simTime >= nextVideoSendTime) {
+      const p = new Packet('video', videoSeq++, nextVideoSendTime);
+      p.networkDelay = NETWORK_BASE_DELAY + (Math.random() * jitterLevel * 5); // Video usually has more variance due to size
+      p.receiveTime = p.sendTime + p.networkDelay;
+      packets.push(p);
+      nextVideoSendTime += PACKET_INTERVAL_VIDEO;
+    }
+
+    // 2. Network to Buffer
+    packets.forEach(p => {
+      if (p.state === 'network' && simTime >= p.receiveTime) {
+        p.state = 'buffer';
+        if (p.type === 'audio') {
+          audioBuffer.push(p);
+          audioBuffer.sort((a, b) => a.seq - b.seq);
+        } else {
+          videoBuffer.push(p);
+          videoBuffer.sort((a, b) => a.seq - b.seq);
+        }
+      }
+    });
+
+    // 3. Playback Engine
+    // Audio defines the master clock
+    let audioPlayed = false;
+    if (audioBuffer.length > 0) {
+      const firstAudio = audioBuffer[0];
+      const targetPlayTime = firstAudio.receiveTime + bufferDelayMs;
+
+      if (simTime >= targetPlayTime) {
+        // Play audio
+        const p = audioBuffer.shift();
+        p.state = 'played';
+        p.playTime = simTime;
+        currentAudioPlayTime = p.sendTime; // The original timestamp of the audio we just played
+        audioPlayed = true;
+
+        // If we missed previous packets (sequence gap), they are practically dropped if they arrive late
+      }
+    }
+
+    // Video playback
+    if (videoBuffer.length > 0) {
+      const firstVideo = videoBuffer[0];
+      const targetPlayTime = firstVideo.receiveTime + bufferDelayMs;
+
+      if (syncEnabled) {
+        // A/V Sync Enabled: Try to match video sendTime with currentAudioPlayTime
+        // Video should play if its timestamp is <= the current audio playback timestamp
+        if (audioPlayed && firstVideo.sendTime <= currentAudioPlayTime) {
+             const p = videoBuffer.shift();
+             p.state = 'played';
+             p.playTime = simTime;
+        } else if (simTime > targetPlayTime + 100) {
+             // Fallback: If video is waiting way too long (audio stalled), play it or drop it
+             // Let's just drop it if it's too old
+             if (firstVideo.sendTime < currentAudioPlayTime - 200) {
+                 const p = videoBuffer.shift();
+                 p.state = 'dropped';
+                 p.playTime = simTime;
+             }
+        }
+      } else {
+        // A/V Sync Disabled: Play video based purely on its own buffer delay
+        if (simTime >= targetPlayTime) {
+          const p = videoBuffer.shift();
+          p.state = 'played';
+          p.playTime = simTime;
+        }
+      }
+    }
+  }
+
+  function loop(timestamp) {
+    const dt = timestamp - lastFrameTime;
+    lastFrameTime = timestamp;
+
+    // Cap dt to prevent huge jumps if tab is inactive
+    if (dt < 100) {
+      updateSimulation(dt);
+      drawSystem();
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  requestAnimationFrame(loop);
+
+</script>
+</body>
+</html>
