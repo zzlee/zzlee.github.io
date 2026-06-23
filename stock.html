@@ -79,6 +79,12 @@
         background: linear-gradient(135deg, var(--accent), var(--accent-2));
         color: #0f1530;
         border: none;
+        transition: opacity 0.2s, cursor 0.2s;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
 
       .muted {
@@ -152,6 +158,10 @@
         statusEl.textContent = "載入資料中...";
         statusEl.className = "muted";
 
+        loadBtn.disabled = true;
+        const originalBtnText = loadBtn.textContent;
+        loadBtn.textContent = "載入中...";
+
         const monthStart = getMonthStartDate();
         const url = `https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?date=${monthStart}&stockNo=${stockNo}&response=json`;
 
@@ -215,6 +225,9 @@
         } catch (error) {
           statusEl.textContent = `載入失敗：${error.message}`;
           statusEl.className = "error";
+        } finally {
+          loadBtn.disabled = false;
+          loadBtn.textContent = originalBtnText;
         }
       }
 
