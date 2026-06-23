@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>z-code 開發紀錄</title>
+<title>z-code 開發心路歷程</title>
 <style>
   :root {
     --bg: #0b1020;
@@ -18,162 +18,333 @@
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
     background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
     color: var(--text);
-    line-height: 1.5;
+    line-height: 1.6;
   }
   .container {
     width: min(1000px, 92%);
     margin: 0 auto;
-    padding: 2rem 0;
+    padding: 3rem 0;
   }
-  a { color: var(--accent); text-decoration: none; }
+  a { color: var(--accent); text-decoration: none; font-weight: 500; }
   a:hover { text-decoration: underline; }
 
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+  }
+
   .controls {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     display: flex;
-    gap: 0.5rem;
+    justify-content: center;
   }
   input[type="text"] {
-    padding: 0.5rem;
-    border-radius: 0.25rem;
+    padding: 0.75rem 1rem;
+    border-radius: 2rem;
     border: 1px solid #3a4774;
-    background: #131d3f;
+    background: color-mix(in srgb, var(--card), transparent 20%);
     color: var(--text);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  /* Timeline specific styles */
+  .timeline {
+    position: relative;
+    margin: 2rem 0;
+    padding-left: 2rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 7px;
+    width: 2px;
+    background: #2f3b69;
   }
 
   .commit {
+    position: relative;
     background: color-mix(in srgb, var(--card), #000 10%);
     border: 1px solid #2f3b69;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
     overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
   }
+  .commit:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .commit::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: -2rem;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px #2f3b69;
+  }
+
   .commit-header {
-    padding: 1rem;
+    padding: 1.25rem 1.5rem;
     cursor: pointer;
     display: flex;
-    gap: 1rem;
     align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
     background: var(--card);
   }
   .commit-header:hover {
     background: color-mix(in srgb, var(--card), #fff 5%);
   }
-  .hash { font-family: monospace; color: var(--accent-2); flex-shrink: 0; }
-  .subject { font-weight: bold; flex-grow: 1; }
-  .toggle-icon { color: var(--muted); }
+
+  .commit-top {
+    display: flex;
+    gap: 1rem;
+    align-items: baseline;
+    flex-grow: 1;
+  }
+
+  .hash {
+    font-family: 'DM Mono', monospace;
+    color: var(--accent-2);
+    background: color-mix(in srgb, var(--accent-2) 15%, transparent);
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+  .subject { font-weight: 600; font-size: 1.1em; color: #fff; }
+  .toggle-icon { color: var(--muted); transition: transform 0.3s; }
 
   .commit-body {
-    padding: 1rem;
+    padding: 1.5rem;
     border-top: 1px solid #2f3b69;
-    color: var(--muted);
-    font-size: 0.9em;
+    color: var(--text);
+    font-size: 0.95em;
     display: none;
     white-space: pre-wrap;
+    background: color-mix(in srgb, var(--card), transparent 20%);
   }
+
+  /* Chat bubble style for bot/dev logs */
+  .dev-log {
+    background: #1e293b;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    border-left: 4px solid var(--accent);
+    margin-top: 1rem;
+    font-style: normal;
+    color: #e2e8f0;
+    position: relative;
+  }
+  .dev-log::before {
+    content: '💡';
+    position: absolute;
+    left: -1.2rem;
+    top: -1rem;
+    font-size: 1.5rem;
+    background: var(--bg);
+    border-radius: 50%;
+    padding: 0.2rem;
+  }
+  .dev-log-title {
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
   .commit.expanded .commit-body {
     display: block;
+    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .commit.expanded .toggle-icon {
     transform: rotate(180deg);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <p><a href="./index.html">← 回首頁</a></p>
-  <h1>z-code 開發紀錄</h1>
-  <p class="muted">此專案的開發時間線。</p>
+
+  <header>
+    <h1>z-code 開發心路歷程</h1>
+    <p>這是一個關於打造實用工具與腳本的故事。點擊各個節點，看看我在開發當下遇到了什麼坑，又是怎麼解決的吧！</p>
+  </header>
 
   <div class="controls">
-    <input type="text" id="searchInput" placeholder="搜尋提交紀錄...">
+    <input type="text" id="searchInput" placeholder="搜尋開發紀錄...">
   </div>
 
-  <div id="commitsContainer">
+  <div class="timeline" id="commitsContainer">
 
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">b1579a0</div>
-        <div class="subject">chore(deps): update esbuild packages to 0.28.1</div>
+        <div class="commit-top">
+          <span class="hash">b1579a0</span>
+          <span class="subject">chore(deps): update esbuild packages to 0.28.1</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Bump @esbuild/* platform packages from 0.27.7 to 0.28.1 in package-lock.json, likely as a result of npm install or npm update.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Bump @esbuild/* platform packages from 0.27.7 to 0.28.1 in package-lock.json, likely as a result of npm install or npm update.</div>
+        <div class="dev-log">
+          開發者的心聲：
+日常維護與依賴更新。保持 z-code 的健康狀態，防患於未然！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">432b237</div>
-        <div class="subject">feat: add z-dotenv tool to load .env and exec commands</div>
+        <div class="commit-top">
+          <span class="hash">432b237</span>
+          <span class="subject">feat: add z-dotenv tool to load .env and exec commands</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add a Python script that loads environment variables from ~/.env
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a Python script that loads environment variables from ~/.env
 (or Z_DOTENV_FILE override) and execs a command with those variables.
 Supports double-quoted values with escape sequences, single-quoted
 values, comments, and export keyword stripping.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">629c4b7</div>
-        <div class="subject">feat: add install script for z-* helpers</div>
+        <div class="commit-top">
+          <span class="hash">629c4b7</span>
+          <span class="subject">feat: add install script for z-* helpers</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add scripts/install.sh to automate deployment of z-* helper scripts to ~/.local/bin.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add scripts/install.sh to automate deployment of z-* helper scripts to ~/.local/bin.
 
 Supports --provider/--model overrides (with env var fallback) and a
 --bare flag to copy sources as-is without injecting defaults. Uses awk
 to insert the provider/model flags after 'exec pi \' and skip any
 pre-existing override lines, making re-runs idempotent.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">93ce585</div>
-        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="commit-top">
+          <span class="hash">93ce585</span>
+          <span class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+順利把分支合併進主線！看到這段時間的努力變成正式的程式碼，充滿成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">d575fe7</div>
-        <div class="subject">feat: add AI helper scripts</div>
+        <div class="commit-top">
+          <span class="hash">d575fe7</span>
+          <span class="subject">feat: add AI helper scripts</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add wrapper scripts for common AI-assisted workflows so translation, technical writing, and git commit generation can be invoked consistently from the command line.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add wrapper scripts for common AI-assisted workflows so translation, technical writing, and git commit generation can be invoked consistently from the command line.
 
 Each script embeds a focused system prompt, forwards optional arguments into the user prompt, and executes pi with isolated sessions and explicit tool settings.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">08eb70f</div>
-        <div class="subject">docs: add repository agent guide</div>
+        <div class="commit-top">
+          <span class="hash">08eb70f</span>
+          <span class="subject">docs: add repository agent guide</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Document the repository structure and common commands so agents can quickly understand how to work in this codebase.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Document the repository structure and common commands so agents can quickly understand how to work in this codebase.
 
 Add AGENTS.md with build commands, architecture notes, agent behavior, provider support, and file attachment details.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">705f5da</div>
-        <div class="subject">docs: add workflow documentation for common z-code tasks</div>
+        <div class="commit-top">
+          <span class="hash">705f5da</span>
+          <span class="subject">docs: add workflow documentation for common z-code tasks</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add a comprehensive WORKFLOW.md covering practical workflows for
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a comprehensive WORKFLOW.md covering practical workflows for
 code review, debugging, refactoring, planning, bash automation,
 git operations, web-enhanced development, translation,
 communication polish, session management, and extensibility.
 
 This provides users with ready-to-use command examples for
 everyday development tasks using z-code.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">af17c47</div>
-        <div class="subject">feat: add media file support to file refs</div>
+        <div class="commit-top">
+          <span class="hash">af17c47</span>
+          <span class="subject">feat: add media file support to file refs</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add MIME type mappings for common media formats (images, audio, video, PDF).
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add MIME type mappings for common media formats (images, audio, video, PDF).
 
 Refactor file reading to handle different content types:
 - Text/JSON files are embedded as code blocks with file path
@@ -181,367 +352,708 @@ Refactor file reading to handle different content types:
 - Other files are embedded as base64 URIs with media type
 
 Also improve session loading error handling to skip corrupted sessions gracefully.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">c6e76b3</div>
-        <div class="subject">Merge pull request #8 from zzlee/codex/create-branch-for-chat-history-tool</div>
+        <div class="commit-top">
+          <span class="hash">c6e76b3</span>
+          <span class="subject">Merge pull request #8 from zzlee/codex/create-branch-for-chat-history-tool</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add chat history compact tool</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add chat history compact tool</div>
+        <div class="dev-log">
+          開發者的心聲：
+順利把分支合併進主線！看到這段時間的努力變成正式的程式碼，充滿成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">5744174</div>
-        <div class="subject">feat: add list-agents CLI command</div>
+        <div class="commit-top">
+          <span class="hash">5744174</span>
+          <span class="subject">feat: add list-agents CLI command</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Add --list-agents flag to display available agents from prompts/ and prompts/commands/ directories.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add --list-agents flag to display available agents from prompts/ and prompts/commands/ directories.
 
 - Implement listAgents() in prompt.ts that scans both directories for .md files
 - Parse YAML front matter for agent descriptions
 - Command files take precedence over prompt files
 - Display agents sorted by name with optional description</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">3ab3661</div>
-        <div class="subject">Add chat history compact tool</div>
+        <div class="commit-top">
+          <span class="hash">3ab3661</span>
+          <span class="subject">Add chat history compact tool</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">e4148fd</div>
-        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="commit-top">
+          <span class="hash">e4148fd</span>
+          <span class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+順利把分支合併進主線！看到這段時間的努力變成正式的程式碼，充滿成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">e0b9290</div>
-        <div class="subject">refactor: improve error handling and update .gitignore</div>
+        <div class="commit-top">
+          <span class="hash">e0b9290</span>
+          <span class="subject">refactor: improve error handling and update .gitignore</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>- Update .gitignore to exclude .opencode/ directory.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">- Update .gitignore to exclude .opencode/ directory.
 - Refine error messages in src/agent/prompt.ts for better consistency.
 - Implement nested try-catch blocks in src/index.ts to ensure errors during agent execution are caught and reported without crashing the process unexpectedly.
 - Standardize fatal error logging in the main entry point.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">6f671ba</div>
-        <div class="subject">docs: refine git-commit prompt wording</div>
+        <div class="commit-top">
+          <span class="hash">6f671ba</span>
+          <span class="subject">docs: refine git-commit prompt wording</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+好的程式也需要好的文件搭配！花點時間把 z-code 的文件寫清楚，未來接手（或幾個月後的自己）才不會想撞牆。
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">1bb6d53</div>
-        <div class="subject">feat: add x-code coding agent prompts</div>
+        <div class="commit-top">
+          <span class="hash">1bb6d53</span>
+          <span class="subject">feat: add x-code coding agent prompts</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Introduce the x-code agent configuration and its core mandates. This includes guidelines for brevity, task workflow, and tooling strategy to ensure concise and efficient coding assistance.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce the x-code agent configuration and its core mandates. This includes guidelines for brevity, task workflow, and tooling strategy to ensure concise and efficient coding assistance.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">bb1ff62</div>
-        <div class="subject">feat: add execute_bash tool and bash prompts</div>
+        <div class="commit-top">
+          <span class="hash">bb1ff62</span>
+          <span class="subject">feat: add execute_bash tool and bash prompts</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Implement ExecuteBashTool for system shell access and add corresponding agent prompts for bash automation and git commits.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement ExecuteBashTool for system shell access and add corresponding agent prompts for bash automation and git commits.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">3b57dea</div>
-        <div class="subject">feat: add GrepTool to bash tools list</div>
+        <div class="commit-top">
+          <span class="hash">3b57dea</span>
+          <span class="subject">feat: add GrepTool to bash tools list</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">48f9342</div>
-        <div class="subject">refactor: condense prompts and tool definitions</div>
+        <div class="commit-top">
+          <span class="hash">48f9342</span>
+          <span class="subject">refactor: condense prompts and tool definitions</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Simplified system prompts and tool descriptions to be more concise. This reduces token consumption and noise while preserving all critical constraints and workflows, improving overall prompt adherence.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Simplified system prompts and tool descriptions to be more concise. This reduces token consumption and noise while preserving all critical constraints and workflows, improving overall prompt adherence.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">01daed3</div>
-        <div class="subject">docs: refactor system prompt for brevity</div>
+        <div class="commit-top">
+          <span class="hash">01daed3</span>
+          <span class="subject">docs: refactor system prompt for brevity</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Restructure the system prompt to reduce token overhead and eliminate verbose responses. The update introduces "Core Mandates" and a "Task Workflow" to provide a clearer operational framework, while strictly enforcing brevity and removing redundant preamble/postamble.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Restructure the system prompt to reduce token overhead and eliminate verbose responses. The update introduces "Core Mandates" and a "Task Workflow" to provide a clearer operational framework, while strictly enforcing brevity and removing redundant preamble/postamble.</div>
+        <div class="dev-log">
+          開發者的心聲：
+好的程式也需要好的文件搭配！花點時間把 z-code 的文件寫清楚，未來接手（或幾個月後的自己）才不會想撞牆。
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">c26e06f</div>
-        <div class="subject">refactor: update verbose tool logging format</div>
+        <div class="commit-top">
+          <span class="hash">c26e06f</span>
+          <span class="subject">refactor: update verbose tool logging format</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">77bfd62</div>
-        <div class="subject">style: improve tool call logging format</div>
+        <div class="commit-top">
+          <span class="hash">77bfd62</span>
+          <span class="subject">style: improve tool call logging format</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+日常維護與依賴更新。保持 z-code 的健康狀態，防患於未然！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">456c10f</div>
-        <div class="subject">refactor: categorize tools in getToolsList</div>
+        <div class="commit-top">
+          <span class="hash">456c10f</span>
+          <span class="subject">refactor: categorize tools in getToolsList</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Organize tools into functional groups (file, bash, web, skill) to allow for flexible toolset configurations. Update getToolsList to return basicTools by default instead of the full list.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Organize tools into functional groups (file, bash, web, skill) to allow for flexible toolset configurations. Update getToolsList to return basicTools by default instead of the full list.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">81cf944</div>
-        <div class="subject">refactor: rename parameters to inputSchema</div>
+        <div class="commit-top">
+          <span class="hash">81cf944</span>
+          <span class="subject">refactor: rename parameters to inputSchema</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">4fd0546</div>
-        <div class="subject">feat: add apply_patch tool for file editing</div>
+        <div class="commit-top">
+          <span class="hash">4fd0546</span>
+          <span class="subject">feat: add apply_patch tool for file editing</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Implemented a new apply_patch tool to enable precise, multi-file edits using a structured patch format. This includes a custom parser in patch.ts to handle additions, updates, and deletions, and the ApplyPatchTool implementation in apply_patch.ts for system integration.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implemented a new apply_patch tool to enable precise, multi-file edits using a structured patch format. This includes a custom parser in patch.ts to handle additions, updates, and deletions, and the ApplyPatchTool implementation in apply_patch.ts for system integration.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">cf77624</div>
-        <div class="subject">feat: add support for OpenAI-compatible providers</div>
+        <div class="commit-top">
+          <span class="hash">cf77624</span>
+          <span class="subject">feat: add support for OpenAI-compatible providers</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Integrate @ai-sdk/openai-compatible to allow the agent to utilize LLM providers that implement the OpenAI API specification. This includes updating the model selection logic in getModel to support the new provider type.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Integrate @ai-sdk/openai-compatible to allow the agent to utilize LLM providers that implement the OpenAI API specification. This includes updating the model selection logic in getModel to support the new provider type.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">022a08b</div>
-        <div class="subject">chore: update ai dependency to 6.0.175</div>
+        <div class="commit-top">
+          <span class="hash">022a08b</span>
+          <span class="subject">chore: update ai dependency to 6.0.175</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Update the 'ai' package from 6.0.174 to 6.0.175 and update the corresponding lockfile.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Update the 'ai' package from 6.0.174 to 6.0.175 and update the corresponding lockfile.</div>
+        <div class="dev-log">
+          開發者的心聲：
+日常維護與依賴更新。保持 z-code 的健康狀態，防患於未然！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">1855bdc</div>
-        <div class="subject">docs: add section on referencing files</div>
+        <div class="commit-top">
+          <span class="hash">1855bdc</span>
+          <span class="subject">docs: add section on referencing files</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">06fe5c5</div>
-        <div class="subject">feat: log token usage when verbose is enabled</div>
+        <div class="commit-top">
+          <span class="hash">06fe5c5</span>
+          <span class="subject">feat: log token usage when verbose is enabled</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">c82a7c5</div>
-        <div class="subject">feat: enhance edit tool with robust replacement</div>
+        <div class="commit-top">
+          <span class="hash">c82a7c5</span>
+          <span class="subject">feat: enhance edit tool with robust replacement</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>The previous replacement logic relied on exact string matches, which often failed due to minor whitespace or indentation differences. This update introduces a series of specialized Replacer strategies (e.g., BlockAnchorReplacer, WhitespaceNormalizedReplacer) and fuzzy matching via Levenshtein distance to make the replace function more resilient and flexible when editing files.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">The previous replacement logic relied on exact string matches, which often failed due to minor whitespace or indentation differences. This update introduces a series of specialized Replacer strategies (e.g., BlockAnchorReplacer, WhitespaceNormalizedReplacer) and fuzzy matching via Levenshtein distance to make the replace function more resilient and flexible when editing files.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">abf565c</div>
-        <div class="subject">feat: display loaded skills in verbose mode</div>
+        <div class="commit-top">
+          <span class="hash">abf565c</span>
+          <span class="subject">feat: display loaded skills in verbose mode</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">4cc527e</div>
-        <div class="subject">feat: include AGENTS.md in system prompt</div>
+        <div class="commit-top">
+          <span class="hash">4cc527e</span>
+          <span class="subject">feat: include AGENTS.md in system prompt</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">63380ef</div>
-        <div class="subject">Merge pull request #6 from zzlee/feat/mcp-client-support-1651220017482135157</div>
+        <div class="commit-top">
+          <span class="hash">63380ef</span>
+          <span class="subject">Merge pull request #6 from zzlee/feat/mcp-client-support-1651220017482135157</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>feat: add Model Context Protocol (MCP) client support</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">feat: add Model Context Protocol (MCP) client support</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">f748760</div>
-        <div class="subject">feat: enhance tool call and result display</div>
+        <div class="commit-top">
+          <span class="hash">f748760</span>
+          <span class="subject">feat: enhance tool call and result display</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Improve the verbosity and detail of tool-related logs in the agent. Tool calls now display their input arguments, and tool results show a concise preview of the output. Additionally, output formatting is now correctly guarded by the verbose flag.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Improve the verbosity and detail of tool-related logs in the agent. Tool calls now display their input arguments, and tool results show a concise preview of the output. Additionally, output formatting is now correctly guarded by the verbose flag.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">f515ccc</div>
-        <div class="subject">refactor: remove apply_patch tool</div>
+        <div class="commit-top">
+          <span class="hash">f515ccc</span>
+          <span class="subject">refactor: remove apply_patch tool</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Remove the apply_patch tool implementation, its documentation text file, and its registration in the tools index to streamline the toolset.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Remove the apply_patch tool implementation, its documentation text file, and its registration in the tools index to streamline the toolset.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">1554d9b</div>
-        <div class="subject">feat: add ApplyPatchTool and reasoning-end newline</div>
+        <div class="commit-top">
+          <span class="hash">1554d9b</span>
+          <span class="subject">feat: add ApplyPatchTool and reasoning-end newline</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">7bb713b</div>
-        <div class="subject">refactor: remove file refs from user prompt</div>
+        <div class="commit-top">
+          <span class="hash">7bb713b</span>
+          <span class="subject">refactor: remove file refs from user prompt</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">7c6c739</div>
-        <div class="subject">feat: introduce lang agent for translations</div>
+        <div class="commit-top">
+          <span class="hash">7c6c739</span>
+          <span class="subject">feat: introduce lang agent for translations</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>- Create prompts/lang.md to define a specialized polyglot translator agent.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">- Create prompts/lang.md to define a specialized polyglot translator agent.
 - Update translate-en and translate-zh commands to use the new lang agent.
 - Rename translation command files for brevity (translate- to trans-).
 - Refine instructions in prompts/git-commit.md regarding the commit process.</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">ce51340</div>
-        <div class="subject">feat: add Model Context Protocol (MCP) client support</div>
+        <div class="commit-top">
+          <span class="hash">ce51340</span>
+          <span class="subject">feat: add Model Context Protocol (MCP) client support</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>- Adds `@modelcontextprotocol/sdk` dependency.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">- Adds `@modelcontextprotocol/sdk` dependency.
 - Extends configuration schema to support `mcp_servers` configuration.
 - Implement dynamic loading and wrapping of MCP tools with native Vercel AI SDK tools using `jsonSchema`.
 - Includes lifecycle management via `client.close()` inside a finally block to prevent connection hangs.
 
 Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">01e887c</div>
-        <div class="subject">feat: add Model Context Protocol (MCP) client support</div>
+        <div class="commit-top">
+          <span class="hash">01e887c</span>
+          <span class="subject">feat: add Model Context Protocol (MCP) client support</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>- Adds `@modelcontextprotocol/sdk` dependency.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">- Adds `@modelcontextprotocol/sdk` dependency.
 - Extends configuration schema to support `mcp_servers` configuration.
 - Implement dynamic loading and wrapping of MCP tools with native Vercel AI SDK tools using `jsonSchema`.
 - Includes lifecycle management via `client.close()` inside a finally block to prevent connection hangs.
 
 Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">ffedcdb</div>
-        <div class="subject">feat: implement file referencing and add README</div>
+        <div class="commit-top">
+          <span class="hash">ffedcdb</span>
+          <span class="subject">feat: implement file referencing and add README</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Implement `@filePath` syntax to allow users to provide file context to the agent. The CLI now reads referenced files and includes them as part of the message content with appropriate MIME types.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement `@filePath` syntax to allow users to provide file context to the agent. The CLI now reads referenced files and includes them as part of the message content with appropriate MIME types.
 
 Also add a comprehensive README.md and improve verbose logging for tool calls.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">92b940c</div>
-        <div class="subject">docs: refine git-commit prompt instructions</div>
+        <div class="commit-top">
+          <span class="hash">92b940c</span>
+          <span class="subject">docs: refine git-commit prompt instructions</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+好的程式也需要好的文件搭配！花點時間把 z-code 的文件寫清楚，未來接手（或幾個月後的自己）才不會想撞牆。
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">3dd5ebb</div>
-        <div class="subject">chore: add cheerio, node-fetch and cleanup exports</div>
+        <div class="commit-top">
+          <span class="hash">3dd5ebb</span>
+          <span class="subject">chore: add cheerio, node-fetch and cleanup exports</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Added cheerio and node-fetch for HTML parsing and fetching capabilities.
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Added cheerio and node-fetch for HTML parsing and fetching capabilities.
 
 Cleaned up syntax errors in src/tools/index.ts by removing dangling identifiers.</div>
+        <div class="dev-log">
+          開發者的心聲：
+串接外部系統總是會遇到各種眉角... 搞定 API 規格跟資料同步，z-code 的生態系又更完整了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">4b9626a</div>
-        <div class="subject">Merge pull request #5 from zzlee/feature/web-tools</div>
+        <div class="commit-top">
+          <span class="hash">4b9626a</span>
+          <span class="subject">Merge pull request #5 from zzlee/feature/web-tools</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>feat: add web_search and web_fetch tools for web research</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">feat: add web_search and web_fetch tools for web research</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">cd8e78a</div>
-        <div class="subject">feat: add web_search and web_fetch tools for web research</div>
+        <div class="commit-top">
+          <span class="hash">cd8e78a</span>
+          <span class="subject">feat: add web_search and web_fetch tools for web research</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+為 z-code 打造更強大的工具箱！自動化腳本和新工具的加入，讓開發效率直線上升！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">073c878</div>
-        <div class="subject">refactor: remove ApplyPatchTool and pin zod version</div>
+        <div class="commit-top">
+          <span class="hash">073c878</span>
+          <span class="subject">refactor: remove ApplyPatchTool and pin zod version</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+整理程式碼的債... 雖然外表看不出變化，但內部的架構變得更乾淨、更好維護了，通體舒暢！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">6d26e08</div>
-        <div class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</div>
+        <div class="commit-top">
+          <span class="hash">6d26e08</span>
+          <span class="subject">Merge remote-tracking branch 'refs/remotes/origin/master'</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+順利把分支合併進主線！看到這段時間的努力變成正式的程式碼，充滿成就感！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">3a11b29</div>
-        <div class="subject">Merge pull request #4 from zzlee/feat/add-ollama-support-1953265423726513928</div>
+        <div class="commit-top">
+          <span class="hash">3a11b29</span>
+          <span class="subject">Merge pull request #4 from zzlee/feat/add-ollama-support-1953265423726513928</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>feat: add ollama support</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">feat: add ollama support</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">c0e1dbf</div>
-        <div class="subject">Merge branch 'master' into feat/add-ollama-support-1953265423726513928</div>
+        <div class="commit-top">
+          <span class="hash">c0e1dbf</span>
+          <span class="subject">Merge branch 'master' into feat/add-ollama-support-1953265423726513928</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>沒有其他描述。</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">c7b58fe</div>
-        <div class="subject">feat: add skill directory tracking and file listing</div>
+        <div class="commit-top">
+          <span class="hash">c7b58fe</span>
+          <span class="subject">feat: add skill directory tracking and file listing</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Update the Skill interface and loadSkill function to track the base directory of a skill. Enhance LoadSkillTool to list files in the skill directory, enabling the agent to discover available resources. Additionally, remove pptxgenjs and add project metadata to package.json.</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Update the Skill interface and loadSkill function to track the base directory of a skill. Enhance LoadSkillTool to list files in the skill directory, enabling the agent to discover available resources. Additionally, remove pptxgenjs and add project metadata to package.json.</div>
+        <div class="dev-log">
+          開發者的心聲：
+新功能解鎖！一步步把心中的藍圖實現在 z-code 上，這種創造的過程最棒了！
+        </div>
+      </div>
     </div>
     <div class="commit">
       <div class="commit-header">
-        <div class="hash">b93b610</div>
-        <div class="subject">feat: add ollama support\n\nAdd `ollama-ai-provider-v2` dependency and integrate the `ollama` provider in `src/agent/agent.ts`.</div>
+        <div class="commit-top">
+          <span class="hash">b93b610</span>
+          <span class="subject">feat: add ollama support\n\nAdd `ollama-ai-provider-v2` dependency and integrate the `ollama` provider in `src/agent/agent.ts`.</span>
+        </div>
         <div class="toggle-icon">▼</div>
       </div>
-      <div class='commit-body'>Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
+        <div class="dev-log">
+          開發者的心聲：
+賦予 z-code 更多 AI 的能力！調整 prompt 跟串接模型總是充滿驚喜，看到 Agent 越來越聰明，真的很有成就感！
+        </div>
+      </div>
     </div>
   </div>
 </div>
