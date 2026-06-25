@@ -209,6 +209,230 @@
     <div class="commit">
       <div class="commit-header">
         <div class="commit-top">
+          <span class="hash">a67ac58</span>
+          <span class="subject">feat: add timestamp-based pacing for UDP/RTSP output streams</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a reusable timestamp pacer module that paces UDP packet</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">ac3c41b</span>
+          <span class="subject">docs: add UDP outbound timestamp pacing plan</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add wiki/phase-udp-timestamp-pacing.md detailing design,</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">f3d5590</span>
+          <span class="subject">feat: add generic RTP depayloader element</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new zst_rtp_depayloader element that converts complete RTP</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">eae81d7</span>
+          <span class="subject">feat: add RTP depayloader element (rtpdepay)</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement the receive-side counterpart to rtppay. The rtpdepay element accepts</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">e203a70</span>
+          <span class="subject">feat(audiomixer): PTS align, QoS drop, dynamic pad</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement PTS-based input alignment with silence-fill for missing</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">dbf74b3</span>
+          <span class="subject">feat(sdpmuxer): add multi-codec SDP with caps defaults</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Extend sdpmuxer to support VP8, VP9, AV1, Opus, PCMU, PCMA,</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">4a9d408</span>
+          <span class="subject">docs: mark adaptive stream demuxing as complete</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Update implementation plan status table and checklist in</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">e9d5021</span>
+          <span class="subject">Merge branch 'main' of https://github.com/zzlee/zstreamer</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">048bbf2</span>
+          <span class="subject">feat: improve MPEG-TS demuxer and scheduler</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">- Add .ts MIME type mapping and increase buffer pool size in file_source</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">f906513</span>
+          <span class="subject">Merge pull request #96 from zzlee/fix-tutorial-includes-2615765643066667024</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">docs: fix include directives in tutorials</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">997fa18</span>
+          <span class="subject">docs: fix include directives in tutorials</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Use angle brackets instead of quotes for system/library headers in `getting-started.md` and `network-streaming.md` examples.</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          抓到一隻難纏的蟲！修復它之後，整個系統又更穩固了。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">74a5a62</span>
+          <span class="subject">docs: track adaptive stream demuxing progress</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Update documentation across 9 files to reflect completed core APIs,</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">53ad331</span>
+          <span class="subject">feat: add dynamic pad infrastructure for demuxers</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Refactor MP4 and MPEG-TS demuxers to create dynamic source pads</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">fa2ea6e</span>
+          <span class="subject">feat: add generic caps fields and dynamic reconfig</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a generic key-value field system for capabilities (caps),</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
           <span class="hash">a94ef6a</span>
           <span class="subject">feat: add stream tracking and thread-safe pad linking</span>
         </div>
@@ -218,7 +442,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Implement a stream table in elements to manage dynamic stream</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">4a764dd</span>
+          <span class="subject">Merge pull request #94 from zzlee/fix-markdown-header-backticks-10830997531453016383</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Fix Document Error in Markdown Headers</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -234,7 +474,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
+          抓到一隻難纏的蟲！修復它之後，整個系統又更穩固了。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">6776154</span>
+          <span class="subject">Merge pull request #93 from zzlee/update-zstreamer-docs-8860107078588015142</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">docs: update documentation with Getting Started and Architecture</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -250,7 +506,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Add @page tags to tutorials/getting-started.md and architecture/architecture.md</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">99ef6a2</span>
+          <span class="subject">Merge pull request #92 from zzlee/update-zstreamer-docs-8860107078588015142</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Update Documentation</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -266,7 +538,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Add @page tags to tutorials/getting-started.md and architecture/architecture.md</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
         </div>
       </div>
     </div>
@@ -282,7 +554,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">These patch files (patch_main.patch, patch_retries.patch, test_audiomixer_pan.patch) and plan.md are artifacts from previous development cycles that have been superseded or integrated. Clean up the repository to keep it tidy.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">4baa70b</span>
+          <span class="subject">Merge branch 'main' of https://github.com/zzlee/zstreamer</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -298,7 +586,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new section covering netsink and netsrc elements for raw TCP/UDP streaming.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
         </div>
       </div>
     </div>
@@ -314,7 +602,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Implement UDP listener/server and client modes for both net_source and net_sink elements, enabling push-based (sink-&gt;source) and pull-based (source-&gt;sink with hole-punch registration) UDP streaming. Includes comprehensive tests and wiki documentation updates.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          網路串流是 Zstreamer 的一大重點！實作 RTP/UDP 傳輸，確保影音能順利跨網傳送，感覺離完整的串流伺服器又更近了一步。
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
         </div>
       </div>
     </div>
@@ -327,10 +615,10 @@
         <div class="toggle-icon">▼</div>
       </div>
       <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename the &quot;rtp_sink&quot; element to &quot;rtp_payloader&quot; to better reflect</div>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename the "rtp_sink" element to "rtp_payloader" to better reflect</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          網路串流是 Zstreamer 的一大重點！實作 RTP/UDP 傳輸，確保影音能順利跨網傳送，感覺離完整的串流伺服器又更近了一步。
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
         </div>
       </div>
     </div>
@@ -346,7 +634,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce the rtpsink element that packetizes H.264, H.265, AAC, and PCM</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          網路串流是 Zstreamer 的一大重點！實作 RTP/UDP 傳輸，確保影音能順利跨網傳送，感覺離完整的串流伺服器又更近了一步。
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">5a11310</span>
+          <span class="subject">Merge pull request #91 from zzlee/adaptive-stream-demuxing-phases-abc-5658120048027935076</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Adaptive Stream Demuxing Phases A, B, C</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
         </div>
       </div>
     </div>
@@ -362,7 +666,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Phase A: Added stream metadata structure `zst_stream_info_t` and element stream query APIs.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">297f0d4</span>
+          <span class="subject">Merge pull request #90 from zzlee/add-doc-intro-2001344981221472124</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Add brief intro to the Main Page of the zstreamer Documentation</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -378,7 +698,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Split CI into core+V4L2 and GL sink jobs for parallel testing</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
+          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
         </div>
       </div>
     </div>
@@ -394,7 +714,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Created docs/mainpage.md with a project overview and key features.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
         </div>
       </div>
     </div>
@@ -407,10 +727,10 @@
         <div class="toggle-icon">▼</div>
       </div>
       <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename &#x27;Dynamic / Floating Demuxer Support&#x27; to &#x27;Adaptive Stream</div>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename 'Dynamic / Floating Demuxer Support' to 'Adaptive Stream</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
         </div>
       </div>
     </div>
@@ -426,7 +746,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Add a comprehensive 716-line design/implementation plan for demuxers</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
         </div>
       </div>
     </div>
@@ -442,7 +762,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Implement sdpmuxer element that generates SDP descriptions for RTP</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          處理影音封裝格式（Muxer/Demuxer）真的是門學問，要把各種串流拆解跟打包，為未來的自適應串流（Adaptive Streaming）打好基礎。
+          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
         </div>
       </div>
     </div>
@@ -458,7 +778,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Move GL context initialization to the worker thread so that</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
+          擴充更多功能！Zstreamer 的版圖越來越完整！
         </div>
       </div>
     </div>
@@ -474,7 +794,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Implement an SDP demuxer element (sdpdemux) that:</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          網路串流是 Zstreamer 的一大重點！實作 RTP/UDP 傳輸，確保影音能順利跨網傳送，感覺離完整的串流伺服器又更近了一步。
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">ac4f75e</span>
+          <span class="subject">Merge pull request #89 from zzlee/glcompsink-completion-7383466485536009829</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Complete implementation of OpenGL Compositor Sink (glcompsink)</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -490,7 +826,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">This commit completes the implementation of the glcompsink element with</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
+          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
         </div>
       </div>
     </div>
@@ -503,10 +839,26 @@
         <div class="toggle-icon">▼</div>
       </div>
       <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
+          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">40e662a</span>
+          <span class="subject">Merge pull request #87 from zzlee/jules-8655440918342124884-863fbc12</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement 4al — OpenGL Compositor Sink, Frame pacing / QoS</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -522,7 +874,23 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Adds max_lateness configuration property</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          影音不同步真的是看影片最痛苦的事... 這裡搞定了 Clock Slaving，讓影像的播放時間能緊緊咬住聲音，總算不用看著嘴型猜聲音了！
+          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
+        </div>
+      </div>
+    </div>
+    <div class="commit">
+      <div class="commit-header">
+        <div class="commit-top">
+          <span class="hash">732df86</span>
+          <span class="subject">Merge pull request #83 from zzlee/feat/audiomixer-pan-9449106592813711929</span>
+        </div>
+        <div class="toggle-icon">▼</div>
+      </div>
+      <div class='commit-body'>
+        <div style="margin-bottom: 1rem; color: #b8c0da;">feat: add per-pad pan controls to audiomixer</div>
+        <div class="dev-log">
+          <span class="dev-log-title">開發者的心聲：</span>
+          將辛苦開發的成果合併回主分支，這是一個里程碑！
         </div>
       </div>
     </div>
@@ -538,7 +906,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">- Added `pan` property (-1.0 to 1.0) to `audio_mixer_input_t` and `ZST_AUDIO_MIXER_PAD_PROP_PAN`.</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
+          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
         </div>
       </div>
     </div>
@@ -551,10 +919,10 @@
         <div class="toggle-icon">▼</div>
       </div>
       <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
+        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
         </div>
       </div>
     </div>
@@ -586,7 +954,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new x11sink element that displays raw CPU-backed video frames</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
+          擴充更多功能！Zstreamer 的版圖越來越完整！
         </div>
       </div>
     </div>
@@ -602,7 +970,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Implements a terminal video compositor sink that accepts multiple</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
+          擴充更多功能！Zstreamer 的版圖越來越完整！
         </div>
       </div>
     </div>
@@ -618,7 +986,7 @@
         <div style="margin-bottom: 1rem; color: #b8c0da;">Document two new planned elements in phase-elements.md:</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
+          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
         </div>
       </div>
     </div>
@@ -632,374 +1000,6 @@
       </div>
       <div class='commit-body'>
         <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a new glsink element that renders video frames using OpenGL</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          終於有畫面了！實作 OpenGL / X11 的顯示元件，讓影片能順利在螢幕上渲染出來，甚至還支援畫面合成（Compositor），視覺效果滿分！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">e403556</span>
-          <span class="subject">docs: add specs for X11 and OpenGL sink elements</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add planned element documentation for x11sink (display via X11/MIT-SHM)</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">052de25</span>
-          <span class="subject">feat: add RTSP source UDP unicast test</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Shift UDP port range from 30000-39999 to 40000-49999</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          寫了超級多的壓力測試跟使用情境測試。雖然寫測試很花時間，但看到 pipeline 在各種極端情況下穩如泰山，就覺得一切都值得啦！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a3e4c54</span>
-          <span class="subject">feat: pixel format conversion and jitter tracking</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add software pixel format conversion in videotestsrc for NV12,</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">0abcb2b</span>
-          <span class="subject">feat: add VA-API video decoder element (vaapidec)</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new hardware-accelerated video decoder element using VA-API</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">b479cad</span>
-          <span class="subject">feat(vaapienc): add DMABUF zero-copy import support</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a direct DMABUF import path in vaapi_make_hw_frame() that</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">5085371</span>
-          <span class="subject">feat: add VA-API video encoder element</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement hardware-accelerated H.264/H.265 video encoding via Linux</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">8c52e3f</span>
-          <span class="subject">feat: add VA-API video encoder element</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Hardware-accelerated H.264/H.265 encoding for Linux GPUs (AMD/Intel)</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">dff17fc</span>
-          <span class="subject">feat: add Intel oneAPI video encoder</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">fbe95d1</span>
-          <span class="subject">Add oneAPI encoder and VA-API plan</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">No additional description.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">17358df</span>
-          <span class="subject">docs: update wiki for Intel oneAPI video encoder development progress</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Mark 4ag section as 🔄 In Progress (build infra done, element code pending)</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">f541f28</span>
-          <span class="subject">feat: add multicast transport support to RTSP server/source</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement RTP/AVP multicast transport for both rtsp_server and</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路串流是 Zstreamer 的一大重點！實作 RTP/UDP 傳輸，確保影音能順利跨網傳送，感覺離完整的串流伺服器又更近了一步。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">3e70a05</span>
-          <span class="subject">Refactor zst_allocator to split out dmabuf implementation</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">This extracts the DMABUF allocator implementation from src/zst_allocator.c</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          進入硬體加速的世界！現在影片解析度越來越高，只靠 CPU 真的扛不住。實作了 DMABUF 和 GPU (CUDA/Vulkan) 的 Allocator，達成 Zero-Copy，減輕系統負擔。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">d13e7f8</span>
-          <span class="subject">feat: add periodic stats logging to fakesink</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement periodic throughput statistics (bits-per-second, push-per-second) with configurable log-period for fakesink element.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">876fda2</span>
-          <span class="subject">feat: add V4L2 DMABUF simulation via vivid</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a vivid-based DMABUF simulation test to verify v4l2src</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">96a4ce6</span>
-          <span class="subject">feat(v4l2src): add mmap-export DMABUF memory type</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement &quot;mmap-export&quot; V4L2 memory mode that allocates buffers via MMAP</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">1c35fc5</span>
-          <span class="subject">feat: lazy topology-aware buffer pool sizing</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add per-element cached pool snapshots and a per-pipeline dirty flag to</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          效能優化大作戰！發現每次處理影音幀都動態配置記憶體太吃資源了。所以實作了 Buffer Pool，把用過的記憶體回收再利用，效能瞬間提升超多！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a886a73</span>
-          <span class="subject">docs: add simulation steps for v4l2 dmabuf testing</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Added a section to `wiki/phase-testing-ci.md` detailing how to use the</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          寫了超級多的壓力測試跟使用情境測試。雖然寫測試很花時間，但看到 pipeline 在各種極端情況下穩如泰山，就覺得一切都值得啦！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">0676159</span>
-          <span class="subject">docs: add V4L2 expbuf phase plan, remove patch script</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add detailed implementation plan for V4L2 DMA-BUF exporter support in v4l2src element, covering mmap-export memory type, buffer lifecycle, and cleanup. Remove the now-unused patch_process.py helper script.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓 AI agent 能更快上手這個專案，順便也幫未來的自己留個使用手冊（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">fc29f9b</span>
-          <span class="subject">feat: Add dmabuf and userptr support to V4L2 source</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          硬體加速上線！解放 CPU，交給 GPU 或硬體來處理影音，效能直接起飛，這才是現代多媒體框架該有的樣子！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">f7db4e0</span>
-          <span class="subject">Refactor zst_allocator to move cuda-related parts to zst_allocator_cuda.c</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          進入硬體加速的世界！現在影片解析度越來越高，只靠 CPU 真的扛不住。實作了 DMABUF 和 GPU (CUDA/Vulkan) 的 Allocator，達成 Zero-Copy，減輕系統負擔。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">83c4d4b</span>
-          <span class="subject">refactor: overhaul pad, element, pipeline core</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Rework pad creation, linking, and unlinking with proper caps</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          日常維護與重構，保持程式碼的整潔度，未來開發才會順利！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">70c45b2</span>
-          <span class="subject">refactor: lock-free probes, spillover, rank sort</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Replace mutex-guarded probe iteration in pads with an</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          日常維護與重構，保持程式碼的整潔度，未來開發才會順利！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">2f635bc</span>
-          <span class="subject">feat: add exponential capacity and state direction</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement amortized exponential capacity growth to reduce</div>
         <div class="dev-log">
           <span class="dev-log-title">開發者的心聲：</span>
           擴充更多功能！Zstreamer 的版圖越來越完整！
