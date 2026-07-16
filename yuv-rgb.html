@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YUV與RGB的愛恨情仇：色彩空間轉換</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f5f3ee;
+      --paper-2: #edeae2;
+      --muted: #888880;
+      --accent: #c0392b;
+      --accent-soft: rgba(192,57,43,0.08);
+      --rule: rgba(26,26,24,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace, sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #f9f7f2 0%, #f0ede6 100%);
+      padding-bottom: 2rem;
+    }
+
+    .page { width: min(860px, 92%); margin: 0 auto; padding-top: 3rem; }
+
+    .back-link {
+      display: inline-block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .description {
+      font-size: 0.95rem;
+      color: #3d3d38;
+      margin-bottom: 2rem;
+    }
+
+    .description p { margin-bottom: 1rem; }
+    .description strong { font-weight: 500; color: var(--accent); }
+
+    .interactive-section {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 650px) {
+      .interactive-section { grid-template-columns: 1fr; }
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .slider-row label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .slider-row input[type="range"] {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .select-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .select-row label { font-size: 0.85rem; font-weight: 500; }
+    .select-row select {
+      padding: 0.4rem;
+      font-family: inherit;
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      border-radius: 2px;
+    }
+
+    .color-display {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .color-swatch {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      border: 1px solid var(--rule);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: background-color 0.1s;
+    }
+
+    .rgb-values {
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+    }
+
+    .matrix-display {
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 1rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+
+    .matrix-display table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: right;
+    }
+    .matrix-display td, .matrix-display th {
+      padding: 0.3rem 0.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .matrix-display th { font-weight: 500; color: var(--muted); }
+    .matrix-display input {
+      width: 60px;
+      text-align: right;
+      font-family: inherit;
+      border: 1px solid var(--rule);
+      background: var(--paper-2);
+      padding: 0.2rem;
+    }
+
+    .info-box {
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      padding: 1rem;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+  </style>
+</head>
+<body>
+<div class="page">
+  <a href="index.html" class="back-link">← 返回首頁</a>
+
+  <h1>YUV與RGB的愛恨情仇</h1>
+
+  <div class="description">
+    <p>每次處理視訊管線，總會遇到這個老朋友：<strong>YUV</strong>。其實，在軟體工程裡我們常說的 YUV，精確來說應該叫 <strong>YCbCr</strong>。</p>
+    <p>YUV 是類比時代的產物，而 YCbCr 才是數位視訊（如 H.264, HEVC）中真正使用的色彩空間。Y 代表亮度 (Luma)，Cb 和 Cr 則是藍色與紅色的色度差 (Chroma)。人的眼睛對亮度變化很敏感，對色彩變化則比較遲鈍，因此透過 YCbCr，我們可以把色度資訊砍半（例如 4:2:0 採樣），藉此大幅節省頻寬——這就是視訊壓縮的魔法！</p>
+    <p>但在螢幕上顯示時，我們終究要把 YCbCr 轉回 RGB。這時，我們就需要面對另一個頭痛的問題：<strong>到底要用哪個轉換矩陣？</strong> 是 BT.601 (標清)、BT.709 (高清)，還是 BT.2020 (HDR)？你的資料是 Full Range (0-255) 還是 Limited Range (電視標準的 16-235)？稍微搞錯一個，畫面就會看起來灰灰的，或是顏色整個走鐘（著名的綠色濾鏡現象）。</p>
+    <p>這個小工具，就是我為了不再被這些矩陣搞瘋，而寫出的視覺化轉換器。自己玩玩看吧！</p>
+  </div>
+
+  <div class="interactive-section">
+    <div class="control-group">
+      <div class="select-row">
+        <label for="colorSpace">色彩空間標準 (Color Space)</label>
+        <select id="colorSpace">
+          <option value="601">BT.601 (SDTV)</option>
+          <option value="709" selected>BT.709 (HDTV)</option>
+          <option value="2020">BT.2020 (UHDTV)</option>
+          <option value="custom">自訂矩陣 (Custom)</option>
+        </select>
+      </div>
+
+      <div class="select-row">
+        <label for="colorRange">色彩範圍 (Color Range)</label>
+        <select id="colorRange">
+          <option value="limited">Limited Range (Y:16-235, UV:16-240)</option>
+          <option value="full" selected>Full Range (0-255)</option>
+        </select>
+      </div>
+
+      <div class="slider-row">
+        <label><span>Y (亮度)</span> <span id="yValText">128</span></label>
+        <input type="range" id="ySlider" min="0" max="255" value="128">
+      </div>
+      <div class="slider-row">
+        <label><span>Cb / U (藍色度)</span> <span id="uValText">128</span></label>
+        <input type="range" id="uSlider" min="0" max="255" value="128">
+      </div>
+      <div class="slider-row">
+        <label><span>Cr / V (紅色度)</span> <span id="vValText">128</span></label>
+        <input type="range" id="vSlider" min="0" max="255" value="128">
+      </div>
+
+      <div style="margin-top: 1rem; border-top: 1px solid var(--rule); padding-top: 1rem;" class="control-group">
+        <p style="font-size: 0.85rem; font-weight: 500; margin-bottom: 0.2rem;">反向轉換 (RGB → YCbCr)</p>
+        <div class="slider-row">
+          <label><span>R (紅)</span> <span id="rValText">125</span></label>
+          <input type="range" id="rSlider" min="0" max="255" value="125">
+        </div>
+        <div class="slider-row">
+          <label><span>G (綠)</span> <span id="gValText">125</span></label>
+          <input type="range" id="gSlider" min="0" max="255" value="125">
+        </div>
+        <div class="slider-row">
+          <label><span>B (藍)</span> <span id="bValText">125</span></label>
+          <input type="range" id="bSlider" min="0" max="255" value="125">
+        </div>
+      </div>
+    </div>
+
+    <div class="color-display">
+      <div class="color-swatch" id="colorSwatch"></div>
+      <div class="rgb-values" id="rgbText">RGB(0, 0, 0)</div>
+
+      <div class="info-box" style="width: 100%; text-align: left; margin:0; font-size:0.75rem;">
+        若 RGB 值超出 0~255 的範圍，代表該 YCbCr 組合在 RGB 空間中是無效的（Out of Gamut），通常會被截斷 (Clamping)。
+      </div>
+    </div>
+  </div>
+
+  <div class="matrix-display">
+    <p style="font-weight: 500; margin-bottom: 0.5rem;">轉換矩陣模型 (YCbCr → RGB)</p>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Y</th>
+          <th>Cb - 128</th>
+          <th>Cr - 128</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>R =</strong></td>
+          <td><input type="number" step="0.001" id="m00" readonly></td>
+          <td><input type="number" step="0.001" id="m01" readonly></td>
+          <td><input type="number" step="0.001" id="m02" readonly></td>
+        </tr>
+        <tr>
+          <td><strong>G =</strong></td>
+          <td><input type="number" step="0.001" id="m10" readonly></td>
+          <td><input type="number" step="0.001" id="m11" readonly></td>
+          <td><input type="number" step="0.001" id="m12" readonly></td>
+        </tr>
+        <tr>
+          <td><strong>B =</strong></td>
+          <td><input type="number" step="0.001" id="m20" readonly></td>
+          <td><input type="number" step="0.001" id="m21" readonly></td>
+          <td><input type="number" step="0.001" id="m22" readonly></td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--muted);" id="matrixNote">
+      * 此為 Full Range 的基礎係數。若為 Limited Range，運算時會先將 YCbCr 正規化。
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // Constants for color spaces
+  const COEFFS = {
+    '601': { Kr: 0.299, Kb: 0.114 },
+    '709': { Kr: 0.2126, Kb: 0.0722 },
+    '2020': { Kr: 0.2627, Kb: 0.0593 }
+  };
+
+  // UI Elements
+  const spaceSelect = document.getElementById('colorSpace');
+  const rangeSelect = document.getElementById('colorRange');
+  const ySlider = document.getElementById('ySlider');
+  const uSlider = document.getElementById('uSlider');
+  const vSlider = document.getElementById('vSlider');
+  const yText = document.getElementById('yValText');
+  const uText = document.getElementById('uValText');
+  const vText = document.getElementById('vValText');
+
+  const rSlider = document.getElementById('rSlider');
+  const gSlider = document.getElementById('gSlider');
+  const bSlider = document.getElementById('bSlider');
+  const rText = document.getElementById('rValText');
+  const gText = document.getElementById('gValText');
+  const bText = document.getElementById('bValText');
+
+  const swatch = document.getElementById('colorSwatch');
+  const rgbText = document.getElementById('rgbText');
+
+  let isSyncing = false; // Prevent infinite event loops
+
+  const matrixInputs = [
+    [document.getElementById('m00'), document.getElementById('m01'), document.getElementById('m02')],
+    [document.getElementById('m10'), document.getElementById('m11'), document.getElementById('m12')],
+    [document.getElementById('m20'), document.getElementById('m21'), document.getElementById('m22')]
+  ];
+
+  let currentMatrix = [
+    [1, 0, 1.5748],
+    [1, -0.1873, -0.4681],
+    [1, 1.8556, 0]
+  ];
+
+  function calculateMatrix(Kr, Kb) {
+    const Kg = 1.0 - Kr - Kb;
+
+    // YCbCr (Full Range) to RGB coefficients
+    const c00 = 1.0;
+    const c01 = 0.0;
+    const c02 = 2.0 * (1.0 - Kr);
+
+    const c10 = 1.0;
+    const c11 = -2.0 * (1.0 - Kb) * Kb / Kg;
+    const c12 = -2.0 * (1.0 - Kr) * Kr / Kg;
+
+    const c20 = 1.0;
+    const c21 = 2.0 * (1.0 - Kb);
+    const c22 = 0.0;
+
+    return [
+      [c00, c01, c02],
+      [c10, c11, c12],
+      [c20, c21, c22]
+    ];
+  }
+
+  function updateMatrixUI(isCustom) {
+    for(let r=0; r<3; r++) {
+      for(let c=0; c<3; c++) {
+        matrixInputs[r][c].value = currentMatrix[r][c].toFixed(4);
+        matrixInputs[r][c].readOnly = !isCustom;
+      }
+    }
+  }
+
+  function readCustomMatrix() {
+    for(let r=0; r<3; r++) {
+      for(let c=0; c<3; c++) {
+        let val = parseFloat(matrixInputs[r][c].value);
+        if(!isNaN(val)) {
+          currentMatrix[r][c] = val;
+        }
+      }
+    }
+    updateColor();
+  }
+
+  function onMatrixSettingChange() {
+    const space = spaceSelect.value;
+    if (space === 'custom') {
+      updateMatrixUI(true);
+    } else {
+      currentMatrix = calculateMatrix(COEFFS[space].Kr, COEFFS[space].Kb);
+      updateMatrixUI(false);
+    }
+    updateColor();
+  }
+
+  matrixInputs.forEach(row => {
+    row.forEach(input => {
+      input.addEventListener('input', () => {
+        if(spaceSelect.value === 'custom') readCustomMatrix();
+      });
+    });
+  });
+
+  function clamp(val, min, max) {
+    return Math.max(min, Math.min(max, val));
+  }
+
+  function invert3x3(m) {
+    let det = m[0][0]*(m[1][1]*m[2][2] - m[2][1]*m[1][2]) -
+              m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0]) +
+              m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]);
+    if (Math.abs(det) < 1e-6) return null;
+
+    return [
+      [(m[1][1]*m[2][2] - m[2][1]*m[1][2])/det, (m[0][2]*m[2][1] - m[0][1]*m[2][2])/det, (m[0][1]*m[1][2] - m[0][2]*m[1][1])/det],
+      [(m[1][2]*m[2][0] - m[1][0]*m[2][2])/det, (m[0][0]*m[2][2] - m[0][2]*m[2][0])/det, (m[1][0]*m[0][2] - m[0][0]*m[1][2])/det],
+      [(m[1][0]*m[2][1] - m[2][0]*m[1][1])/det, (m[2][0]*m[0][1] - m[0][0]*m[2][1])/det, (m[0][0]*m[1][1] - m[1][0]*m[0][1])/det]
+    ];
+  }
+
+  function updateColor(source = 'yuv') {
+    if (isSyncing) return;
+    isSyncing = true;
+
+    const isLimited = rangeSelect.value === 'limited';
+    let y, cb, cr, r, g, b;
+
+    if (source === 'yuv') {
+      y = parseInt(ySlider.value, 10);
+      cb = parseInt(uSlider.value, 10);
+      cr = parseInt(vSlider.value, 10);
+
+      if (isLimited) {
+        let y_norm = (y - 16) / 219.0;
+        let cb_norm = (cb - 128) / 224.0;
+        let cr_norm = (cr - 128) / 224.0;
+
+        r = y_norm * currentMatrix[0][0] + cb_norm * currentMatrix[0][1] + cr_norm * currentMatrix[0][2];
+        g = y_norm * currentMatrix[1][0] + cb_norm * currentMatrix[1][1] + cr_norm * currentMatrix[1][2];
+        b = y_norm * currentMatrix[2][0] + cb_norm * currentMatrix[2][1] + cr_norm * currentMatrix[2][2];
+
+        r *= 255; g *= 255; b *= 255;
+      } else {
+        r = y * currentMatrix[0][0] + (cb - 128) * currentMatrix[0][1] + (cr - 128) * currentMatrix[0][2];
+        g = y * currentMatrix[1][0] + (cb - 128) * currentMatrix[1][1] + (cr - 128) * currentMatrix[1][2];
+        b = y * currentMatrix[2][0] + (cb - 128) * currentMatrix[2][1] + (cr - 128) * currentMatrix[2][2];
+      }
+
+      rSlider.value = clamp(Math.round(r), 0, 255);
+      gSlider.value = clamp(Math.round(g), 0, 255);
+      bSlider.value = clamp(Math.round(b), 0, 255);
+    } else {
+      // Source is RGB
+      r = parseInt(rSlider.value, 10);
+      g = parseInt(gSlider.value, 10);
+      b = parseInt(bSlider.value, 10);
+
+      const inv = invert3x3(currentMatrix);
+      if (inv) {
+        if (isLimited) {
+          let y_norm = (r/255) * inv[0][0] + (g/255) * inv[0][1] + (b/255) * inv[0][2];
+          let cb_norm = (r/255) * inv[1][0] + (g/255) * inv[1][1] + (b/255) * inv[1][2];
+          let cr_norm = (r/255) * inv[2][0] + (g/255) * inv[2][1] + (b/255) * inv[2][2];
+
+          y = y_norm * 219 + 16;
+          cb = cb_norm * 224 + 128;
+          cr = cr_norm * 224 + 128;
+        } else {
+          y = r * inv[0][0] + g * inv[0][1] + b * inv[0][2];
+          cb = r * inv[1][0] + g * inv[1][1] + b * inv[1][2] + 128;
+          cr = r * inv[2][0] + g * inv[2][1] + b * inv[2][2] + 128;
+        }
+      } else {
+        y = 0; cb = 128; cr = 128;
+      }
+
+      ySlider.value = clamp(Math.round(y), 0, 255);
+      uSlider.value = clamp(Math.round(cb), 0, 255);
+      vSlider.value = clamp(Math.round(cr), 0, 255);
+    }
+
+    // Refresh display values
+    yText.textContent = ySlider.value;
+    uText.textContent = uSlider.value;
+    vText.textContent = vSlider.value;
+    rText.textContent = rSlider.value;
+    gText.textContent = gSlider.value;
+    bText.textContent = bSlider.value;
+
+    r = Math.round(r);
+    g = Math.round(g);
+    b = Math.round(b);
+
+    const outOfGamut = (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255);
+
+    const clampR = clamp(r, 0, 255);
+    const clampG = clamp(g, 0, 255);
+    const clampB = clamp(b, 0, 255);
+
+    swatch.style.backgroundColor = `rgb(${clampR}, ${clampG}, ${clampB})`;
+
+    if (outOfGamut && source === 'yuv') {
+      rgbText.innerHTML = `<span style="color:var(--accent);">RGB(${r}, ${g}, ${b})*</span>`;
+    } else {
+      rgbText.innerHTML = `RGB(${clampR}, ${clampG}, ${clampB})`;
+    }
+
+    isSyncing = false;
+  }
+
+  // Event Listeners
+  spaceSelect.addEventListener('change', () => onMatrixSettingChange());
+  rangeSelect.addEventListener('change', () => updateColor('yuv'));
+
+  ySlider.addEventListener('input', () => updateColor('yuv'));
+  uSlider.addEventListener('input', () => updateColor('yuv'));
+  vSlider.addEventListener('input', () => updateColor('yuv'));
+
+  rSlider.addEventListener('input', () => updateColor('rgb'));
+  gSlider.addEventListener('input', () => updateColor('rgb'));
+  bSlider.addEventListener('input', () => updateColor('rgb'));
+
+  // Initialize
+  onMatrixSettingChange();
+
+</script>
+</body>
+</html>
