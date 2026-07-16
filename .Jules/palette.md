@@ -13,3 +13,6 @@
 ## 2026-06-23 - Interactive Commit History
 **Learning:** Implementing an exclusive accordion pattern for commit lists improves navigation by reducing vertical scroll fatigue, and using `white-space: pre-wrap` is essential for displaying multi-line developer insights generated from commit metadata.
 **Action:** Applied exclusive toggle logic to commit headers and added `white-space: pre-wrap` to the `.dev-log` class in `zstreamer-commits.html`.
+## 2024-12-07 - EDID Viewer UX Enhancements
+ **Learning:** Native `<details>` and `<summary>` elements provide a lightweight, accessible way to create interactive tree structures for nested data like JSON without relying on heavy external libraries.
+ **Action:** Implemented a recursive `createJsonTree` function that wraps JSON objects and arrays in `<details>` elements, creating a collapsible, styled tree view for raw EDID parsed data. Also added recursive formatting for Base/Extension block data.

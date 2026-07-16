@@ -206,10 +206,26 @@
       padding: 1.5rem;
       border-radius: 4px;
       overflow-x: auto;
-      font-size: 0.75rem;
-      line-height: 1.4;
+      font-size: 0.8rem;
+      line-height: 1.5;
       margin-top: 1rem;
     }
+
+    .json-tree details { margin-left: 1rem; }
+    .json-tree summary { cursor: pointer; color: #95a5a6; outline: none; }
+    .json-tree summary:hover { color: #fff; }
+    .json-tree summary::marker { color: #555; }
+    .json-tree .json-content {
+      border-left: 1px dashed #444;
+      padding-left: 1rem;
+      margin-left: 0.2rem;
+    }
+    .json-key { color: #3498db; }
+    .json-idx { color: #bdc3c7; }
+    .json-str { color: #2ecc71; }
+    .json-num { color: #f39c12; }
+    .json-bool { color: #e67e22; }
+    .json-null { color: #e74c3c; }
 
     @keyframes rise {
       from { opacity: 0; transform: translateY(10px); }
@@ -252,8 +268,18 @@
       <div class="tag-list" id="feature-tags"></div>
     </div>
 
+    <div class="section-title">Base EDID</div>
+    <div class="card">
+      <div class="kv-list" id="base-edid-info"></div>
+    </div>
+
+    <div class="section-title">Extensions Block</div>
+    <div class="card">
+      <div class="kv-list" id="ext-edid-info"></div>
+    </div>
+
     <div class="section-title">Raw Parsed Data (JSON)</div>
-    <pre class="raw-json" id="raw-json"></pre>
+    <div class="raw-json json-tree" id="raw-json"></div>
 
   </div>
 
@@ -271,6 +297,8 @@
   const vpInfo = document.getElementById('vp-info');
   const dpInfo = document.getElementById('dp-info');
   const featureTags = document.getElementById('feature-tags');
+  const baseEdidContainer = document.getElementById('base-edid-info');
+  const extEdidContainer = document.getElementById('ext-edid-info');
   const rawJson = document.getElementById('raw-json');
 
   // Event Listeners
@@ -329,6 +357,77 @@
 
   function createTag(text, active) {
     return `<span class="tag ${active ? 'highlight' : ''}">${escapeHtml(text)}</span>`;
+  }
+
+  function createJsonTree(data, level = 0) {
+    if (data === null) return `<span class="json-null">null</span>`;
+    if (typeof data === 'boolean') return `<span class="json-bool">${data}</span>`;
+    if (typeof data === 'number' || typeof data === 'bigint') return `<span class="json-num">${data}</span>`;
+    if (typeof data === 'string') return `<span class="json-str">"${escapeHtml(data)}"</span>`;
+
+    const isOpen = level < 2 ? 'open' : '';
+
+    if (Array.isArray(data)) {
+      if (data.length === 0) return `<span class="json-str">[]</span>`;
+      let html = `<details ${isOpen}><summary>[ ${data.length} items ]</summary><div class="json-content">`;
+      data.forEach((item, i) => {
+        html += `<div><span class="json-idx">${i}:</span> ${createJsonTree(item, level + 1)}</div>`;
+      });
+      html += `</div></details>`;
+      return html;
+    }
+    if (typeof data === 'object') {
+      const keys = Object.keys(data);
+      if (keys.length === 0) return `<span class="json-str">{}</span>`;
+      let html = `<details ${isOpen}><summary>{ ${keys.length} keys }</summary><div class="json-content">`;
+      keys.forEach(k => {
+        html += `<div><span class="json-key">"${escapeHtml(k)}"</span>: ${createJsonTree(data[k], level + 1)}</div>`;
+      });
+      html += `</div></details>`;
+      return html;
+    }
+    return escapeHtml(String(data));
+  }
+
+  function renderBlockInfo(blockObj, container) {
+    if (!blockObj) {
+      container.innerHTML = '<div class="kv-item"><span class="kv-key">Status</span><span class="kv-val">No Data</span></div>';
+      return;
+    }
+
+    function buildKV(obj, depth = 0) {
+      if (typeof obj !== 'object' || obj === null) {
+        return `<span class="kv-val">${escapeHtml(obj)}</span>`;
+      }
+      if (Array.isArray(obj)) {
+        if (obj.length === 0) return `<span class="kv-val">None</span>`;
+        let arrHtml = `<div style="margin-left: ${depth > 0 ? 1 : 0}rem; width: 100%;">`;
+        obj.forEach((item, i) => {
+          arrHtml += `<div class="kv-item" style="border-left: 2px solid var(--rule); padding-left: 0.5rem; margin-top: 0.5rem; justify-content: flex-start; gap: 1rem; flex-wrap: wrap;"><span class="kv-key" style="min-width:auto; margin-right:0.5rem;">[${i}]</span><div style="flex:1;">${buildKV(item, depth + 1)}</div></div>`;
+        });
+        arrHtml += `</div>`;
+        return arrHtml;
+      }
+
+      let objHtml = `<div style="margin-left: ${depth > 0 ? 1 : 0}rem; width: 100%; display: flex; flex-direction: column; gap: 0.2rem;">`;
+      for (const [k, v] of Object.entries(obj)) {
+        if (v === undefined || typeof v === 'function') continue;
+        if (k === 'bytes' || k === 'rawData') continue;
+
+        let displayKey = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+
+        if (typeof v === 'object' && v !== null) {
+          objHtml += `<div style="margin-top: 0.5rem;"><div style="font-weight: 500; color: var(--ink); font-size: 0.85rem; border-bottom: 1px dashed var(--rule); margin-bottom: 0.2rem;">${escapeHtml(displayKey)}</div>${buildKV(v, depth + 1)}</div>`;
+        } else {
+          let valStr = typeof v === 'bigint' ? v.toString() : v;
+          objHtml += `<div class="kv-item" style="justify-content: flex-start; gap: 1rem;"><span class="kv-key" style="min-width: 180px;">${escapeHtml(displayKey)}</span> <span class="kv-val" style="text-align: left; word-break: break-word;">${escapeHtml(valStr)}</span></div>`;
+        }
+      }
+      objHtml += `</div>`;
+      return objHtml;
+    }
+
+    container.innerHTML = buildKV(blockObj);
   }
 
   async function handleFile(file) {
@@ -432,15 +531,31 @@
       dpInfo.innerHTML += createKV("Resolutions", resolutions.join(', '));
     }
 
-    // Add raw json (remove huge bytes array first to not freeze the browser)
+    // Base EDID Info
+    if (edid.baseBlock) {
+      renderBlockInfo(edid.baseBlock, baseEdidContainer);
+    }
+
+    // Extensions Info
+    if (edid.extensions && edid.extensions.length > 0) {
+      extEdidContainer.innerHTML = '';
+      edid.extensions.forEach((ext, i) => {
+        let blockDiv = document.createElement('div');
+        blockDiv.innerHTML = `<div style="font-weight: bold; margin-top: 1rem; margin-bottom: 0.5rem; color: var(--accent); border-bottom: 1px solid var(--rule);">Extension Block ${i}</div>`;
+        let innerDiv = document.createElement('div');
+        renderBlockInfo(ext, innerDiv);
+        blockDiv.appendChild(innerDiv);
+        extEdidContainer.appendChild(blockDiv);
+      });
+    } else {
+      extEdidContainer.innerHTML = '<div class="kv-item"><span class="kv-key">Status</span><span class="kv-val">No Extension Blocks</span></div>';
+    }
+
+    // Add raw json tree (remove huge bytes array first to not freeze the browser)
     const toRender = { ...edid };
     delete toRender.bytes;
 
-    rawJson.textContent = JSON.stringify(toRender, (key, value) => {
-      // Handle BigInt which can't be JSON stringified natively
-      if (typeof value === 'bigint') return value.toString();
-      return value;
-    }, 2);
+    rawJson.innerHTML = createJsonTree(toRender);
 
     resultsDiv.style.display = 'block';
   }
