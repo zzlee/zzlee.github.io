@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDID Viewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f5f3ee;
+      --paper-2: #edeae2;
+      --muted: #888880;
+      --accent: #c0392b;
+      --accent-soft: rgba(192,57,43,0.08);
+      --rule: rgba(26,26,24,0.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace, sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      min-height: 100vh;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #f9f7f2 0%, #f0ede6 100%);
+      padding-bottom: 2rem;
+    }
+
+    .page { width: min(860px, 92%); margin: 0 auto; padding-top: 3rem; }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 2rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    .back-link:hover {
+      color: var(--ink);
+      border-bottom: 1px solid var(--ink);
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      line-height: 1.1;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+
+    .desc {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .upload-container {
+      background: var(--paper-2);
+      border: 1px dashed var(--muted);
+      border-radius: 4px;
+      padding: 3rem 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      transition: background 0.2s, border-color 0.2s;
+      cursor: pointer;
+    }
+
+    .upload-container:hover, .upload-container.dragover {
+      background: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .upload-container input[type="file"] {
+      display: none;
+    }
+
+    .upload-btn {
+      display: inline-block;
+      padding: 0.55rem 1.1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      font-weight: 500;
+      background: var(--ink);
+      color: var(--paper);
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .upload-btn:hover { background: var(--accent); }
+
+    .upload-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .error-msg {
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    /* Output Results Layout */
+    .results {
+      display: none;
+      animation: rise 0.5s ease forwards;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2rem 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--ink);
+      font-family: 'DM Serif Display', serif;
+    }
+
+    .kv-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .kv-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 0.85rem;
+      gap: 1rem;
+    }
+
+    .kv-key {
+      color: var(--muted);
+      min-width: 100px;
+    }
+
+    .kv-val {
+      color: var(--ink);
+      font-weight: 500;
+      text-align: right;
+      word-break: break-all;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 0.2rem 0.5rem;
+      border-radius: 2px;
+      font-size: 0.75rem;
+      color: var(--ink);
+    }
+
+    .tag.highlight {
+      background: var(--ink);
+      color: var(--paper);
+      border-color: var(--ink);
+    }
+
+    .raw-json {
+      background: #111;
+      color: #eee;
+      padding: 1.5rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      line-height: 1.4;
+      margin-top: 1rem;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+  <a href="index.html" class="back-link">← 回到首頁 (Back to Home)</a>
+
+  <h1>EDID Viewer</h1>
+  <p class="desc">A purely web-based, client-side tool to parse and display Extended Display Identification Data (EDID) binary files. No data is sent to any server.</p>
+
+  <div class="upload-container" id="drop-zone">
+    <label for="edid-file" class="upload-btn">選擇 EDID 檔案</label>
+    <input type="file" id="edid-file" accept=".bin,.dat,*/*" />
+    <p class="upload-text">或將檔案拖曳至此</p>
+  </div>
+
+  <div id="error-box" class="error-msg"></div>
+
+  <div id="results" class="results">
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Vendor & Product</h3>
+        <div class="kv-list" id="vp-info"></div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Display Parameters</h3>
+        <div class="kv-list" id="dp-info"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Features & Characteristics</div>
+    <div class="card">
+      <div class="tag-list" id="feature-tags"></div>
+    </div>
+
+    <div class="section-title">Raw Parsed Data (JSON)</div>
+    <pre class="raw-json" id="raw-json"></pre>
+
+  </div>
+
+</div>
+
+<script type="module">
+  import { parseEdid } from "https://cdn.jsdelivr.net/npm/@acdvorak/edid-parser-ts@1.1.1/dist/index.mjs";
+
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('edid-file');
+  const errorBox = document.getElementById('error-box');
+  const resultsDiv = document.getElementById('results');
+
+  // UI Elements to fill
+  const vpInfo = document.getElementById('vp-info');
+  const dpInfo = document.getElementById('dp-info');
+  const featureTags = document.getElementById('feature-tags');
+  const rawJson = document.getElementById('raw-json');
+
+  // Event Listeners
+  dropZone.addEventListener('click', (e) => {
+    if (e.target !== fileInput && e.target !== document.querySelector('label')) {
+      fileInput.click();
+    }
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) {
+      handleFile(e.dataTransfer.files[0]);
+    }
+  });
+
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files.length) {
+      handleFile(e.target.files[0]);
+    }
+  });
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+    resultsDiv.style.display = 'none';
+  }
+
+  function hideError() {
+    errorBox.style.display = 'none';
+  }
+
+  const escapeHtml = (unsafe) => {
+    if (unsafe === undefined || unsafe === null) return '';
+    return String(unsafe)
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+  };
+
+  function createKV(key, val) {
+    return `<div class="kv-item"><span class="kv-key">${escapeHtml(key)}</span><span class="kv-val">${val != null ? escapeHtml(val) : 'N/A'}</span></div>`;
+  }
+
+  function createTag(text, active) {
+    return `<span class="tag ${active ? 'highlight' : ''}">${escapeHtml(text)}</span>`;
+  }
+
+  async function handleFile(file) {
+    hideError();
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const bytes = new Uint8Array(arrayBuffer);
+
+      const edid = parseEdid(bytes);
+
+      renderResults(edid);
+
+    } catch (err) {
+      showError(`解析失敗 (Parse Error): ${err.message || String(err)}`);
+      console.error(err);
+    }
+  }
+
+  function renderResults(edid) {
+    // Clear previous
+    vpInfo.innerHTML = '';
+    dpInfo.innerHTML = '';
+    featureTags.innerHTML = '';
+
+    // Vendor & Product
+    const vendor = edid.vendorInfo || {};
+    const prod = edid.productInfo || {};
+    vpInfo.innerHTML += createKV("Vendor", vendor.goodName || vendor.vid);
+    vpInfo.innerHTML += createKV("Model", prod.modelName);
+    vpInfo.innerHTML += createKV("Product Code", prod.productCode);
+    vpInfo.innerHTML += createKV("Serial Number", prod.serialNumberStr || prod.serialNumberInt);
+    vpInfo.innerHTML += createKV("Manufactured", `W${prod.manufactureWeek || 0} / ${prod.manufactureYear || '?'}`);
+
+    // Display Params
+    const dp = edid.basicDisplayParams || {};
+    dpInfo.innerHTML += createKV("Type", dp.isDigital ? "Digital" : "Analog");
+    if (dp.physicalWidthInMm && dp.physicalHeightInMm) {
+      dpInfo.innerHTML += createKV("Size", `${dp.physicalWidthInMm}x${dp.physicalHeightInMm} mm`);
+    } else {
+      dpInfo.innerHTML += createKV("Size", "Unknown / Aspect Ratio");
+    }
+    dpInfo.innerHTML += createKV("Gamma", dp.gamma);
+    dpInfo.innerHTML += createKV("DPMS Standby", dp.dpmsStandbySupported ? 'Yes' : 'No');
+    dpInfo.innerHTML += createKV("DPMS Suspend", dp.dpmsSuspendSupported ? 'Yes' : 'No');
+    dpInfo.innerHTML += createKV("DPMS Active-Off", dp.dpmsActiveOffSupported ? 'Yes' : 'No');
+
+    // Features
+    if (dp.isSrgbStandardDefaultColorSpace) featureTags.innerHTML += createTag("sRGB Default", true);
+    if (dp.isContinuousTimingsSupported) featureTags.innerHTML += createTag("Continuous Timings", true);
+    if (dp.isPreferredTimingModeSupported) featureTags.innerHTML += createTag("Preferred Timing", true);
+
+    // Add raw json (remove huge bytes array first to not freeze the browser)
+    const toRender = { ...edid };
+    delete toRender.bytes;
+
+    rawJson.textContent = JSON.stringify(toRender, (key, value) => {
+      // Handle BigInt which can't be JSON stringified natively
+      if (typeof value === 'bigint') return value.toString();
+      return value;
+    }, 2);
+
+    resultsDiv.style.display = 'block';
+  }
+
+</script>
+</body>
+</html>
