@@ -27,3 +27,6 @@
 ## 2026-07-16 - Dynamic Empty State Handling
 **Learning:** Automatically hiding empty data sections enhances the UX of data viewers, avoiding confusion when features aren't present.
 **Action:** Added conditional DOM logic checking feature counts and applying 'display: none' dynamically in `edid-viewer.html`.
+## 2026-07-16 - [EDID Viewer Hex Dump Output]
+ **Learning:** Handling raw byte arrays (like Uint8Array) in a UI tree often causes browser freezes if blindly converted to nested DOM elements, and it is usually illegible for users.
+ **Action:** Implemented a safe `formatHexDump` formatter with a byte limit (4096 bytes) that detects byte array types and renders them inside a `<pre>` block as structured hex dumps with offsets, improving performance and readability.
