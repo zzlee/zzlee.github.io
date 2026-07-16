@@ -16,3 +16,6 @@
 ## 2024-12-07 - EDID Viewer UX Enhancements
  **Learning:** Native `<details>` and `<summary>` elements provide a lightweight, accessible way to create interactive tree structures for nested data like JSON without relying on heavy external libraries.
  **Action:** Implemented a recursive `createJsonTree` function that wraps JSON objects and arrays in `<details>` elements, creating a collapsible, styled tree view for raw EDID parsed data. Also added recursive formatting for Base/Extension block data.
+## 2026-07-16 - [Interactive Tree UI with native details element]
+ **Learning:** Native HTML `<details>` and `<summary>` elements provide a lightweight, accessible way to create interactive tree structures without relying on heavy JavaScript libraries.
+ **Action:** Replaced static `<div>` containers with `<details>` and `<summary>` to implement a collapsible tree UI for complex data structures like EDID viewer JSON, leaving them collapsed by default by omitting the `open` attribute.

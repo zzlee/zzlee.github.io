@@ -365,7 +365,7 @@
     if (typeof data === 'number' || typeof data === 'bigint') return `<span class="json-num">${data}</span>`;
     if (typeof data === 'string') return `<span class="json-str">"${escapeHtml(data)}"</span>`;
 
-    const isOpen = level < 2 ? 'open' : '';
+    const isOpen = '';
 
     if (Array.isArray(data)) {
       if (data.length === 0) return `<span class="json-str">[]</span>`;
@@ -403,7 +403,11 @@
         if (obj.length === 0) return `<span class="kv-val">None</span>`;
         let arrHtml = `<div style="margin-left: ${depth > 0 ? 1 : 0}rem; width: 100%;">`;
         obj.forEach((item, i) => {
-          arrHtml += `<div class="kv-item" style="border-left: 2px solid var(--rule); padding-left: 0.5rem; margin-top: 0.5rem; justify-content: flex-start; gap: 1rem; flex-wrap: wrap;"><span class="kv-key" style="min-width:auto; margin-right:0.5rem;">[${i}]</span><div style="flex:1;">${buildKV(item, depth + 1)}</div></div>`;
+          if (typeof item === 'object' && item !== null) {
+            arrHtml += `<details style="margin-top: 0.5rem; border-left: 2px solid var(--rule); padding-left: 0.5rem;"><summary style="cursor: pointer; color: var(--muted); font-size: 0.85rem; outline: none;">[${i}]</summary><div style="padding-left: 1rem; margin-top: 0.2rem;">${buildKV(item, depth + 1)}</div></details>`;
+          } else {
+            arrHtml += `<div class="kv-item" style="border-left: 2px solid var(--rule); padding-left: 0.5rem; margin-top: 0.5rem; justify-content: flex-start; gap: 1rem; flex-wrap: wrap;"><span class="kv-key" style="min-width:auto; margin-right:0.5rem;">[${i}]</span><div style="flex:1;">${buildKV(item, depth + 1)}</div></div>`;
+          }
         });
         arrHtml += `</div>`;
         return arrHtml;
@@ -417,7 +421,7 @@
         let displayKey = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
         if (typeof v === 'object' && v !== null) {
-          objHtml += `<div style="margin-top: 0.5rem;"><div style="font-weight: 500; color: var(--ink); font-size: 0.85rem; border-bottom: 1px dashed var(--rule); margin-bottom: 0.2rem;">${escapeHtml(displayKey)}</div>${buildKV(v, depth + 1)}</div>`;
+          objHtml += `<details style="margin-top: 0.5rem;"><summary style="font-weight: 500; color: var(--ink); font-size: 0.85rem; cursor: pointer; border-bottom: 1px dashed var(--rule); margin-bottom: 0.2rem; outline: none; list-style-position: inside;">${escapeHtml(displayKey)}</summary><div style="padding-left: 1rem; margin-top: 0.2rem;">${buildKV(v, depth + 1)}</div></details>`;
         } else {
           let valStr = typeof v === 'bigint' ? v.toString() : v;
           objHtml += `<div class="kv-item" style="justify-content: flex-start; gap: 1rem;"><span class="kv-key" style="min-width: 180px;">${escapeHtml(displayKey)}</span> <span class="kv-val" style="text-align: left; word-break: break-word;">${escapeHtml(valStr)}</span></div>`;
