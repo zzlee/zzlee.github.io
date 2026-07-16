@@ -23,3 +23,7 @@
 ## 2024-05-18 - Interactive Tree UI for JSON Data
 **Learning:** For rendering complex nested data objects (like EDID parsing results), a flat key-value list can be overwhelming. Native HTML `<details>` and `<summary>` elements offer an effective, lightweight way to create interactive tree views without relying on external UI frameworks. CSS pseudo-elements (like `::before`) can be leveraged for dynamic tree indicators (e.g., rotating arrows).
 **Action:** Implemented a recursive function (`buildTreeUI`) that generates nested `<details>` structures for objects and arrays in `edid-viewer.html`. All nodes default to a closed state, keeping the initial interface clean while allowing users to explore deep structural properties as needed. Data rendering always employs `escapeHtml()` for XSS protection.
+
+## 2026-07-16 - Dynamic Empty State Handling
+**Learning:** Automatically hiding empty data sections enhances the UX of data viewers, avoiding confusion when features aren't present.
+**Action:** Added conditional DOM logic checking feature counts and applying 'display: none' dynamically in `edid-viewer.html`.
