@@ -227,6 +227,70 @@
     .json-bool { color: #e67e22; }
     .json-null { color: #e74c3c; }
 
+    /* Interactive Tree UI */
+    .tree-view {
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+    .tree-view details {
+      margin-top: 0.2rem;
+    }
+    .tree-view summary {
+      cursor: pointer;
+      outline: none;
+      list-style: none;
+      color: var(--ink);
+      font-weight: 500;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      padding: 0.2rem 0;
+      border-bottom: 1px dashed transparent;
+      transition: border-color 0.2s;
+    }
+    .tree-view summary::-webkit-details-marker {
+      display: none;
+    }
+    .tree-view summary:hover {
+      border-bottom-color: var(--rule);
+    }
+    .tree-view summary::before {
+      content: '▶';
+      font-size: 0.6rem;
+      color: var(--muted);
+      transition: transform 0.2s;
+      display: inline-block;
+      width: 12px;
+    }
+    .tree-view details[open] > summary::before {
+      transform: rotate(90deg);
+    }
+    .tree-view .tree-content {
+      padding-left: 1.2rem;
+      margin-left: 0.3rem;
+      border-left: 1px dashed var(--rule);
+      margin-top: 0.2rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .tree-view .tree-leaf {
+      display: flex;
+      justify-content: flex-start;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.2rem 0;
+    }
+    .tree-view .tree-key {
+      color: var(--muted);
+      min-width: 160px;
+    }
+    .tree-view .tree-val {
+      color: var(--ink);
+      word-break: break-word;
+    }
+
     @keyframes rise {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -395,25 +459,25 @@
       return;
     }
 
-    function buildKV(obj, depth = 0) {
+    function buildTreeUI(obj, isRoot = false) {
       if (typeof obj !== 'object' || obj === null) {
-        return `<span class="kv-val">${escapeHtml(obj)}</span>`;
-      }
-      if (Array.isArray(obj)) {
-        if (obj.length === 0) return `<span class="kv-val">None</span>`;
-        let arrHtml = `<div style="margin-left: ${depth > 0 ? 1 : 0}rem; width: 100%;">`;
-        obj.forEach((item, i) => {
-          if (typeof item === 'object' && item !== null) {
-            arrHtml += `<details style="margin-top: 0.5rem; border-left: 2px solid var(--rule); padding-left: 0.5rem;"><summary style="cursor: pointer; color: var(--muted); font-size: 0.85rem; outline: none;">[${i}]</summary><div style="padding-left: 1rem; margin-top: 0.2rem;">${buildKV(item, depth + 1)}</div></details>`;
-          } else {
-            arrHtml += `<div class="kv-item" style="border-left: 2px solid var(--rule); padding-left: 0.5rem; margin-top: 0.5rem; justify-content: flex-start; gap: 1rem; flex-wrap: wrap;"><span class="kv-key" style="min-width:auto; margin-right:0.5rem;">[${i}]</span><div style="flex:1;">${buildKV(item, depth + 1)}</div></div>`;
-          }
-        });
-        arrHtml += `</div>`;
-        return arrHtml;
+        return `<span class="tree-val">${escapeHtml(obj)}</span>`;
       }
 
-      let objHtml = `<div style="margin-left: ${depth > 0 ? 1 : 0}rem; width: 100%; display: flex; flex-direction: column; gap: 0.2rem;">`;
+      let html = '';
+
+      if (Array.isArray(obj)) {
+        if (obj.length === 0) return `<span class="tree-val">None</span>`;
+        obj.forEach((item, i) => {
+          if (typeof item === 'object' && item !== null) {
+            html += `<details><summary>[${i}]</summary><div class="tree-content">${buildTreeUI(item)}</div></details>`;
+          } else {
+            html += `<div class="tree-leaf"><span class="tree-key">[${i}]</span><span class="tree-val">${escapeHtml(item)}</span></div>`;
+          }
+        });
+        return html;
+      }
+
       for (const [k, v] of Object.entries(obj)) {
         if (v === undefined || typeof v === 'function') continue;
         if (k === 'bytes' || k === 'rawData') continue;
@@ -421,17 +485,16 @@
         let displayKey = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
         if (typeof v === 'object' && v !== null) {
-          objHtml += `<details style="margin-top: 0.5rem;"><summary style="font-weight: 500; color: var(--ink); font-size: 0.85rem; cursor: pointer; border-bottom: 1px dashed var(--rule); margin-bottom: 0.2rem; outline: none; list-style-position: inside;">${escapeHtml(displayKey)}</summary><div style="padding-left: 1rem; margin-top: 0.2rem;">${buildKV(v, depth + 1)}</div></details>`;
+          html += `<details><summary>${escapeHtml(displayKey)}</summary><div class="tree-content">${buildTreeUI(v)}</div></details>`;
         } else {
           let valStr = typeof v === 'bigint' ? v.toString() : v;
-          objHtml += `<div class="kv-item" style="justify-content: flex-start; gap: 1rem;"><span class="kv-key" style="min-width: 180px;">${escapeHtml(displayKey)}</span> <span class="kv-val" style="text-align: left; word-break: break-word;">${escapeHtml(valStr)}</span></div>`;
+          html += `<div class="tree-leaf"><span class="tree-key">${escapeHtml(displayKey)}</span><span class="tree-val">${escapeHtml(valStr)}</span></div>`;
         }
       }
-      objHtml += `</div>`;
-      return objHtml;
+      return html;
     }
 
-    container.innerHTML = buildKV(blockObj);
+    container.innerHTML = `<div class="tree-view">${buildTreeUI(blockObj, true)}</div>`;
   }
 
   async function handleFile(file) {
