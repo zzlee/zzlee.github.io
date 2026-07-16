@@ -407,6 +407,29 @@
     errorBox.style.display = 'none';
   }
 
+  function formatHexDump(bytes) {
+    if (!bytes || bytes.length === 0) return '';
+    let result = [];
+    const maxBytes = 4096; // Avoid freezing the browser on very large arrays
+    const len = Math.min(bytes.length, maxBytes);
+    for (let i = 0; i < len; i += 16) {
+      let offset = i.toString(16).padStart(7, '0');
+      let lineHex = [];
+      for (let j = 0; j < 16; j += 2) {
+        if (i + j < len) {
+          let b1 = bytes[i + j].toString(16).padStart(2, '0');
+          let b2 = (i + j + 1 < len) ? bytes[i + j + 1].toString(16).padStart(2, '0') : '';
+          lineHex.push(b1 + b2);
+        }
+      }
+      result.push(`${offset} ${lineHex.join(' ')}`);
+    }
+    if (bytes.length > maxBytes) {
+      result.push(`... (${bytes.length - maxBytes} more bytes omitted)`);
+    }
+    return result.join('\n');
+  }
+
   const escapeHtml = (unsafe) => {
     if (unsafe === undefined || unsafe === null) return '';
     return String(unsafe)
@@ -430,6 +453,10 @@
     if (typeof data === 'boolean') return `<span class="json-bool">${data}</span>`;
     if (typeof data === 'number' || typeof data === 'bigint') return `<span class="json-num">${data}</span>`;
     if (typeof data === 'string') return `<span class="json-str">"${escapeHtml(data)}"</span>`;
+
+    if (data instanceof Uint8Array || data instanceof Uint8ClampedArray) {
+      return `\n<pre style="font-family: inherit; color: inherit; white-space: pre-wrap;">${formatHexDump(data)}</pre>`;
+    }
 
     const isOpen = '';
 
@@ -466,6 +493,10 @@
         return `<span class="tree-val">${escapeHtml(obj)}</span>`;
       }
 
+      if (obj instanceof Uint8Array || obj instanceof Uint8ClampedArray) {
+        return `\n<pre style="font-family: inherit; color: inherit; white-space: pre-wrap; font-size: 0.85em;">${formatHexDump(obj)}</pre>`;
+      }
+
       let html = '';
 
       if (Array.isArray(obj)) {
@@ -482,7 +513,6 @@
 
       for (const [k, v] of Object.entries(obj)) {
         if (v === undefined || typeof v === 'function') continue;
-        if (k === 'bytes' || k === 'rawData') continue;
 
         let displayKey = k.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
 
@@ -629,9 +659,8 @@
       extEdidContainer.innerHTML = '<div class="kv-item"><span class="kv-key">Status</span><span class="kv-val">No Extension Blocks</span></div>';
     }
 
-    // Add raw json tree (remove huge bytes array first to not freeze the browser)
+    // Add raw json tree
     const toRender = { ...edid };
-    delete toRender.bytes;
 
     rawJson.innerHTML = createJsonTree(toRender);
 
