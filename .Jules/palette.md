@@ -4,3 +4,6 @@
 ## 2026-06-23 - Interactive Commit History
 **Learning:** Implementing an exclusive accordion pattern for commit lists improves navigation by reducing vertical scroll fatigue, and using `white-space: pre-wrap` is essential for displaying multi-line developer insights generated from commit metadata.
 **Action:** Applied exclusive toggle logic to commit headers and added `white-space: pre-wrap` to the `.dev-log` class in `zstreamer-commits.html`.
+## 2024-06-23 - Interactive Technical Explainer Synced State
+**Learning:** Interactive technical explainers (like color space and matrix conversions) benefit significantly from real-time syncing between visual controls (sliders), numeric outputs, and mathematical formulas. Isolating the core computational logic (e.g., matrix operations and color space clamping) from the UI bindings allows for seamless switching between predefined specifications (BT.601, BT.709, etc.) and custom inputs.
+**Action:** Implemented a real-time YCbCr/RGB bidirectional converter in `yuv-rgb.html` that dynamically updates a visual color swatch and matrix formula inputs whenever sliders or spec dropdowns are adjusted.
