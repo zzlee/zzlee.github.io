@@ -380,6 +380,58 @@
     if (dp.isContinuousTimingsSupported) featureTags.innerHTML += createTag("Continuous Timings", true);
     if (dp.isPreferredTimingModeSupported) featureTags.innerHTML += createTag("Preferred Timing", true);
 
+    // Extract Color Gamuts
+    const colorGamuts = edid.featureSupport?.colorGamuts || [];
+    if (colorGamuts.length > 0) {
+      const gamutsStr = colorGamuts.map(g => {
+        if (g === 'srgb') return 'sRGB';
+        if (g === 'display_p3') return 'Display P3';
+        if (g === 'adobe_rgb') return 'Adobe RGB';
+        if (g === 'rec_2020') return 'Rec. 2020';
+        return g;
+      }).join(', ');
+      dpInfo.innerHTML += createKV("Color Gamuts", gamutsStr);
+    }
+
+    // Extract Resolutions
+    let resolutions = [];
+    if (edid.baseBlock?.standardDisplayModes) {
+      edid.baseBlock.standardDisplayModes.forEach(m => {
+        let h = '?';
+        if (m.xyPixelRatio === 0) h = Math.round(m.xResolutionPx * 10 / 16);
+        else if (m.xyPixelRatio === 1) h = Math.round(m.xResolutionPx * 3 / 4);
+        else if (m.xyPixelRatio === 2) h = Math.round(m.xResolutionPx * 4 / 5);
+        else if (m.xyPixelRatio === 3) h = Math.round(m.xResolutionPx * 9 / 16);
+        resolutions.push(`${m.xResolutionPx}x${h} @ ${m.vertFreqHz}Hz`);
+      });
+    }
+
+    if (edid.baseBlock?.dtds) {
+      edid.baseBlock.dtds.forEach(m => {
+        if (m.horizontalActivePixels && m.verticalActivePixels) {
+          resolutions.push(`${m.horizontalActivePixels}x${m.verticalActivePixels}`);
+        }
+      });
+    }
+
+    if (edid.extensions) {
+      edid.extensions.forEach(ext => {
+        if (ext.dtds) {
+          ext.dtds.forEach(m => {
+            if (m.horizontalActivePixels && m.verticalActivePixels) {
+              resolutions.push(`${m.horizontalActivePixels}x${m.verticalActivePixels}`);
+            }
+          });
+        }
+      });
+    }
+
+    // Deduplicate and display resolutions
+    resolutions = [...new Set(resolutions)];
+    if (resolutions.length > 0) {
+      dpInfo.innerHTML += createKV("Resolutions", resolutions.join(', '));
+    }
+
     // Add raw json (remove huge bytes array first to not freeze the browser)
     const toRender = { ...edid };
     delete toRender.bytes;
