@@ -327,8 +327,8 @@
       </div>
     </div>
 
-    <div class="section-title">Features & Characteristics</div>
-    <div class="card">
+    <div id="features-section-title" class="section-title">Features & Characteristics</div>
+    <div id="features-card" class="card">
       <div class="tag-list" id="feature-tags"></div>
     </div>
 
@@ -361,6 +361,8 @@
   const vpInfo = document.getElementById('vp-info');
   const dpInfo = document.getElementById('dp-info');
   const featureTags = document.getElementById('feature-tags');
+  const featuresSectionTitle = document.getElementById('features-section-title');
+  const featuresCard = document.getElementById('features-card');
   const baseEdidContainer = document.getElementById('base-edid-info');
   const extEdidContainer = document.getElementById('ext-edid-info');
   const rawJson = document.getElementById('raw-json');
@@ -542,9 +544,18 @@
     dpInfo.innerHTML += createKV("DPMS Active-Off", dp.dpmsActiveOffSupported ? 'Yes' : 'No');
 
     // Features
-    if (dp.isSrgbStandardDefaultColorSpace) featureTags.innerHTML += createTag("sRGB Default", true);
-    if (dp.isContinuousTimingsSupported) featureTags.innerHTML += createTag("Continuous Timings", true);
-    if (dp.isPreferredTimingModeSupported) featureTags.innerHTML += createTag("Preferred Timing", true);
+    let featuresCount = 0;
+    if (dp.isSrgbStandardDefaultColorSpace) { featureTags.innerHTML += createTag("sRGB Default", true); featuresCount++; }
+    if (dp.isContinuousTimingsSupported) { featureTags.innerHTML += createTag("Continuous Timings", true); featuresCount++; }
+    if (dp.isPreferredTimingModeSupported) { featureTags.innerHTML += createTag("Preferred Timing", true); featuresCount++; }
+
+    if (featuresCount === 0) {
+      featuresSectionTitle.style.display = 'none';
+      featuresCard.style.display = 'none';
+    } else {
+      featuresSectionTitle.style.display = 'block';
+      featuresCard.style.display = 'block';
+    }
 
     // Extract Color Gamuts
     const colorGamuts = edid.featureSupport?.colorGamuts || [];
