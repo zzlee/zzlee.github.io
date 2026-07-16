@@ -30,3 +30,6 @@
 ## 2026-07-16 - [EDID Viewer Hex Dump Output]
  **Learning:** Handling raw byte arrays (like Uint8Array) in a UI tree often causes browser freezes if blindly converted to nested DOM elements, and it is usually illegible for users.
  **Action:** Implemented a safe `formatHexDump` formatter with a byte limit (4096 bytes) that detects byte array types and renders them inside a `<pre>` block as structured hex dumps with offsets, improving performance and readability.
+## 2026-07-16 - Add Expand All / Collapse All functionality to Tree Viewer
+ **Learning:** Standard HTML `<details>` elements can be dynamically expanded and collapsed across a tree hierarchy by toggling the `open` attribute on all elements within a specified container.
+ **Action:** Implemented `window.toggleTree(containerId, expand)` function in vanilla JS and added inline toggle buttons (`+`/`-`) to section headers in EDID viewer to improve usability.

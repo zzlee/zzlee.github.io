@@ -130,6 +130,28 @@
       margin: 2rem 0 1rem;
       padding-bottom: 0.5rem;
       border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tree-controls {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .tree-toggle-btn {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .tree-toggle-btn:hover {
+      background: var(--ink);
+      color: var(--paper);
     }
 
     .grid-2 {
@@ -332,17 +354,35 @@
       <div class="tag-list" id="feature-tags"></div>
     </div>
 
-    <div class="section-title">Base EDID</div>
+    <div class="section-title">
+      <span>Base EDID</span>
+      <div class="tree-controls">
+        <button class="tree-toggle-btn" onclick="window.toggleTree('base-edid-info', true)" title="Expand All">+</button>
+        <button class="tree-toggle-btn" onclick="window.toggleTree('base-edid-info', false)" title="Collapse All">-</button>
+      </div>
+    </div>
     <div class="card">
       <div class="kv-list" id="base-edid-info"></div>
     </div>
 
-    <div class="section-title">Extensions Block</div>
+    <div class="section-title">
+      <span>Extensions Block</span>
+      <div class="tree-controls">
+        <button class="tree-toggle-btn" onclick="window.toggleTree('ext-edid-info', true)" title="Expand All">+</button>
+        <button class="tree-toggle-btn" onclick="window.toggleTree('ext-edid-info', false)" title="Collapse All">-</button>
+      </div>
+    </div>
     <div class="card">
       <div class="kv-list" id="ext-edid-info"></div>
     </div>
 
-    <div class="section-title">Raw Parsed Data (JSON)</div>
+    <div class="section-title">
+      <span>Raw Parsed Data (JSON)</span>
+      <div class="tree-controls">
+        <button class="tree-toggle-btn" onclick="window.toggleTree('raw-json', true)" title="Expand All">+</button>
+        <button class="tree-toggle-btn" onclick="window.toggleTree('raw-json', false)" title="Collapse All">-</button>
+      </div>
+    </div>
     <div class="raw-json json-tree" id="raw-json"></div>
 
   </div>
@@ -366,6 +406,19 @@
   const baseEdidContainer = document.getElementById('base-edid-info');
   const extEdidContainer = document.getElementById('ext-edid-info');
   const rawJson = document.getElementById('raw-json');
+
+  window.toggleTree = (containerId, expand) => {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const details = container.querySelectorAll('details');
+    details.forEach(d => {
+      if (expand) {
+        d.setAttribute('open', '');
+      } else {
+        d.removeAttribute('open');
+      }
+    });
+  };
 
   // Event Listeners
   dropZone.addEventListener('click', (e) => {
