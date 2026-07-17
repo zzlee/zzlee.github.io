@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Playground</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #1e1e1e; /* Dark theme */
+      color: #d4d4d4;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      line-height: 1.5;
+      height: 100vh;
+      box-sizing: border-box;
+      overflow-y: auto;
+      cursor: text;
+    }
+
+    #output {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .output-line {
+      color: #d4d4d4;
+    }
+
+    .error {
+      color: #f44336;
+    }
+
+    .prompt-line {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .prompt {
+      color: #4CAF50; /* Green */
+      margin-right: 8px;
+      user-select: none;
+    }
+
+    #cmdline {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #d4d4d4;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 16px;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+    }
+
+    .cmd-text {
+      color: #d4d4d4;
+    }
+  </style>
+</head>
+<body>
+  <div id="output"></div>
+  <div class="prompt-line">
+    <span class="prompt">&gt;</span>
+    <input type="text" id="cmdline" autocomplete="off" spellcheck="false" autofocus>
+  </div>
+
+  <!-- Hidden iframe used as a sandbox for JavaScript execution -->
+  <iframe id="sandbox" style="display:none" sandbox="allow-same-origin allow-scripts"></iframe>
+
+  <script>
+    const output = document.getElementById('output');
+    const cmdline = document.getElementById('cmdline');
+    const sandbox = document.getElementById('sandbox');
+
+    const history = [];
+    let historyIndex = -1;
+
+    function printToScreen(text, className = 'output-line') {
+      const div = document.createElement('div');
+      div.className = className;
+      // Use textContent directly, which is naturally safe from XSS.
+      div.textContent = text;
+      output.appendChild(div);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function initSandbox() {
+      const win = sandbox.contentWindow;
+      // Inject a custom print function
+      win.print = function(...args) {
+        printToScreen(args.join(' '));
+      };
+      // Override console methods to redirect to our terminal
+      win.console.log = function(...args) {
+        printToScreen(args.join(' '));
+      };
+      win.console.error = function(...args) {
+        printToScreen(args.join(' '), 'error');
+      };
+      win.console.warn = function(...args) {
+        printToScreen(args.join(' '));
+      };
+      win.console.info = function(...args) {
+        printToScreen(args.join(' '));
+      };
+    }
+
+    sandbox.onload = initSandbox;
+    initSandbox();
+
+    cmdline.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const code = cmdline.value;
+        if (!code) return; // Do not execute empty strings
+
+        // Display command echo
+        const echoDiv = document.createElement('div');
+        const promptSpan = document.createElement('span');
+        promptSpan.className = 'prompt';
+        promptSpan.textContent = '>';
+        const cmdSpan = document.createElement('span');
+        cmdSpan.className = 'cmd-text';
+        cmdSpan.textContent = ' ' + code;
+        echoDiv.appendChild(promptSpan);
+        echoDiv.appendChild(cmdSpan);
+        output.appendChild(echoDiv);
+
+        // Save to history
+        history.push(code);
+        historyIndex = history.length;
+
+        cmdline.value = '';
+
+        try {
+          // Execute code in sandbox context
+          const result = sandbox.contentWindow.eval(code);
+
+          // Print result if not undefined
+          if (result !== undefined) {
+             printToScreen(String(result));
+          }
+        } catch (err) {
+          printToScreen(String(err), 'error');
+        }
+
+        window.scrollTo(0, document.body.scrollHeight);
+      } else if (e.key === 'ArrowUp') {
+        if (historyIndex > 0) {
+          historyIndex--;
+          cmdline.value = history[historyIndex];
+          // Move cursor to the end
+          setTimeout(() => cmdline.setSelectionRange(cmdline.value.length, cmdline.value.length), 0);
+        }
+        e.preventDefault();
+      } else if (e.key === 'ArrowDown') {
+        if (historyIndex < history.length - 1) {
+          historyIndex++;
+          cmdline.value = history[historyIndex];
+        } else {
+          historyIndex = history.length;
+          cmdline.value = '';
+        }
+        e.preventDefault();
+      }
+    });
+
+    // Automatically focus input when clicking the body, providing a terminal-like experience
+    document.body.addEventListener('click', (e) => {
+      // Allow selecting text by checking if something is selected
+      if (window.getSelection().toString() === '') {
+        cmdline.focus();
+      }
+    });
+  </script>
+</body>
+</html>
