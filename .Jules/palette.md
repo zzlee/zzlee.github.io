@@ -33,3 +33,7 @@
 ## 2026-07-16 - Add Expand All / Collapse All functionality to Tree Viewer
  **Learning:** Standard HTML `<details>` elements can be dynamically expanded and collapsed across a tree hierarchy by toggling the `open` attribute on all elements within a specified container.
  **Action:** Implemented `window.toggleTree(containerId, expand)` function in vanilla JS and added inline toggle buttons (`+`/`-`) to section headers in EDID viewer to improve usability.
+
+## 2024-05-18 - Web-based JS Execution Sandbox
+**Learning:** For a web-based JavaScript execution engine, a hidden iframe (`sandbox="allow-same-origin allow-scripts"`) is an effective and lightweight way to evaluate user scripts cleanly. To safely render outputs directly in vanilla JavaScript without an XSS vulnerability, using `textContent` for appending nodes is preferred over `innerHTML`.
+**Action:** Implemented a dark-themed, xterm-like UI in `js-playground.html` featuring custom print functions injected into an iframe sandbox, with text displayed via `textContent` creation.
