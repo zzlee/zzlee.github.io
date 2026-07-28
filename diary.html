@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[SYS.LOG] 隨手日記</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #050505;
+      --neon-cyan: #00ffff;
+      --neon-cyan-dim: rgba(0, 255, 255, 0.2);
+      --neon-green: #33ff33;
+      --text-main: #e0e0e0;
+      --text-muted: #888888;
+      --hud-border: 1px solid var(--neon-cyan);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'DM Mono', monospace;
+      line-height: 1.6;
+      padding: 2rem;
+      min-height: 100vh;
+      background-image: linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: var(--hud-border);
+      box-shadow: 0 0 15px var(--neon-cyan-dim);
+      padding: 2rem;
+      position: relative;
+      background: rgba(5, 5, 5, 0.8);
+    }
+
+    /* HUD Corner decorations */
+    .container::before, .container::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--neon-cyan);
+    }
+    .container::before {
+      top: -2px; left: -2px;
+      border-right: none; border-bottom: none;
+    }
+    .container::after {
+      bottom: -2px; right: -2px;
+      border-left: none; border-top: none;
+    }
+
+    header {
+      border-bottom: 1px solid var(--neon-cyan-dim);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    h1 {
+      color: var(--neon-cyan);
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .sys-status {
+      color: var(--neon-green);
+      font-size: 0.8rem;
+      animation: blink 2s infinite;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover {
+      color: var(--neon-cyan);
+    }
+    .back-link::before {
+      content: '< ';
+    }
+
+    .diary-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .diary-entry {
+      border-left: 2px solid var(--neon-cyan);
+      padding-left: 1rem;
+      background: rgba(0, 255, 255, 0.05);
+      padding: 1rem;
+      transition: background 0.3s;
+    }
+    .diary-entry:hover {
+      background: rgba(0, 255, 255, 0.1);
+    }
+
+    .entry-date {
+      color: var(--neon-green);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+
+    .entry-content {
+      font-size: 0.95rem;
+      white-space: pre-wrap;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a href="index.html" class="back-link">返回主系統</a>
+  <header>
+    <h1>[SYS.LOG] 隨手日記</h1>
+    <div class="sys-status">SYS.ONLINE</div>
+  </header>
+
+  <div id="diary-container" class="diary-list">
+    <!-- Entries will be loaded here -->
+  </div>
+</div>
+
+<script>
+  // Initial diary entry data
+  const diaryData = [
+    {
+      date: "2024-10-26T21:00:00", // Example date, representing "today" relative to the prompt
+      content: "昨天和家人看了一個網紅介紹解謎遊戲, 透過傳統的網頁展示, 素材及內容可能都是透過AI生成, 營造一種讓人不斷想看下去的氛圍.\n這個遊戲讓我想利用Jules建構一個寫日記的界面, 先試試看"
+    }
+  ];
+
+  // Helper function to escape HTML to prevent XSS
+  function escapeHtml(str) {
+    return str.replace(/[&<>'"]/g, tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag]));
+  }
+
+  // Format date to a sci-fi log format
+  function formatDate(isoString) {
+    const d = new Date(isoString);
+    const pad = n => n.toString().padStart(2, '0');
+    return `[T-${d.getFullYear().toString().slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}.${pad(d.getHours())}${pad(d.getMinutes())}]`;
+  }
+
+  // Render entries
+  function renderDiary() {
+    const container = document.getElementById('diary-container');
+
+    diaryData.forEach(entry => {
+      const entryDiv = document.createElement('div');
+      entryDiv.className = 'diary-entry';
+
+      const dateDiv = document.createElement('div');
+      dateDiv.className = 'entry-date';
+      dateDiv.textContent = formatDate(entry.date);
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'entry-content';
+      // Safe rendering of user content using innerHTML AFTER escaping,
+      // though textContent with pre-wrap is also fine. We use innerHTML here
+      // just to show the escaping in action, but textContent would be naturally safe.
+      // Since memory said: "When using innerHTML... always sanitize", let's demonstrate it.
+      contentDiv.innerHTML = escapeHtml(entry.content);
+
+      entryDiv.appendChild(dateDiv);
+      entryDiv.appendChild(contentDiv);
+      container.appendChild(entryDiv);
+    });
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', renderDiary);
+</script>
+
+</body>
+</html>
