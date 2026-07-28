@@ -171,11 +171,11 @@
     }[tag]));
   }
 
-  // Format date to a sci-fi log format
+  // Format date to a readable log format
   function formatDate(isoString) {
     const d = new Date(isoString);
     const pad = n => n.toString().padStart(2, '0');
-    return `[T-${d.getFullYear().toString().slice(2)}${pad(d.getMonth()+1)}${pad(d.getDate())}.${pad(d.getHours())}${pad(d.getMinutes())}]`;
+    return `[${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}]`;
   }
 
   // Render entries
