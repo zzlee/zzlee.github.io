@@ -155,7 +155,7 @@
   // Initial diary entry data
   const diaryData = [
     {
-      date: "2024-10-26T21:00:00", // Example date, representing "today" relative to the prompt
+      date: new Date().toISOString(), // Use current local time
       content: "昨天和家人看了一個網紅介紹解謎遊戲, 透過傳統的網頁展示, 素材及內容可能都是透過AI生成, 營造一種讓人不斷想看下去的氛圍.\n這個遊戲讓我想利用Jules建構一個寫日記的界面, 先試試看"
     }
   ];
@@ -171,11 +171,10 @@
     }[tag]));
   }
 
-  // Format date to a readable log format
+  // Format date to a readable log format in local time
   function formatDate(isoString) {
     const d = new Date(isoString);
-    const pad = n => n.toString().padStart(2, '0');
-    return `[${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}]`;
+    return `[${d.toLocaleString('zh-TW', { hour12: false, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-')}]`;
   }
 
   // Render entries
