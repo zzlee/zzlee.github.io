@@ -37,3 +37,7 @@
 ## 2024-05-18 - Web-based JS Execution Sandbox
 **Learning:** For a web-based JavaScript execution engine, a hidden iframe (`sandbox="allow-same-origin allow-scripts"`) is an effective and lightweight way to evaluate user scripts cleanly. To safely render outputs directly in vanilla JavaScript without an XSS vulnerability, using `textContent` for appending nodes is preferred over `innerHTML`.
 **Action:** Implemented a dark-themed, xterm-like UI in `js-playground.html` featuring custom print functions injected into an iframe sandbox, with text displayed via `textContent` creation.
+
+## 2024-10-26 - Futuristic Sci-Fi UI for Diary
+**Learning:** A futuristic "sci-fi" or HUD-like interface is effectively created using a dark background (`#050505`), neon accent colors (like cyan `#00ffff` and green `#33ff33`), monospace fonts (`DM Mono`), and crisp geometric borders with subtle box-shadows. Dynamically rendering user input in such interfaces requires strict XSS prevention when manipulating the DOM.
+**Action:** Implemented a dark theme HUD layout in `diary.html` with neon accents. Created an `escapeHtml` function to sanitize user-provided diary content before safely rendering it via `innerHTML`.
