@@ -41,3 +41,7 @@
 ## 2024-10-26 - Futuristic Sci-Fi UI for Diary
 **Learning:** A futuristic "sci-fi" or HUD-like interface is effectively created using a dark background (`#050505`), neon accent colors (like cyan `#00ffff` and green `#33ff33`), monospace fonts (`DM Mono`), and crisp geometric borders with subtle box-shadows. Dynamically rendering user input in such interfaces requires strict XSS prevention when manipulating the DOM.
 **Action:** Implemented a dark theme HUD layout in `diary.html` with neon accents. Created an `escapeHtml` function to sanitize user-provided diary content before safely rendering it via `innerHTML`.
+
+## 2026-07-17 - Interactive Scientific Process Explainer
+ **Learning:** Complex scientific processes with multiple variable dependencies (e.g., egg aging time, thermal shock, pH balance) are best communicated by decoupling interactive simulators (slider & outcome calculation) from interactive SVG visual diagrams. Real-time dynamic SVG geometry and color updates help users build intuitive visual connections with physical phenomena.
+ **Action:** Created `boiled-egg.html` featuring a synced SVG cross-section diagram and dual simulation calculators (egg aging + peeling probability) that visually reflect structural changes (air cell growth, membrane adhesion, pH shift) in real time.

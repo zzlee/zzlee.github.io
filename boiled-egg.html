@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>為什麼老蛋比較好剝？水煮蛋的科學解析 | ZzLee</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1a18;
+      --paper: #f5f3ee;
+      --paper-2: #edeae2;
+      --muted: #888880;
+      --accent: #c0392b;
+      --accent-soft: rgba(192,57,43,0.08);
+      --accent-gold: #d35400;
+      --rule: rgba(26,26,24,0.10);
+      --egg-yolk: #f39c12;
+      --egg-shell: #e6c594;
+      --egg-white: #fefefe;
+      --success: #27ae60;
+      --fail: #c0392b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Mono', monospace, sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(160deg, #f9f7f2 0%, #f0ede6 100%);
+      padding-bottom: 4rem;
+    }
+
+    .page { width: min(840px, 92%); margin: 0 auto; padding-top: 3.5rem; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      margin-bottom: 2rem;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .header-tag {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      color: var(--ink);
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent-gold);
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+      color: #4a4a44;
+      margin-bottom: 2.5rem;
+      max-width: 65ch;
+    }
+
+    /* ─── CARD & SECTION LAYOUT ─── */
+    .section-card {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+
+    .section-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.6rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    p { color: #3d3d38; font-size: 0.92rem; margin-bottom: 1rem; }
+    p:last-child { margin-bottom: 0; }
+
+    /* ─── SIMULATOR LAYOUT ─── */
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-top: 1.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 720px) {
+      .sim-grid { grid-template-columns: 1fr; }
+    }
+
+    .slider-box {
+      background: var(--paper-2);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.8rem;
+    }
+
+    .slider-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .slider-val {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--accent-gold);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #dcd7cc;
+      outline: none;
+      accent-color: var(--accent-gold);
+      cursor: pointer;
+    }
+
+    .metrics-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      margin-top: 1.25rem;
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--rule);
+    }
+    .metric-row:last-child { border-bottom: none; }
+
+    .metric-name { color: var(--muted); }
+    .metric-val { font-weight: 500; color: var(--ink); }
+
+    /* Visual Egg SVG Box */
+    .egg-visual-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #FAF8F5;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      padding: 1.5rem;
+      position: relative;
+    }
+
+    /* ─── EXPERIMENT SECTION ─── */
+    .exp-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      background: var(--paper-2);
+      padding: 1.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      margin-top: 1.25rem;
+    }
+
+    .control-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .control-field label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    select, button {
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 0.55rem 0.8rem;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    select:focus, button:focus {
+      outline: 2px solid var(--accent);
+    }
+
+    .btn-action {
+      background: var(--ink);
+      color: var(--paper);
+      font-weight: 500;
+      border: none;
+      margin-top: auto;
+    }
+    .btn-action:hover {
+      background: var(--accent);
+    }
+
+    .exp-result {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border-radius: 6px;
+      border: 1px solid var(--rule);
+      background: var(--paper);
+      display: none;
+    }
+    .exp-result.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .result-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.75rem;
+    }
+    .badge-success { background: rgba(39, 174, 96, 0.15); color: #1e8449; }
+    .badge-fail { background: rgba(192, 57, 43, 0.15); color: #a93226; }
+
+    /* ─── CULINARY MATRIX ─── */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1.25rem;
+      font-size: 0.88rem;
+    }
+    .matrix-table th, .matrix-table td {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--rule);
+    }
+    .matrix-table th {
+      background: var(--paper-2);
+      font-weight: 500;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .matrix-table tr:hover td {
+      background: var(--accent-soft);
+    }
+
+    /* ─── FOOTER & ANIMATIONS ─── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+<div class="page">
+  <a href="index.html" class="back-link">← 返回首頁</a>
+
+  <div class="header-tag">料理科普與科學實驗</div>
+  <h1>為什麼<em>老蛋</em>比新鮮蛋更好剝？</h1>
+  <p class="subtitle">
+    你是否遇過煮水煮蛋時，蛋殼與蛋白死死黏在一起、剝得坑坑窪窪的慘劇？其實「好不好剝」關鍵不在母雞健康或雞蛋品質，而是雞蛋熟成過程中的酸鹼化學變化與氣室物理演變。
+  </p>
+
+  <!-- SECTION 1: Aging Simulator -->
+  <section class="section-card" id="aging-sim">
+    <h2 class="section-title">01. 雞蛋熟成模擬器</h2>
+    <p>拖動下方滑桿，觀察隨著存放天數增加，二氧化碳釋放導致的 pH 值上升、氣室擴大與殼膜黏著力下降：</p>
+
+    <div class="sim-grid">
+      <div class="slider-box">
+        <div class="slider-header">
+          <span class="slider-title">雞蛋存放天數（冷藏 4°C）</span>
+          <span class="slider-val"><span id="daysVal">0</span> 天</span>
+        </div>
+        <input type="range" id="ageSlider" min="0" max="21" value="0" step="1" aria-label="雞蛋存放天數">
+
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-name">蛋白酸鹼值 (pH)</span>
+            <span class="metric-val" id="phVal">7.6 (偏酸)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">殼膜黏著強度</span>
+            <span class="metric-val" id="adhesionVal" style="color: var(--fail);">強烈黏著 (極難剝)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">氣室體積 (鈍端)</span>
+            <span class="metric-val" id="airCellVal">微小 (&lt; 2mm)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">蛋白濃稠度</span>
+            <span class="metric-val" id="albumenVal">高度黏稠 (濃蛋白厚)</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-name">蛋黃繫帶狀態</span>
+            <span class="metric-val" id="chalazaVal">繫帶結實 / 正中心</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="egg-visual-container">
+        <svg viewBox="0 0 300 320" width="240" height="256" style="overflow: visible;">
+          <defs>
+            <!-- Shell gradient -->
+            <linearGradient id="shellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f0d9b5" />
+              <stop offset="100%" stop-color="#d8af74" />
+            </linearGradient>
+            <!-- Albumen gradient -->
+            <radialGradient id="albumenGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+              <stop offset="70%" stop-color="#f5f7fa" stop-opacity="0.9" />
+              <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0.85" />
+            </radialGradient>
+            <!-- Yolk gradient -->
+            <radialGradient id="yolkGrad" cx="40%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#ffe066" />
+              <stop offset="70%" stop-color="#f39c12" />
+              <stop offset="100%" stop-color="#d35400" />
+            </radialGradient>
+          </defs>
+
+          <!-- Outer Egg Shell & Inner Membrane -->
+          <path id="eggShell" d="M 150 20 C 220 20 250 120 250 210 C 250 270 205 295 150 295 C 95 295 50 270 50 210 C 50 120 80 20 150 20 Z"
+                fill="url(#shellGrad)" stroke="#b8860b" stroke-width="3" />
+
+          <!-- Air Cell (at blunt bottom end) -->
+          <path id="airCell" d="M 68 235 C 100 275 200 275 232 235 C 205 295 95 295 68 235 Z"
+                fill="#e0e0e0" stroke="#aaa" stroke-width="1.5" />
+
+          <!-- Egg White (Albumen) Area -->
+          <path id="eggWhite" d="M 150 26 C 214 26 242 122 242 206 C 242 230 230 245 220 245 C 180 245 120 245 80 245 C 70 245 58 230 58 206 C 58 122 86 26 150 26 Z"
+                fill="url(#albumenGrad)" stroke="#cbd5e1" stroke-width="1" />
+
+          <!-- Yolk Chalazae (繫帶) -->
+          <line id="chalazaLeft" x1="60" y1="155" x2="105" y2="155" stroke="#ffffff" stroke-width="3" stroke-dasharray="4,2" />
+          <line id="chalazaRight" x1="195" y1="155" x2="240" y2="155" stroke="#ffffff" stroke-width="3" stroke-dasharray="4,2" />
+
+          <!-- Egg Yolk -->
+          <circle id="eggYolk" cx="150" cy="155" r="45" fill="url(#yolkGrad)" stroke="#e67e22" stroke-width="2" />
+
+          <!-- Membrane Adhesion Visual Indicators (Red dots/lines between shell and white) -->
+          <g id="adhesionGroup" opacity="1">
+            <line x1="53" y1="140" x2="57" y2="140" stroke="#c0392b" stroke-width="3" />
+            <line x1="53" y1="180" x2="57" y2="180" stroke="#c0392b" stroke-width="3" />
+            <line x1="247" y1="140" x2="243" y2="140" stroke="#c0392b" stroke-width="3" />
+            <line x1="247" y1="180" x2="243" y2="180" stroke="#c0392b" stroke-width="3" />
+            <line x1="150" y1="23" x2="150" y2="27" stroke="#c0392b" stroke-width="3" />
+          </g>
+
+          <!-- Dynamic Text on Diagram -->
+          <text id="diagramLabel" x="150" y="315" text-anchor="middle" font-size="12" fill="#666" font-family="'DM Mono', monospace">氣室 (Air Cell)</text>
+        </svg>
+        <p style="font-size:0.75rem; color:var(--muted); text-align:center; margin-top:0.5rem;">
+          圖解：氣孔排出 CO₂ 促使 pH 上升，同時水分蒸發擴大氣室
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Peeling Experiment -->
+  <section class="section-card" id="peeling-exp">
+    <h2 class="section-title">02. 互動水煮蛋剝殼實驗</h2>
+    <p>選擇不同的雞蛋新鮮度、下鍋方式與起鍋冷卻條件，測試各種煮法組合下的剝殼成功率：</p>
+
+    <div class="exp-controls">
+      <div class="control-field">
+        <label for="eggSelect">雞蛋狀態</label>
+        <select id="eggSelect">
+          <option value="fresh">剛生出的新鮮蛋 (1~3 天)</option>
+          <option value="aged" selected>微熟成老蛋 (冷藏 7~14 天)</option>
+        </select>
+      </div>
+
+      <div class="control-field">
+        <label for="boilSelect">下鍋方式</label>
+        <select id="boilSelect">
+          <option value="hot" selected>沸水 / 蒸氣熱水下鍋</option>
+          <option value="cold">冷水慢慢加熱下鍋</option>
+        </select>
+      </div>
+
+      <div class="control-field">
+        <label for="coolSelect">起鍋冷卻</label>
+        <select id="coolSelect">
+          <option value="ice" selected>立即泡冰水 (至少 10 分鐘)</option>
+          <option value="ambient">室溫自然放涼</option>
+        </select>
+      </div>
+
+      <button id="runExpBtn" class="btn-action">開始水煮與剝殼測試</button>
+    </div>
+
+    <div id="expResult" class="exp-result">
+      <div id="resultBadge" class="result-badge"></div>
+      <h3 id="resultTitle" style="font-family:'DM Serif Display',serif; font-size:1.25rem; margin-bottom:0.5rem;"></h3>
+      <p id="resultDesc" style="color:#3d3d38; font-size:0.9rem; margin-bottom:0.8rem;"></p>
+      <div id="resultScience" style="background:var(--paper-2); padding:0.9rem; border-radius:4px; font-size:0.85rem; color:#4a4a44; border-left:3px solid var(--accent-gold);"></div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Culinary Matrix -->
+  <section class="section-card" id="culinary-matrix">
+    <h2 class="section-title">03. 廚房分工與最佳料理指南</h2>
+    <p>新鮮蛋與熟成老蛋各有長處，了解蛋的化學與物理狀態能幫助你在廚房中選對材料：</p>
+
+    <table class="matrix-table">
+      <thead>
+        <tr>
+          <th>雞蛋狀態</th>
+          <th>結構特徵</th>
+          <th>最佳料理方式</th>
+          <th>原因解析</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--accent-gold);">超新鮮蛋</strong><br><span style="font-size:0.75rem; color:var(--muted);">產出 1–3 天內</span></td>
+          <td>濃蛋白厚實緊實、蛋黃高挺飽滿、繫帶結實</td>
+          <td><strong>荷包蛋、太陽蛋、生食拌飯、水波蛋</strong></td>
+          <td>下鍋後蛋白不易散開，能保持完整圓潤的外型；濃郁蛋香最適合生食或半熟。</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--success);">微熟成蛋</strong><br><span style="font-size:0.75rem; color:var(--muted);">冷藏 1–2 週</span></td>
+          <td>pH 值升至 ~9.0、氣室擴大、內膜黏性消失</td>
+          <td><strong>水煮蛋、溏心蛋、茶葉蛋、滷蛋</strong></td>
+          <td>膜蛋白分離且熱脹冷縮明顯，蛋白光滑完整不破損，是做水煮蛋的「黃金期」。</td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--muted);">高齡熟成蛋</strong><br><span style="font-size:0.75rem; color:var(--muted);">冷藏 3 週以上</span></td>
+          <td>濃蛋白結構瓦解、蛋黃偏心扁平、質地偏稀</td>
+          <td><strong>炒蛋、蒸蛋 (茶碗蒸)、烘焙蛋糕</strong></td>
+          <td>蛋白水樣化容易打散攪拌，打發或與湯汁混合效果佳，不影響加熱後的總體風味。</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>
+    <span>© <span id="yr"></span> ZzLee</span>
+    <a href="index.html">返回目前關注項目</a>
+  </footer>
+</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // ─── AGING SIMULATOR LOGIC ───
+  const ageSlider = document.getElementById('ageSlider');
+  const daysVal = document.getElementById('daysVal');
+  const phVal = document.getElementById('phVal');
+  const adhesionVal = document.getElementById('adhesionVal');
+  const airCellVal = document.getElementById('airCellVal');
+  const albumenVal = document.getElementById('albumenVal');
+  const chalazaVal = document.getElementById('chalazaVal');
+
+  const airCellPath = document.getElementById('airCell');
+  const eggYolkCircle = document.getElementById('eggYolk');
+  const chalazaLeft = document.getElementById('chalazaLeft');
+  const chalazaRight = document.getElementById('chalazaRight');
+  const adhesionGroup = document.getElementById('adhesionGroup');
+
+  function updateSimulator(days) {
+    daysVal.textContent = days;
+    const t = days / 21; // 0 to 1 normalized
+
+    // 1. pH Calculation (7.6 -> 9.2)
+    const ph = (7.6 + t * 1.6).toFixed(1);
+    let phDesc = " (酸性)";
+    if (ph > 8.0 && ph <= 8.6) phDesc = " (弱鹼性)";
+    else if (ph > 8.6) phDesc = " (最佳鹼度)";
+    phVal.textContent = `${ph}${phDesc}`;
+
+    // 2. Adhesion Force
+    const adhesionPct = Math.max(0, Math.round(100 - t * 100));
+    if (adhesionPct > 70) {
+      adhesionVal.textContent = `強烈黏著 (${adhesionPct}% - 極難剝)`;
+      adhesionVal.style.color = "var(--fail)";
+    } else if (adhesionPct > 30) {
+      adhesionVal.textContent = `中等黏著 (${adhesionPct}% - 尚可)`;
+      adhesionVal.style.color = "var(--accent-gold)";
+    } else {
+      adhesionVal.textContent = `輕微 / 無黏著 (${adhesionPct}% - 極易剝離)`;
+      adhesionVal.style.color = "var(--success)";
+    }
+    adhesionGroup.setAttribute('opacity', (adhesionPct / 100).toFixed(2));
+
+    // 3. Air Cell Expansion (SVG Path adjustment)
+    // Fresh: Y = 235, Aged: Y = 190
+    const airTopY = 235 - t * 45;
+    const airCellSizeMm = (1.5 + t * 6.5).toFixed(1);
+    airCellVal.textContent = `${airCellSizeMm} mm (${t < 0.3 ? '微小' : t < 0.7 ? '中等' : '顯著擴大'})`;
+
+    // SVG air cell curve
+    airCellPath.setAttribute('d', `M 68 ${airTopY} C 100 275 200 275 232 ${airTopY} C 205 295 95 295 68 ${airTopY} Z`);
+
+    // 4. Albumen Viscosity
+    if (days <= 3) {
+      albumenVal.textContent = "高度黏稠 (濃蛋白層厚)";
+    } else if (days <= 10) {
+      albumenVal.textContent = "中度黏稠 (濃蛋白轉稀)";
+    } else {
+      albumenVal.textContent = "稀薄水樣 (水分流失與蛋白質水解)";
+    }
+
+    // 5. Yolk & Chalaza Position
+    // As egg ages, chalaza weakens, yolk sags down slightly (Y: 155 -> 175)
+    const yolkY = 155 + t * 20;
+    eggYolkCircle.setAttribute('cy', yolkY);
+    chalazaLeft.setAttribute('y1', yolkY);
+    chalazaLeft.setAttribute('y2', yolkY);
+    chalazaRight.setAttribute('y1', yolkY);
+    chalazaRight.setAttribute('y2', yolkY);
+
+    const chalazaOpacity = Math.max(0.1, 1 - t * 0.85);
+    chalazaLeft.setAttribute('opacity', chalazaOpacity);
+    chalazaRight.setAttribute('opacity', chalazaOpacity);
+
+    if (days <= 3) {
+      chalazaVal.textContent = "繫帶結實 / 正中心";
+    } else if (days <= 10) {
+      chalazaVal.textContent = "繫帶鬆弛 / 略微微偏心";
+    } else {
+      chalazaVal.textContent = "繫帶幾近瓦解 / 蛋黃易偏心與扁平";
+    }
+  }
+
+  ageSlider.addEventListener('input', (e) => {
+    updateSimulator(parseInt(e.target.value));
+  });
+
+  // Initial call
+  updateSimulator(0);
+
+  // ─── PEELING EXPERIMENT LOGIC ───
+  const eggSelect = document.getElementById('eggSelect');
+  const boilSelect = document.getElementById('boilSelect');
+  const coolSelect = document.getElementById('coolSelect');
+  const runExpBtn = document.getElementById('runExpBtn');
+
+  const expResult = document.getElementById('expResult');
+  const resultBadge = document.getElementById('resultBadge');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultDesc = document.getElementById('resultDesc');
+  const resultScience = document.getElementById('resultScience');
+
+  runExpBtn.addEventListener('click', () => {
+    const egg = eggSelect.value;
+    const boil = boilSelect.value;
+    const cool = coolSelect.value;
+
+    let success = false;
+    let title = "";
+    let desc = "";
+    let science = "";
+
+    if (egg === 'aged' && boil === 'hot' && cool === 'ice') {
+      success = true;
+      title = "完美光滑水煮蛋！一捏即滑落 🥚✨";
+      desc = "蛋殼輕輕一壓就順暢剝離，蛋白表面如絲緞般光滑，無任何破損坑洞。";
+      science = "<strong>科學解析：</strong>【三重加持】老蛋的高 pH 值（~9.0）消除了殼膜黏性；熱水下鍋使蛋白瞬間熱凝固收縮；冰水急冷產生熱脹冷縮差，水分順著氣室裂痕滲入膜內，達成最佳剝殼體驗！";
+    } else if (egg === 'aged' && boil === 'hot' && cool === 'ambient') {
+      success = true;
+      title = "剝殼非常順暢 (良好) 👍";
+      desc = "蛋殼容易剝開，蛋白僅有極微小貼連，總體完整度極高。";
+      science = "<strong>科學解析：</strong>老蛋的高 pH 值與熱水下鍋熱衝擊已經解決了大部分黏膜問題，即使沒有冰水急冷，依然能輕鬆剝除。";
+    } else if (egg === 'aged' && boil === 'cold' && cool === 'ice') {
+      success = false;
+      title = "部分蛋白破損貼殼 ⚠️";
+      desc = "雖然是老蛋且泡了冰水，但剝殼時邊緣仍有少許蛋白被扯下。";
+      science = "<strong>科學解析：</strong>冷水慢慢加熱時，蛋白凝固速度緩慢，有足夠時間與內殼膜再次產生物理微結構交織。建議改成熱水/蒸氣下鍋！";
+    } else if (egg === 'fresh' && boil === 'hot' && cool === 'ice') {
+      success = false;
+      title = "殘念！新鮮蛋殼肉難分 😭";
+      desc = "儘管用了熱水下鍋與冰水鎮涼，剝殼時蛋白依然連皮帶肉被扯下一大塊。";
+      science = "<strong>科學解析：</strong>新鮮蛋 pH 值偏低 (pH 7.6)，角蛋白與內殼膜黏力極強。即使有熱衝擊與冰鎮，化學黏著力依然強大。新鮮蛋請優先做荷包蛋或生食！";
+    } else {
+      success = false;
+      title = "慘不忍睹！坑坑窪窪的月球表面 🌋";
+      desc = "蛋殼死死黏在蛋白上，撕開時連同大半蛋白一起扯掉，外型破爛。";
+      science = "<strong>科學解析：</strong>【最差組合】新鮮蛋的高黏力 + 冷水慢煮的蛋白質緩慢凝固 + 缺乏冰鎮縮小溫差。蛋白與殼膜牢牢嵌合在一起，無法順利剝離。";
+    }
+
+    resultBadge.className = success ? 'result-badge badge-success' : 'result-badge badge-fail';
+    resultBadge.textContent = success ? '剝殼成功率 98%' : '剝殼困難 / 蛋白破損';
+    resultTitle.textContent = title;
+    resultDesc.textContent = desc;
+    resultScience.innerHTML = science;
+
+    expResult.classList.add('active');
+  });
+</script>
+</body>
+</html>
