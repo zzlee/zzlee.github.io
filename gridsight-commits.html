@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GridSight 開發心路歷程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #090d16;
+    --card: #121929;
+    --card-hover: #182238;
+    --border: #23304d;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.15);
+    --green: #34d399;
+    --amber: #fbbf24;
+    --purple: #a78bfa;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(circle at 15% 15%, #152238 0%, var(--bg) 50%), var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding-bottom: 4rem;
+  }
+
+  .container {
+    width: min(960px, 92%);
+    margin: 0 auto;
+    padding-top: 2.5rem;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    transition: transform 0.2s;
+  }
+  .back-link:hover {
+    transform: translateX(-4px);
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--accent-glow);
+    color: var(--accent);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  header h1 {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 1.05rem;
+    max-width: 660px;
+    margin: 0 auto;
+  }
+
+  /* ─── CONTROLS ─── */
+  .controls-card {
+    background: color-mix(in srgb, var(--card), transparent 20%);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .search-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    background: #0d1322;
+    color: var(--text);
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+
+  .tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .filter-btn {
+    background: #0d1322;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover {
+    color: var(--text);
+    border-color: var(--muted);
+  }
+  .filter-btn.active {
+    background: var(--accent);
+    color: #090d16;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* ─── TIMELINE ─── */
+  .timeline {
+    position: relative;
+    padding-left: 2.25rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 9px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--accent), var(--border) 90%);
+  }
+
+  .commit-card {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.85rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .commit-card:hover {
+    border-color: color-mix(in srgb, var(--accent), transparent 60%);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+
+  .commit-card::before {
+    content: '';
+    position: absolute;
+    top: 1.5rem;
+    left: -2.25rem;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--green);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--border);
+    z-index: 2;
+  }
+
+  .commit-card[data-cat="perf"]::before { background: var(--amber); }
+  .commit-card[data-cat="ui"]::before { background: var(--purple); }
+  .commit-card[data-cat="stream"]::before { background: var(--accent); }
+
+  .commit-header {
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--card);
+    user-select: none;
+  }
+  .commit-header:hover {
+    background: var(--card-hover);
+  }
+
+  .commit-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex-grow: 1;
+  }
+
+  .commit-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .hash {
+    font-family: 'DM Mono', monospace;
+    color: var(--green);
+    background: rgba(52, 211, 153, 0.12);
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+
+  .date {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+
+  .cat-badge {
+    font-size: 0.72rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    background: color-mix(in srgb, var(--border), #fff 10%);
+    color: var(--muted);
+  }
+
+  .subject {
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: #ffffff;
+    line-height: 1.4;
+  }
+
+  .chevron {
+    color: var(--muted);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.8rem;
+  }
+
+  .commit-body {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    background: #0d1322;
+    display: none;
+  }
+
+  .commit-card.expanded .commit-body {
+    display: block;
+    animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .commit-card.expanded .chevron {
+    transform: rotate(180deg);
+  }
+
+  .body-text {
+    color: #cbd5e1;
+    font-size: 0.92rem;
+    white-space: pre-wrap;
+    margin-bottom: 1.25rem;
+    font-family: 'DM Mono', monospace;
+    background: rgba(0,0,0,0.2);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--border);
+  }
+
+  /* ─── DEV LOG BUBBLE ─── */
+  .dev-log {
+    background: linear-gradient(135deg, #131d33 0%, #172440 100%);
+    border: 1px solid #283a60;
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    margin-top: 1rem;
+  }
+
+  .dev-log-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dev-log-content {
+    color: #e2e8f0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 640px) {
+    .timeline { padding-left: 1.75rem; }
+    .timeline::before { left: 5px; }
+    .commit-card::before { left: -1.75rem; width: 12px; height: 12px; top: 1.6rem; }
+    .commit-header { padding: 1rem 1.25rem; }
+    .commit-body { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="./index.html" class="back-link">← 返回首頁</a>
+
+  <header>
+    <span class="badge">GridSight 專案故事</span>
+    <h1>GridSight 開發心路歷程</h1>
+    <p>智慧教室多螢幕即時監控與廣播系統 — 從低延遲 H.264 視訊串流、SIMD 轉碼加速，到離題警示與極簡一鍵部署的開發紀錄。</p>
+  </header>
+
+  <div class="controls-card">
+    <div class="search-wrapper">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="搜尋開發紀錄 (例如: SIMD, seats, H.264, off-task, broadcast)...">
+    </div>
+
+    <div class="tags-wrapper">
+      <button class="filter-btn active" data-filter="all">全部紀錄</button>
+      <button class="filter-btn" data-filter="perf">⚡ 效能優化 (SIMD/Async)</button>
+      <button class="filter-btn" data-filter="stream">🎥 影音廣播與串流</button>
+      <button class="filter-btn" data-filter="ui">🎨 教室座位與 UI</button>
+      <button class="filter-btn" data-filter="alert">🚨 離題警示與監控</button>
+      <button class="filter-btn" data-filter="deploy">📦 發布與部署</button>
+    </div>
+  </div>
+
+  <div class="timeline" id="commitsTimeline">
+    <!-- Commits will be rendered via JS or static HTML -->
+  </div>
+</div>
+
+<script>
+  // Commit Data compiled from GitHub repo zzlee/gridsight
+  const commitData = [
+    {
+      hash: "a1e02b2",
+      date: "2026-08-18",
+      cat: "ui",
+      catName: "教室座位與 UI",
+      subject: "feat(layout): add editing UI for classroom aisles and obstacles/podium",
+      body: "新增教室走道與講台障礙物可視化編輯介面。支援在矩陣視圖中直接點擊切換走道與講台位置。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "實際走訪教室才會發現，座位根本不是單純的 5x6 矩陣！中間有走道、前面有講台。為了讓老師能一目瞭然對應學生座位，新增了走道與障礙物編輯 UI，讓視覺地圖與真實教室完全一致。"
+    },
+    {
+      hash: "7f3e8eb",
+      date: "2026-08-18",
+      cat: "deploy",
+      catName: "發布與部署",
+      subject: "feat(deploy): implement standalone zero-dependency Windows gs-console.exe packager",
+      body: "實作 Windows 環境零依賴單一可執行檔打包。老師電腦不需要先安裝 Node.js 或複雜的環境即可雙擊開啟。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "學校電腦權限常受限，如果叫老師先裝 Node.js 或設環境變數，這套軟體就不用賣了（笑）。直接將 Node 執行環境打包成單一雙擊即可啟動的 exe，做到真正的 Zero-Dependency 一鍵部署！"
+    },
+    {
+      hash: "14df80d",
+      date: "2026-08-18",
+      cat: "deploy",
+      catName: "發布與部署",
+      subject: "feat(portal): add dedicated student join portal and 1-click Win+R execution helper",
+      body: "新增專屬學生加入入口網頁與 Win+R 一鍵複製執行指令助手，讓學生快速連線至教師端。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "課堂開始前，全班 40 個學生要連進來最怕繁瑣步驟。設計了超直覺的學生 portal 和一鍵複製 Win+R 命令，學生貼上就能直接啟動連線 agent，省去大幅說明時間。"
+    },
+    {
+      hash: "e75b6b3",
+      date: "2026-08-18",
+      cat: "deploy",
+      catName: "發布與部署",
+      subject: "feat(portable): implement zero-warning portable Windows release with official signed Node.js",
+      body: "採用官方簽名之可攜式 Node.js 二進位檔，消除 Windows Defender 防毒軟體未簽名警告。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "之前自己打的打包檔常常被教室的防毒軟體誤報為危險檔案。這次改用官方已簽名的 Node 便攜包重新封裝，達成完全零警告 (Zero-Warning) 的順暢體驗。"
+    },
+    {
+      hash: "ad774cc",
+      date: "2026-08-19",
+      cat: "perf",
+      catName: "效能優化",
+      subject: "⚡ Convert synchronous SEATS_FILE I/O to async fs.promises in API route",
+      body: "將 /api/layout 路由中原本阻塞式的 readFileSync / writeFileSync 全部重構成 async fs.promises 非同步操作。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "高併發連線時發現主執行緒有微小的卡頓，排查後發現是儲存座位佈局時用了同步 File I/O。改成非同步 promise 之後，伺服器 Event Loop 順暢無比！"
+    },
+    {
+      hash: "de6b851",
+      date: "2026-08-19",
+      cat: "perf",
+      catName: "效能優化",
+      subject: "⚡ Optimize random token generator with thread_local mt19937",
+      body: "在 C++ agent 端的隨機 Token 生成器中導入 thread_local mt19937，避免多執行緒競爭與重覆初始化開銷。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "C++ Beacon Agent 每一次建立驗證都要抓亂數 Token，頻繁鎖定全局隨機引擎造成了些微 lock contention。改成 `thread_local` 的 Mersenne Twister 後，效能直接飆升。"
+    },
+    {
+      hash: "075e5fd",
+      date: "2026-08-20",
+      cat: "stream",
+      catName: "影音廣播與串流",
+      subject: "feat(stream): support on-demand 100% native full-resolution snapshot in beacon and focus-modal",
+      body: "支援點擊學生畫面時，即時向 C++ Agent 請求 100% 原生全高清解析度截圖。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "全班 40 台畫面平時用低碼率串流監控，但老師想點開某位學生仔細看程式碼時就需要高清細節。實作按需 (On-Demand) 原生解析度快照，兼顧了頻寬與清晰度！"
+    },
+    {
+      hash: "c65595b",
+      date: "2026-08-20",
+      cat: "alert",
+      catName: "離題警示與監控",
+      subject: "feat: add active window title tracking and off-task keyword alert system",
+      body: "C++ Agent 實作 Win32 Active Window 標題追蹤，並在教師端比對關鍵字（如遊戲、社群軟體）自動觸發離題警示。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "老師不可能時刻盯著 40 個小螢幕看誰在偷玩遊戲！透過 C++ Agent 輕量追蹤當前前台視窗標題，一匹配到『英雄聯盟』或『Discord』等關鍵字，教師端馬上閃紅框提醒！"
+    },
+    {
+      hash: "705a428",
+      date: "2026-08-20",
+      cat: "perf",
+      catName: "效能優化",
+      subject: "⚡ Optimize BGRA to NV12 color conversion using SSE2 SIMD intrinsics in gs-agent",
+      body: "使用 x86 SSE2 SIMD 指令集重新寫 C++ 端的 BGRA 轉 NV12 顏色空間轉換核心。",
+      storyTitle: "開發者的心声 (Dev Log)：",
+      story: "螢幕擷取出來的像素是原始 BGRA，要送到硬體 H.264 編碼器必須轉成 NV12。純 CPU 逐像素迴圈佔用了 15% CPU，改用 SSE2 SIMD 平行處理後，色彩轉換 CPU 佔用直接降到 2% 以下！讚啦！"
+    },
+    {
+      hash: "2d5fa06",
+      date: "2026-08-21",
+      cat: "deploy",
+      catName: "發布與部署",
+      subject: "feat: add multi-NIC selection on startup and auto-open browser on server ready",
+      body: "伺服器啟動時自動偵測多網卡環境供選擇，並在伺服器準備就緒後自動開啟預設瀏覽器。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "有些教室電腦有實體網卡跟 WiFi，甚至還有虛擬網卡，常搞錯 IP。現在啟動時智慧列出所有網卡供選擇，並自動打卡瀏覽器控制台，UX 大幅提升。"
+    },
+    {
+      hash: "f7302fb",
+      date: "2026-08-21",
+      cat: "stream",
+      catName: "影音廣播與串流",
+      subject: "feat: Add teacher screen broadcast feature and student popup window with fullscreen toggle",
+      body: "實作教師端螢幕 H.264 UDP Multicast 廣播，學生端接收並自動彈出視窗且支援全螢幕開關。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "除了『看學生』，更需要『讓學生看老師示範』。設計了以 UDP Multicast 為基礎的螢幕廣播系統，全班 40 台電腦同步接收 1080p 60FPS 畫面，完全零延遲！"
+    },
+    {
+      hash: "c46e274",
+      date: "2026-08-21",
+      cat: "stream",
+      catName: "影音廣播與串流",
+      subject: "feat: Add teacher URL sharing and file sharing features",
+      body: "透過 WebSocket 反向推播，實作教師一鍵推送網址與檔案給全班學生 Agent 並自動打開。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "『請同學打開講義網址...』以前要學生手打網址常打錯。現在老師只要在主控台輸入 URL 或上傳範例檔，1 秒內全班電腦自動彈出網頁與下載檔案！"
+    },
+    {
+      hash: "60ca281",
+      date: "2026-08-23",
+      cat: "alert",
+      catName: "離題警示與監控",
+      subject: "feat: add student failure log fetching when live stream is missing",
+      body: "當學生即時串流中斷或連線異常時，教師端可一鍵代理抓取學生 C++ Agent 端日誌 (`gs-agent.log`) 遠端排錯。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "某台學生電腦斷線時，過去要親自走到學生位置查看 console。現在 Agent 提供安全日誌 API，老師在主控台按一下就能遠端看診，維護便利性大增。"
+    },
+    {
+      hash: "8b665b7",
+      date: "2026-08-23",
+      cat: "stream",
+      catName: "影音廣播與串流",
+      subject: "fix(broadcast): harden teacher RTP streaming, patch file-share traversal, align docs",
+      body: "強化 RTP 廣播防護與編碼器 Ghost-Encoder Race Condition 修復，修補檔案分享路徑穿透漏洞。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "遭遇到了難纏的鬼影編碼器 (Ghost Encoder) 問題 — 舊廣播關閉事件若晚到會把剛開的新廣播狀態沖掉。精心重構了狀態機與生命週期，廣播切換變得固若金湯！"
+    },
+    {
+      hash: "2c59862",
+      date: "2026-08-24",
+      cat: "deploy",
+      catName: "發布與部署",
+      subject: "docs(wiki): record full development history and create wiki knowledge base",
+      body: "整理與紀錄完整開發架構、通訊協定矩陣與除錯 Runbook 文件。",
+      storyTitle: "開發者的心聲 (Dev Log)：",
+      story: "將這段時間針對多網卡、UDP Multicast、SIMD 編碼與系統架構的所有坑點與心得完整收錄在文件庫中，傳承給未來的維護者。"
+    }
+  ];
+
+  // Utility HTML Escape function to prevent XSS
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  const timelineEl = document.getElementById('commitsTimeline');
+  const searchInput = document.getElementById('searchInput');
+  const filterBtns = document.querySelectorAll('.filter-btn');
+
+  let activeCategory = 'all';
+  let searchTerm = '';
+
+  function renderCommits() {
+    timelineEl.innerHTML = '';
+
+    const filtered = commitData.filter(item => {
+      const matchCat = (activeCategory === 'all') || (item.cat === activeCategory);
+      const matchSearch = !searchTerm ||
+        item.subject.toLowerCase().includes(searchTerm) ||
+        item.body.toLowerCase().includes(searchTerm) ||
+        item.story.toLowerCase().includes(searchTerm) ||
+        item.hash.toLowerCase().includes(searchTerm);
+      return matchCat && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      timelineEl.innerHTML = `
+        <div class="empty-state">
+          <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">🔍 找不到符合條件的開發紀錄</p>
+          <p style="color: var(--muted); font-size: 0.9rem;">嘗試搜尋其他關鍵字或切換類別標籤</p>
+        </div>
+      `;
+      return;
+    }
+
+    filtered.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'commit-card';
+      card.setAttribute('data-cat', item.cat);
+
+      card.innerHTML = `
+        <div class="commit-header">
+          <div class="commit-info">
+            <div class="commit-meta">
+              <span class="hash">${escapeHtml(item.hash)}</span>
+              <span class="date">${escapeHtml(item.date)}</span>
+              <span class="cat-badge">${escapeHtml(item.catName)}</span>
+            </div>
+            <div class="subject">${escapeHtml(item.subject)}</div>
+          </div>
+          <div class="chevron">▼</div>
+        </div>
+        <div class="commit-body">
+          <div class="body-text">${escapeHtml(item.body)}</div>
+          <div class="dev-log">
+            <div class="dev-log-header">
+              <span>💡</span>
+              <span>${escapeHtml(item.storyTitle)}</span>
+            </div>
+            <div class="dev-log-content">${escapeHtml(item.story)}</div>
+          </div>
+        </div>
+      `;
+
+      card.querySelector('.commit-header').addEventListener('click', () => {
+        const isExpanded = card.classList.contains('expanded');
+        // Close other expanded cards
+        document.querySelectorAll('.commit-card.expanded').forEach(c => {
+          if (c !== card) c.classList.remove('expanded');
+        });
+        card.classList.toggle('expanded', !isExpanded);
+      });
+
+      timelineEl.appendChild(card);
+    });
+  }
+
+  // Filter Listeners
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.getAttribute('data-filter');
+      renderCommits();
+    });
+  });
+
+  searchInput.addEventListener('input', (e) => {
+    searchTerm = e.target.value.trim().toLowerCase();
+    renderCommits();
+  });
+
+  // Initial Render
+  renderCommits();
+</script>
+</body>
+</html>

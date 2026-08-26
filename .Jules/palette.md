@@ -45,3 +45,7 @@
 ## 2026-07-17 - Interactive Scientific Process Explainer
  **Learning:** Complex scientific processes with multiple variable dependencies (e.g., egg aging time, thermal shock, pH balance) are best communicated by decoupling interactive simulators (slider & outcome calculation) from interactive SVG visual diagrams. Real-time dynamic SVG geometry and color updates help users build intuitive visual connections with physical phenomena.
  **Action:** Created `boiled-egg.html` featuring a synced SVG cross-section diagram and dual simulation calculators (egg aging + peeling probability) that visually reflect structural changes (air cell growth, membrane adhesion, pH shift) in real time.
+
+## 2026-07-20 - Interactive Project Story Timeline
+ **Learning:** Combining a categorized git commit history timeline with conversational developer story cards ("開發者的心聲") makes complex technical projects engaging and accessible. Providing search filtering, category pills, and collapsible commit accordions helps users easily digest both high-level story milestones and low-level code commits.
+ **Action:** Built `gridsight-commits.html` with interactive category filtering, live search, expandable commit accordions, and narrative developer log notes in Traditional Chinese, linked as project #01 on `index.html`.
