@@ -3,73 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zstreamer 開發心路歷程</title>
+<title>Zstreamer 開發心路歷程 | 故事與 commit 演進紀錄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 <style>
   :root {
     --bg: #0b1020;
     --card: #111831;
+    --card-hover: #162042;
+    --border: #2f3b69;
     --text: #e9ecf5;
-    --muted: #b8c0da;
-    --accent: #7cc7ff;
-    --accent-2: #8ef5d0;
+    --muted: #94a3b8;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.25);
+    --green: #34d399;
+    --purple: #a78bfa;
+    --amber: #fbbf24;
+    --pink: #f472b6;
   }
+
+  *, *::before, *::after { box-sizing: border-box; }
+
   body {
     margin: 0;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
-    background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 45%), var(--bg);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 10%, #1c2854 0%, var(--bg) 50%), var(--bg);
     color: var(--text);
     line-height: 1.6;
+    min-height: 100vh;
   }
-  .container {
-    width: min(1000px, 92%);
-    margin: 0 auto;
-    padding: 3rem 0;
-  }
-  a { color: var(--accent); text-decoration: none; font-weight: 500; }
-  a:hover { text-decoration: underline; }
 
+  .container {
+    width: min(1040px, 92%);
+    margin: 0 auto;
+    padding: 2.5rem 0 5rem;
+  }
+
+  /* Back Link */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    transition: transform 0.2s, color 0.2s;
+  }
+  .back-link:hover {
+    transform: translateX(-4px);
+    color: #7dd3fc;
+  }
+
+  /* Header Section */
   header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
+  }
+  .badge-tag {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 1rem;
   }
   header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    color: #fff;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    margin: 0 0 1rem;
+    color: #ffffff;
+    letter-spacing: -0.02em;
   }
-  header p {
+  header h1 span {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header p.subtitle {
     color: var(--muted);
     font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto 1.5rem;
+    max-width: 680px;
+    margin: 0 auto;
+    line-height: 1.7;
   }
 
-  .controls {
-    margin-bottom: 2rem;
+  /* Navigation Tabs */
+  .mode-switch {
     display: flex;
     justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    background: color-mix(in srgb, var(--card), #000 30%);
+    padding: 0.4rem;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
   }
-  input[type="text"] {
-    padding: 0.75rem 1rem;
-    border-radius: 2rem;
-    border: 1px solid #3a4774;
-    background: color-mix(in srgb, var(--card), transparent 20%);
+  .tab-btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .tab-btn.active {
+    background: var(--accent);
+    color: #040914;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .tab-btn:hover:not(.active) {
     color: var(--text);
-    width: 100%;
-    max-width: 500px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
   }
-  input[type="text"]:focus {
+
+  /* Chapter Cards & Storytelling section */
+  .story-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .chapter-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+  }
+  .chapter-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  }
+  .chapter-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .chapter-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 1rem;
+  }
+  .chapter-story {
+    color: #cbd5e1;
+    font-size: 0.98rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+  .chapter-quote {
+    background: color-mix(in srgb, var(--card), #000 40%);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.25rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    font-style: italic;
+    color: #e2e8f0;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .chapter-quote::before {
+    content: '💭 開發者的內心獨白：';
+    display: block;
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .chapter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .chip {
+    padding: 0.25rem 0.65rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.375rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* Interactive Pipeline Visualizer Section */
+  .visualizer-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .visualizer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .visualizer-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .sim-controls {
+    display: flex;
+    gap: 0.75rem;
+  }
+  .btn-sim {
+    padding: 0.45rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--card), #fff 8%);
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .btn-sim:hover {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--card), #fff 15%);
+  }
+
+  /* Pipeline Diagram Flow */
+  .pipeline-flow {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    align-items: center;
+    padding: 1.5rem;
+    background: color-mix(in srgb, var(--bg), #000 40%);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow-x: auto;
+  }
+  .element-node {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 0.6rem;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .element-node:hover, .element-node.active {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+    transform: translateY(-2px);
+  }
+  .element-node .type {
+    font-size: 0.68rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .element-node .name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #fff;
+    margin: 0.2rem 0;
+  }
+  .element-node .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    display: inline-block;
+    margin-right: 4rem;
+  }
+  .element-node.running .status-dot {
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+  }
+
+  .pad-connector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .node-inspector {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    background: color-mix(in srgb, var(--card), #000 50%);
+    border-radius: 0.5rem;
+    border: 1px dashed var(--border);
+    font-size: 0.88rem;
+    color: #cbd5e1;
+  }
+  .node-inspector h4 {
+    margin: 0 0 0.4rem;
+    color: var(--accent);
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Timeline & Filter Section */
+  .timeline-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card);
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+  }
+
+  .search-box {
+    position: relative;
+    flex: 1;
+    min-width: 240px;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 0.65rem 1rem 0.65rem 2.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg), #000 20%);
+    color: var(--text);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+  }
+  .search-box input:focus {
     outline: none;
     border-color: var(--accent);
   }
+  .search-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
 
-  /* Timeline specific styles */
+  .cat-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .cat-btn {
+    padding: 0.35rem 0.8rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-btn:hover, .cat-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(56, 189, 248, 0.08);
+  }
+
+  /* Timeline Item Styles */
   .timeline {
     position: relative;
-    margin: 2rem 0;
     padding-left: 2rem;
+    margin-top: 1rem;
   }
   .timeline::before {
     content: '';
@@ -78,966 +410,684 @@
     bottom: 0;
     left: 7px;
     width: 2px;
-    background: #2f3b69;
+    background: var(--border);
   }
 
-  .commit {
+  .commit-card {
     position: relative;
-    background: color-mix(in srgb, var(--card), #000 10%);
-    border: 1px solid #2f3b69;
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     overflow: hidden;
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
   }
-  .commit:hover {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  .commit-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
   }
-
-  .commit::before {
+  .commit-card::before {
     content: '';
     position: absolute;
-    top: 1.5rem;
+    top: 1.4rem;
     left: -2rem;
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: var(--accent-2);
+    background: var(--green);
     border: 3px solid var(--bg);
-    box-shadow: 0 0 0 2px #2f3b69;
+    box-shadow: 0 0 0 2px var(--border);
+    z-index: 2;
   }
 
   .commit-header {
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.4rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    background: var(--card);
+    user-select: none;
   }
   .commit-header:hover {
-    background: color-mix(in srgb, var(--card), #fff 5%);
+    background: color-mix(in srgb, var(--card), #fff 3%);
   }
-
-  .commit-top {
+  .commit-main-info {
     display: flex;
-    gap: 1rem;
-    align-items: baseline;
-    flex-grow: 1;
+    flex-direction: column;
+    gap: 0.3rem;
   }
-
-  .hash {
+  .commit-meta {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .commit-hash {
     font-family: 'DM Mono', monospace;
-    color: var(--accent-2);
-    background: color-mix(in srgb, var(--accent-2) 15%, transparent);
-    padding: 0.2rem 0.5rem;
+    color: var(--accent);
+    background: rgba(56, 189, 248, 0.1);
+    padding: 0.15rem 0.45rem;
     border-radius: 0.25rem;
-    font-size: 0.9em;
+    font-size: 0.8rem;
+    font-weight: 500;
   }
-  .subject { font-weight: 600; font-size: 1.1em; color: #fff; }
-  .toggle-icon { color: var(--muted); transition: transform 0.3s; }
+  .commit-cat-tag {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 0.25rem;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+  }
+  .commit-subject {
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: #fff;
+  }
+  .toggle-icon {
+    color: var(--muted);
+    transition: transform 0.3s ease;
+    font-size: 0.8rem;
+  }
 
   .commit-body {
-    padding: 1.5rem;
-    border-top: 1px solid #2f3b69;
-    color: var(--text);
-    font-size: 0.95em;
+    padding: 1.25rem 1.4rem 1.4rem;
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--card), #000 20%);
     display: none;
-    white-space: pre-wrap;
-    background: color-mix(in srgb, var(--card), transparent 20%);
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-
-  /* Chat bubble style for bot/dev logs */
-  .dev-log {
-    background: #1e293b;
-    padding: 1.25rem;
-    border-radius: 0.75rem;
-    border-left: 4px solid var(--accent);
-    margin-top: 1rem;
-    font-style: normal;
-    color: #e2e8f0;
-    position: relative;
-    white-space: pre-wrap;
-  }
-  .dev-log::before {
-    content: '💡';
-    position: absolute;
-    left: -1.2rem;
-    top: -1rem;
-    font-size: 1.5rem;
-    background: var(--bg);
-    border-radius: 50%;
-    padding: 0.2rem;
-  }
-  .dev-log-title {
-    font-weight: bold;
-    color: var(--accent);
-    margin-bottom: 0.5rem;
+  .commit-card.expanded .commit-body {
     display: block;
   }
-
-  .commit.expanded .commit-body {
-    display: block;
-    animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  .commit.expanded .toggle-icon {
+  .commit-card.expanded .toggle-icon {
     transform: rotate(180deg);
   }
 
+  .commit-desc {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+  }
+
+  /* Dev log speech bubble */
+  .dev-log {
+    background: #1e293b;
+    padding: 1.1rem 1.25rem;
+    border-radius: 0.6rem;
+    border-left: 4px solid var(--accent);
+    color: #e2e8f0;
+    font-size: 0.9rem;
+    position: relative;
+    white-space: pre-wrap;
+    line-height: 1.75;
+  }
+  .dev-log::before {
+    content: '💡 開發者的心聲';
+    display: block;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+  }
+
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
+    from { opacity: 0; transform: translateY(-6px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  footer {
+    margin-top: 4rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+  }
+
+  /* Responsive UI */
+  @media (max-width: 640px) {
+    .container { padding: 1.5rem 0 3rem; }
+    .chapter-card { padding: 1.25rem; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .cat-filters { justify-content: flex-start; }
+    .mode-switch { width: 100%; justify-content: space-between; }
+    .tab-btn { flex: 1; text-align: center; padding: 0.5rem 0.8rem; font-size: 0.82rem; }
   }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <p><a href="./index.html">← 回首頁</a></p>
+  <a href="./index.html" class="back-link">← 返回 ZzLee 個人主頁</a>
 
   <header>
-    <h1>Zstreamer 開發心路歷程</h1>
-    <p>這是一個從零開始打造多媒體管線框架的故事。點擊各個節點，看看我在開發當下遇到了什麼坑，又是怎麼解決的吧！</p>
+    <span class="badge-tag">Zstreamer Pipeline Framework</span>
+    <h1>Zstreamer <span>開發心路歷程</span></h1>
+    <p class="subtitle">
+      從底層 C/C++ 多媒體 Buffer 設計、OpenGL 視訊合成，到 RTP 網路串流與動態 Pad 解耦。這是一段探索系統極限與架構美學的故事。
+    </p>
   </header>
 
-  <div class="controls">
-    <input type="text" id="searchInput" placeholder="搜尋開發紀錄 (例如: buffer, pool, sync)...">
-  </div>
+  <!-- View Switcher Tabs -->
+  <nav class="mode-switch" aria-label="檢視模式切換">
+    <button class="tab-btn active" id="btnStoryView" onclick="switchView('story')">📖 故事章節歷程</button>
+    <button class="tab-btn" id="btnSimView" onclick="switchView('sim')">⚡ 互動 Pipeline 模擬</button>
+    <button class="tab-btn" id="btnCommitView" onclick="switchView('commit')">📜 完整 Commit 時間線</button>
+  </nav>
 
-  <div class="timeline" id="commitsContainer">
+  <!-- CHAPTER STORY VIEW -->
+  <section id="storyView" class="story-container">
 
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a67ac58</span>
-          <span class="subject">feat: add timestamp-based pacing for UDP/RTSP output streams</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+    <!-- Chapter 1 -->
+    <article class="chapter-card">
+      <span class="chapter-number">Chapter 01</span>
+      <h2 class="chapter-title">地基構築：核心 Pipeline 與 Element 抽象化</h2>
+      <p class="chapter-story">
+        當初決定用 C 語言從零手寫 Zstreamer 時，首要目標就是建立一個極度輕量、低延遲且沒有多餘維護負擔的多媒體 Pipeline。為了做到靈活組合，我參考了標準 Pipeline 哲學，設計了 `Pad`、`Buffer Pool` 以及基礎 `Element` 介面。
+      </p>
+      <div class="chapter-quote">
+        「最困難的不是寫語法，而是記憶體生命週期的掌控。多媒體資料流的高頻 Buffer 分配如果每次都重新 malloc，效能立刻拉垮。引進 Refcount 與 Buffer Pool 之後，看到數據傳遞穩如泰山，心中的懸石終於落了地。」
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a reusable timestamp pacer module that paces UDP packet</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
+      <div class="chapter-tags">
+        <span class="chip">#BufferPool</span>
+        <span class="chip">#Refcount</span>
+        <span class="chip">#ElementPads</span>
+        <span class="chip">#ZeroCopy</span>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">ac3c41b</span>
-          <span class="subject">docs: add UDP outbound timestamp pacing plan</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+    </article>
+
+    <!-- Chapter 2 -->
+    <article class="chapter-card">
+      <span class="chapter-number">Chapter 02</span>
+      <h2 class="chapter-title">視覺之舞：OpenGL 畫面合成器與 QoS Pacing</h2>
+      <p class="chapter-story">
+        有了單路影片播放還不夠，真正的考驗是多路視訊源的混合。我著手打造 `glcompsink`（OpenGL Compositor Sink），支援將多個視訊 Pad 疊加渲染在同一個 3D/2D 紋理看板上。同時導入了 `max_lateness` QoS (Quality of Service) 掉幀機制，防止累計延遲導致畫面卡頓。
+      </p>
+      <div class="chapter-quote">
+        「多路影音同步時，如果某一邊的解碼延遲過長，整個繪圖線程會被拖慢。加入 QoS Drop 與 獨立 Worker Thread 上下文初始化後，即便是在高壓串流下，畫面依然能流暢維持 60 FPS 幀率！」
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add wiki/phase-udp-timestamp-pacing.md detailing design,</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
+      <div class="chapter-tags">
+        <span class="chip">#glcompsink</span>
+        <span class="chip">#OpenGL-ES</span>
+        <span class="chip">#QoS-FrameDrop</span>
+        <span class="chip">#FramePacing</span>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">f3d5590</span>
-          <span class="subject">feat: add generic RTP depayloader element</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+    </article>
+
+    <!-- Chapter 3 -->
+    <article class="chapter-card">
+      <span class="chapter-number">Chapter 03</span>
+      <h2 class="chapter-title">聽覺重奏：多聲道混音器與 ASRC 漂移補償</h2>
+      <p class="chapter-story">
+        影音系統永遠少不了聲音。為了達到完美的音訊混合，我實作了 `audiomixer` Element。它不僅支援多路 request sink pad（`sink_%u`），還具備動態音量調整、獨立 Pan（聲相平衡）以及基於 PTS 的時間戳對齊。面對跨硬體的採樣率漂移，更引入了 ASRC（Asynchronous Sample Rate Converter）漂移補償。
+      </p>
+      <div class="chapter-quote">
+        「音訊爆音與相位差是工程師的噩夢。當兩路音訊採樣時脈有微小偏差時，長時間播放一定會發生 Buffer Underflow。寫下 ASRC 漂移補償算法並看到波形順暢銜接時，那種聲音清亮無雜音的感覺真的太治癒了！」
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new zst_rtp_depayloader element that converts complete RTP</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
+      <div class="chapter-tags">
+        <span class="chip">#audiomixer</span>
+        <span class="chip">#ASRC-Drift</span>
+        <span class="chip">#PTS-Align</span>
+        <span class="chip">#PanBalance</span>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">eae81d7</span>
-          <span class="subject">feat: add RTP depayloader element (rtpdepay)</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+    </article>
+
+    <!-- Chapter 4 -->
+    <article class="chapter-card">
+      <span class="chapter-number">Chapter 04</span>
+      <h2 class="chapter-title">跨越脈動：RTP / SDP 封包與 Pacing 網路傳輸</h2>
+      <p class="chapter-story">
+        將本地資料流推向網路世界！在這一階段，Zstreamer 增加了 `net_source`、`net_sink`、`rtp_payloader`（RTP 打包）、`rtpdepay`（RTP 解包）以及 `sdpmuxer` / `sdpdemux`。最為關鍵的是加入了基於時間戳的 Timestamp Pacing，確保 UDP 封包均勻平滑發送，避免突發流量（Burst）造成路由器塞爆 drop 封包。
+      </p>
+      <div class="chapter-quote">
+        「網路傳輸坑超級多！直接 sendto 把整個 Video Frame 塞出去會導致 UDP 瞬間爆包落幀。實作了 leaky bucket timestamp pacer 後，看著 Wireshark 裡精準等距的封包時間間隔，整個傳輸品質煥然一新！」
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement the receive-side counterpart to rtppay. The rtpdepay element accepts</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
+      <div class="chapter-tags">
+        <span class="chip">#RTP/RTCP</span>
+        <span class="chip">#SDPMuxer</span>
+        <span class="chip">#TimestampPacing</span>
+        <span class="chip">#UDP-Multicast</span>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">e203a70</span>
-          <span class="subject">feat(audiomixer): PTS align, QoS drop, dynamic pad</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+    </article>
+
+    <!-- Chapter 5 -->
+    <article class="chapter-card">
+      <span class="chapter-number">Chapter 05</span>
+      <h2 class="chapter-title">靈魂演進：Adaptive Stream Demuxing 與動態 Pad</h2>
+      <p class="chapter-story">
+        在複雜的動態串流情境中，封包格式（Caps）與軌道數量（如 MP4 / MPEG-TS 中的多音軌、多視軌）是在解開串流時才能確知的。我啟動了「Adaptive Stream Demuxing」大重構，重寫 MP4/TS demuxer，讓元素可以在執行期動態建立與連結 Source Pad，並提供安全的多執行緒動態重組。
+      </p>
+      <div class="chapter-quote">
+        「動態 Pad 的生命週期管理與鏈結鎖（Thread-safe Pad Linking）是整個架構最優雅也最具挑戰的部分。這代表 Zstreamer 已經從小玩具升華為能夠適應各種複雜多媒體格式的現代化管線框架！」
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement PTS-based input alignment with silence-fill for missing</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
+      <div class="chapter-tags">
+        <span class="chip">#DynamicPads</span>
+        <span class="chip">#AdaptiveDemux</span>
+        <span class="chip">#MPEG-TS</span>
+        <span class="chip">#ThreadSafe</span>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">dbf74b3</span>
-          <span class="subject">feat(sdpmuxer): add multi-codec SDP with caps defaults</span>
+    </article>
+
+  </section>
+
+  <!-- INTERACTIVE PIPELINE SIMULATOR VIEW -->
+  <section id="simView" style="display: none;">
+    <div class="visualizer-card">
+      <div class="visualizer-header">
+        <div>
+          <div class="visualizer-title">⚡ Zstreamer 實時管線模擬器</div>
+          <p style="color:var(--muted); font-size:0.88rem; margin:0.2rem 0 0;">點擊下方 Element 節點檢視狀態，並使用控制鈕測試資料流 pacing 與動態 Pad 運作</p>
         </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Extend sdpmuxer to support VP8, VP9, AV1, Opus, PCMU, PCMA,</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">4a9d408</span>
-          <span class="subject">docs: mark adaptive stream demuxing as complete</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Update implementation plan status table and checklist in</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
+        <div class="sim-controls">
+          <button class="btn-sim" id="btnToggleSim" onclick="togglePipelineSim()">▶ 開始模擬</button>
+          <button class="btn-sim" onclick="resetPipelineSim()">🔄 重置</button>
         </div>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">e9d5021</span>
-          <span class="subject">Merge branch 'main' of https://github.com/zzlee/zstreamer</span>
+
+      <!-- Pipeline Diagram -->
+      <div class="pipeline-flow">
+        <div class="element-node" id="node-src" onclick="inspectNode('src')">
+          <div class="type">Source</div>
+          <div class="name">net_source</div>
+          <div><span class="status-dot"></span><span style="font-size:0.75rem; color:var(--muted);" id="st-src">IDLE</span></div>
         </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
+
+        <div class="pad-connector">➔</div>
+
+        <div class="element-node" id="node-depay" onclick="inspectNode('depay')">
+          <div class="type">RTP Depay</div>
+          <div class="name">rtpdepay</div>
+          <div><span class="status-dot"></span><span style="font-size:0.75rem; color:var(--muted);" id="st-depay">IDLE</span></div>
+        </div>
+
+        <div class="pad-connector">➔</div>
+
+        <div class="element-node" id="node-demux" onclick="inspectNode('demux')">
+          <div class="type">Adaptive Demux</div>
+          <div class="name">tsdemux</div>
+          <div><span class="status-dot"></span><span style="font-size:0.75rem; color:var(--muted);" id="st-demux">IDLE</span></div>
+        </div>
+
+        <div class="pad-connector">➔</div>
+
+        <div class="element-node" id="node-mixer" onclick="inspectNode('mixer')">
+          <div class="type">Compositor</div>
+          <div class="name">glcompsink</div>
+          <div><span class="status-dot"></span><span style="font-size:0.75rem; color:var(--muted);" id="st-mixer">IDLE</span></div>
         </div>
       </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">048bbf2</span>
-          <span class="subject">feat: improve MPEG-TS demuxer and scheduler</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Add .ts MIME type mapping and increase buffer pool size in file_source</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">f906513</span>
-          <span class="subject">Merge pull request #96 from zzlee/fix-tutorial-includes-2615765643066667024</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">docs: fix include directives in tutorials</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
+
+      <!-- Inspector Detail View -->
+      <div class="node-inspector" id="nodeInspector">
+        <h4><span id="inspectIcon">🔍</span> <span id="inspectTitle">請點擊上方 Element 檢視詳細規格與狀態</span></h4>
+        <div id="inspectBody" style="font-family:'DM Mono', monospace; font-size:0.82rem; line-height:1.7;">
+          目前未選擇任何 Element。在 Zstreamer 中，每個 Element 均包含 Pad、Caps 協商機制與 Buffer 隊列。
         </div>
       </div>
     </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">997fa18</span>
-          <span class="subject">docs: fix include directives in tutorials</span>
-        </div>
-        <div class="toggle-icon">▼</div>
+  </section>
+
+  <!-- COMMIT TIMELINE VIEW -->
+  <section id="commitView" class="timeline-section" style="display: none;">
+    <div class="filter-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜尋開發紀錄 (例如: buffer, pacing, audiomixer, demux)..." oninput="filterCommits()">
       </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Use angle brackets instead of quotes for system/library headers in `getting-started.md` and `network-streaming.md` examples.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          抓到一隻難纏的蟲！修復它之後，整個系統又更穩固了。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">74a5a62</span>
-          <span class="subject">docs: track adaptive stream demuxing progress</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Update documentation across 9 files to reflect completed core APIs,</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
+      <div class="cat-filters">
+        <button class="cat-btn active" onclick="filterCategory('all', this)">全部</button>
+        <button class="cat-btn" onclick="filterCategory('video', this)">影音渲染</button>
+        <button class="cat-btn" onclick="filterCategory('audio', this)">音訊處理</button>
+        <button class="cat-btn" onclick="filterCategory('network', this)">網路串流</button>
+        <button class="cat-btn" onclick="filterCategory('demux', this)">Demux/動態 Pad</button>
+        <button class="cat-btn" onclick="filterCategory('docs', this)">文件與 CI</button>
       </div>
     </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">53ad331</span>
-          <span class="subject">feat: add dynamic pad infrastructure for demuxers</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Refactor MP4 and MPEG-TS demuxers to create dynamic source pads</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
+
+    <div class="timeline" id="commitsContainer">
+      <!-- Dynamic commit items will be generated here -->
     </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">fa2ea6e</span>
-          <span class="subject">feat: add generic caps fields and dynamic reconfig</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a generic key-value field system for capabilities (caps),</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a94ef6a</span>
-          <span class="subject">feat: add stream tracking and thread-safe pad linking</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement a stream table in elements to manage dynamic stream</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">4a764dd</span>
-          <span class="subject">Merge pull request #94 from zzlee/fix-markdown-header-backticks-10830997531453016383</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Fix Document Error in Markdown Headers</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">5a6a9ae</span>
-          <span class="subject">Fix document error with backticks in markdown headers</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Co-authored-by: zzlee &lt;4455453+zzlee@users.noreply.github.com&gt;</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          抓到一隻難纏的蟲！修復它之後，整個系統又更穩固了。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">6776154</span>
-          <span class="subject">Merge pull request #93 from zzlee/update-zstreamer-docs-8860107078588015142</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">docs: update documentation with Getting Started and Architecture</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">9fc6e7c</span>
-          <span class="subject">docs: update documentation with Getting Started and Architecture</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Add @page tags to tutorials/getting-started.md and architecture/architecture.md</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">99ef6a2</span>
-          <span class="subject">Merge pull request #92 from zzlee/update-zstreamer-docs-8860107078588015142</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Update Documentation</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">1ae0a3c</span>
-          <span class="subject">docs: update documentation with Getting Started and Architecture</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Add @page tags to tutorials/getting-started.md and architecture/architecture.md</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">8504011</span>
-          <span class="subject">chore: remove old patch files and plan document</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">These patch files (patch_main.patch, patch_retries.patch, test_audiomixer_pan.patch) and plan.md are artifacts from previous development cycles that have been superseded or integrated. Clean up the repository to keep it tidy.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">4baa70b</span>
-          <span class="subject">Merge branch 'main' of https://github.com/zzlee/zstreamer</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">b96c61e</span>
-          <span class="subject">docs: add low-level raw network streaming tutorial</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new section covering netsink and netsrc elements for raw TCP/UDP streaming.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">41b6d66</span>
-          <span class="subject">feat: add UDP protocol to net source/sink</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement UDP listener/server and client modes for both net_source and net_sink elements, enabling push-based (sink-&gt;source) and pull-based (source-&gt;sink with hole-punch registration) UDP streaming. Includes comprehensive tests and wiki documentation updates.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">2e84f24</span>
-          <span class="subject">refactor(rtp): rename rtp_sink to rtp_payloader</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename the "rtp_sink" element to "rtp_payloader" to better reflect</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">4e4fd82</span>
-          <span class="subject">feat: add RTP packetizer element and UDP multicast support</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce the rtpsink element that packetizes H.264, H.265, AAC, and PCM</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">5a11310</span>
-          <span class="subject">Merge pull request #91 from zzlee/adaptive-stream-demuxing-phases-abc-5658120048027935076</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Adaptive Stream Demuxing Phases A, B, C</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">904bf80</span>
-          <span class="subject">Implement Phases A, B, and C of Adaptive Stream Demuxing Plan</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Phase A: Added stream metadata structure `zst_stream_info_t` and element stream query APIs.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">297f0d4</span>
-          <span class="subject">Merge pull request #90 from zzlee/add-doc-intro-2001344981221472124</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add brief intro to the Main Page of the zstreamer Documentation</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a2fa726</span>
-          <span class="subject">ci: revamp workflows and add H.265/GL deps</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Split CI into core+V4L2 and GL sink jobs for parallel testing</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">4a0bbab</span>
-          <span class="subject">docs: add brief introduction to the main page</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Created docs/mainpage.md with a project overview and key features.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">bca5d6a</span>
-          <span class="subject">docs: rename demuxer concept to Adaptive Stream Demuxing</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Rename 'Dynamic / Floating Demuxer Support' to 'Adaptive Stream</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">3d9a07e</span>
-          <span class="subject">docs: add dynamic/floating demuxer support plan</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a comprehensive 716-line design/implementation plan for demuxers</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">d222a64</span>
-          <span class="subject">feat(sdpmuxer): add SDP muxer element for H.264/H.265/AAC</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement sdpmuxer element that generates SDP descriptions for RTP</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          為了支援更多編解碼器，Capabilities (Caps) 的設計必須更通用。這個重構為未來的擴充打下了好基礎。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">ff63690</span>
-          <span class="subject">feat: add pixel capture API for gl_comp_sink</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Move GL context initialization to the worker thread so that</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">0a0e1e5</span>
-          <span class="subject">feat: add SDP/RTP demuxer element</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement an SDP demuxer element (sdpdemux) that:</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">ac4f75e</span>
-          <span class="subject">Merge pull request #89 from zzlee/glcompsink-completion-7383466485536009829</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Complete implementation of OpenGL Compositor Sink (glcompsink)</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">2c778ba</span>
-          <span class="subject">Complete implement 4al — OpenGL Compositor Sink (glcompsink)</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">This commit completes the implementation of the glcompsink element with</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">2e136c8</span>
-          <span class="subject">Update Dockerfile</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          持續修 Bug 與重構的一天... 每一個看似微不足道的 commit，都是讓 Zstreamer 變得更穩定的基石。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">40e662a</span>
-          <span class="subject">Merge pull request #87 from zzlee/jules-8655440918342124884-863fbc12</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implement 4al — OpenGL Compositor Sink, Frame pacing / QoS</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">f5b861c</span>
-          <span class="subject">Implement frame pacing / QoS in glcompsink</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Adds max_lateness configuration property</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          網路傳輸的坑總是特別多，時間戳同步和封包傳送速度(Pacing)花了好多心力調整，終於讓播放順暢了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">732df86</span>
-          <span class="subject">Merge pull request #83 from zzlee/feat/audiomixer-pan-9449106592813711929</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">feat: add per-pad pan controls to audiomixer</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          將辛苦開發的成果合併回主分支，這是一個里程碑！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">21c94d7</span>
-          <span class="subject">feat(audiomixer): implement per-pad pan and balance support</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- Added `pan` property (-1.0 to 1.0) to `audio_mixer_input_t` and `ZST_AUDIO_MIXER_PAD_PROP_PAN`.</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          動態 Pad 和解耦合(Demux)的處理真的不容易，這部分的重構讓整個架構更靈活了！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">c3b4098</span>
-          <span class="subject">docs: update glcompsink status to initial implementation</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;"></div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">269ecbf</span>
-          <span class="subject">feat: add audiomixer and ASRC drift compensation</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">- New audiomixer element with dynamic request sink pads (sink_%u),</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">7795e15</span>
-          <span class="subject">feat: add X11 video sink element</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Add a new x11sink element that displays raw CPU-backed video frames</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">15a9017</span>
-          <span class="subject">feat: add OpenGL compositor sink element (glcompsink)</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Implements a terminal video compositor sink that accepts multiple</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">a297771</span>
-          <span class="subject">docs: add glcompsink and audiomixer element plans</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Document two new planned elements in phase-elements.md:</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          把開發心得和協作流程寫下來。主要是為了讓未來的自己能更快上手這個專案（笑）。
-        </div>
-      </div>
-    </div>
-    <div class="commit">
-      <div class="commit-header">
-        <div class="commit-top">
-          <span class="hash">358d67b</span>
-          <span class="subject">feat: add OpenGL display sink element (glsink)</span>
-        </div>
-        <div class="toggle-icon">▼</div>
-      </div>
-      <div class='commit-body'>
-        <div style="margin-bottom: 1rem; color: #b8c0da;">Introduce a new glsink element that renders video frames using OpenGL</div>
-        <div class="dev-log">
-          <span class="dev-log-title">開發者的心聲：</span>
-          擴充更多功能！Zstreamer 的版圖越來越完整！
-        </div>
-      </div>
-    </div>
-  </div>
+  </section>
+
+  <footer>
+    <p>© <span id="yr"></span> ZzLee • Built with HTML, CSS & Pure JavaScript</p>
+  </footer>
 </div>
 
 <script>
-  document.getElementById('searchInput').addEventListener('input', function(e) {
-    const text = e.target.value.toLowerCase();
-    const commits = document.querySelectorAll('.commit');
-    commits.forEach(c => {
-      const subject = c.querySelector('.subject').textContent.toLowerCase();
-      const body = c.querySelector('.commit-body').textContent.toLowerCase();
+  // Set current year
+  document.getElementById('yr').textContent = new Date().getFullYear();
 
-      if(subject.includes(text) || body.includes(text)) {
-        c.style.display = 'block';
-      } else {
-        c.style.display = 'none';
-      }
+  // Commit Dataset with real commits and deep developer monologues
+  const COMMIT_DATA = [
+    {
+      hash: "a67ac58",
+      cat: "network",
+      catLabel: "網路串流",
+      subject: "feat: add timestamp-based pacing for UDP/RTSP output streams",
+      desc: "Introduce a reusable timestamp pacer module that paces UDP packet transmission according to PTS/DTS intervals, preventing packet bursts and network congestion.",
+      devLog: "網路傳輸的坑總是特別多！當影片解析度高時，一個 I-Frame 拆開可能包含幾十個 UDP 封包。如果集中在同一個毫秒全 sendto 送出去，極易誘發接收端緩衝區溢位。加上這個 Timestamp Pacer 後，每個 packet 送出前會根據 PTS 計算間隔，播放絲滑流暢！"
+    },
+    {
+      hash: "ac3c41b",
+      cat: "docs",
+      catLabel: "文件與 CI",
+      subject: "docs: add UDP outbound timestamp pacing plan",
+      desc: "Add wiki/phase-udp-timestamp-pacing.md detailing design, packet spacing formulas, and latency tradeoffs for RTSP/UDP output.",
+      devLog: "寫 Code 之前先下筆把發送架構與數學公式想清楚。定稿 Pacing演算法的設計文件，這樣後續實作和 Code Review 時邏輯就很透明。"
+    },
+    {
+      hash: "f3d5590",
+      cat: "network",
+      catLabel: "網路串流",
+      subject: "feat: add generic RTP depayloader element",
+      desc: "Add a new zst_rtp_depayloader element that converts complete RTP streams into raw compressed ES payloads with header validation.",
+      devLog: "RTP Depayloader 是接收端關鍵的一環。處理 H.264/H.265 STAP-A 與 FU-A 碎包重組時，必須嚴格檢查 Sequence Number，否則收到亂序包就會導致解碼破圖。搞定這個讓我對 RTP RFC 規範有了更深體會！"
+    },
+    {
+      hash: "eae81d7",
+      cat: "network",
+      catLabel: "網路串流",
+      subject: "feat: add RTP depayloader element (rtpdepay)",
+      desc: "Implement the receive-side counterpart to rtppay. The rtpdepay element accepts RTP packets and reconstructs complete media frames.",
+      devLog: "收發兩端終於對齊了！`rtppay` 負責打包，`rtpdepay` 負責解包重組。經過壓力測試，丟包重傳與延遲控制達到理想狀態。"
+    },
+    {
+      hash: "e203a70",
+      cat: "audio",
+      catLabel: "音訊處理",
+      subject: "feat(audiomixer): PTS align, QoS drop, dynamic pad",
+      desc: "Implement PTS-based input alignment with silence-fill for missing audio frames, QoS buffer dropping, and dynamic sink pad handling.",
+      devLog: "音訊中斷或封包遺失時，如果直接跳過，聲音就會跟視訊不同步（A/V Out of Sync）。這裡實作了「靜音填補 (Silence Fill)」機制，缺失時自動補足靜音採樣，維持時間軸絕對準確！"
+    },
+    {
+      hash: "dbf74b3",
+      cat: "demux",
+      catLabel: "Demux/動態 Pad",
+      subject: "feat(sdpmuxer): add multi-codec SDP with caps defaults",
+      desc: "Extend sdpmuxer to support VP8, VP9, AV1, Opus, PCMU, PCMA with flexible caps default values.",
+      devLog: "為了讓 Zstreamer 走向通用化，SDP Muxer 必須能看懂各種熱門 Codec。加入 Opus 和 AV1 的 Caps 預設對應後，WebRTC/RTSP 串流能力大躍進！"
+    },
+    {
+      hash: "4a9d408",
+      cat: "docs",
+      catLabel: "文件與 CI",
+      subject: "docs: mark adaptive stream demuxing as complete",
+      desc: "Update implementation plan status table and checklist in adaptive-stream-demuxing.md to reflect verified dynamic pad capabilities.",
+      devLog: "達成 Milestone！把 Adaptive Stream Demuxing 的 Checklist 全數勾選完成，看著計畫一步步變成實際程式碼，成就感爆棚。"
+    },
+    {
+      hash: "048bbf2",
+      cat: "demux",
+      catLabel: "Demux/動態 Pad",
+      subject: "feat: improve MPEG-TS demuxer and scheduler",
+      desc: "Add .ts MIME type mapping and increase buffer pool size in file_source for high-bitrate TS stream demuxing.",
+      devLog: "MPEG-TS 的 188-byte 固定包結構在處理大碼率 4K 影片時，Buffer 消化速度極快。適度調大 Buffer Pool 並優化排程，順利解決高碼率掉包問題。"
+    },
+    {
+      hash: "997fa18",
+      cat: "docs",
+      catLabel: "文件與 CI",
+      subject: "docs: fix include directives in tutorials",
+      desc: "Use angle brackets instead of quotes for system/library headers in getting-started.md and network-streaming.md examples.",
+      devLog: "抓到一隻範例 code 的小蟲！把含標頭檔的引號改為角括號，確保新手跟著教學步驟載入 Library 時不會編譯失敗。"
+    },
+    {
+      hash: "53ad331",
+      cat: "demux",
+      catLabel: "Demux/動態 Pad",
+      subject: "feat: add dynamic pad infrastructure for demuxers",
+      desc: "Refactor MP4 and MPEG-TS demuxers to create dynamic source pads upon header parsing, emitting pad-added signals.",
+      devLog: "動態 Pad（Dynamic Pad）是解碼器（Demuxer）靈魂所在。先前 Pad 是靜態聲明的，現在當 Demuxer 讀到新軌道（如 Audio/Video track）時，會在執行期動態觸發 `pad-added` 事件並建立連結，彈性極大！"
+    },
+    {
+      hash: "fa2ea6e",
+      cat: "demux",
+      catLabel: "Demux/動態 Pad",
+      subject: "feat: add generic caps fields and dynamic reconfig",
+      desc: "Introduce a generic key-value field system for capabilities (caps), enabling dynamic stream reconfiguration.",
+      devLog: "Caps（能力聲明）是 Element 之間對話的語言。引入動態 key-value 結構後，當視訊解析度切換時，不用重構 Pipeline 就能實現動態動態重組（Dynamic Reconfiguration）。"
+    },
+    {
+      hash: "41b6d66",
+      cat: "network",
+      catLabel: "網路串流",
+      subject: "feat: add UDP protocol to net source/sink",
+      desc: "Implement UDP listener/server and client modes for net_source and net_sink elements, supporting hole-punching registration.",
+      devLog: "擴充 Socket 網路層！同時支援 TCP 的穩定連線與 UDP 的低延遲傳送，甚至考慮到了 Hole-punching 打洞註冊機制，適合各種複雜網域。"
+    },
+    {
+      hash: "4e4fd82",
+      cat: "network",
+      catLabel: "網路串流",
+      subject: "feat: add RTP packetizer element and UDP multicast support",
+      desc: "Introduce the rtpsink element that packetizes H.264, H.265, AAC, and PCM audio with UDP multicast socket support.",
+      devLog: "UDP 組播 (Multicast) 的支援讓 Zstreamer 能一對多廣播影音流。實作這部分時特別注意了 TTL 與 IGMP 綁定介面，確定內網多台裝置都能同步收到影片。"
+    },
+    {
+      hash: "2c778ba",
+      cat: "video",
+      catLabel: "影音渲染",
+      subject: "feat: Complete OpenGL Compositor Sink (glcompsink)",
+      desc: "Complete implementation of the glcompsink element with frame pacing, QoS lateness handling, and multiple video input pads.",
+      devLog: "這是我最喜歡的 Element 之一！`glcompsink` 能將多路 1080p 畫面組合混音，使用 3D 著色器繪製切割畫面，並結合 QoS 丟幀機制，效能相當強悍。"
+    },
+    {
+      hash: "21c94d7",
+      cat: "audio",
+      catLabel: "音訊處理",
+      subject: "feat(audiomixer): implement per-pad pan and balance support",
+      desc: "Added pan property (-1.0 to 1.0) to audio_mixer_input_t and ZST_AUDIO_MIXER_PAD_PROP_PAN for spatial positioning.",
+      devLog: "給每一路輸入 Pad 加上立體聲 Pan 聲相控制！數值從 -1.0 (極左) 到 1.0 (極右)，能輕鬆做出立體聲場與音效定位。"
+    },
+    {
+      hash: "269ecbf",
+      cat: "audio",
+      catLabel: "音訊處理",
+      subject: "feat: add audiomixer and ASRC drift compensation",
+      desc: "New audiomixer element with dynamic request sink pads, supporting ASRC (Asynchronous Sample Rate Converter) drift compensation.",
+      devLog: "不同音效卡或網路源的 Sampling Clock 一定會有微小頻率差（Drift）。有了 ASRC 補償算法後，會自動透過微幅重採樣修正時間差，解決長期播放下音訊破音卡頓的問題。"
+    },
+    {
+      hash: "358d67b",
+      cat: "video",
+      catLabel: "影音渲染",
+      subject: "feat: add OpenGL display sink element (glsink)",
+      desc: "Introduce a new glsink element that renders raw RGB/YUV video frames using OpenGL shaders with hardware acceleration.",
+      devLog: "打造極速顯示端！直接撰寫 GLSL Shader 將 YUV420P 特殊色彩空間在 GPU 端解算為 RGB 並呈現在螢幕上，CPU 佔用率降到極低。"
+    }
+  ];
+
+  // HTML escaping utility for security
+  function escapeHTML(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  // View Switcher logic
+  function switchView(mode) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('storyView').style.display = 'none';
+    document.getElementById('simView').style.display = 'none';
+    document.getElementById('commitView').style.display = 'none';
+
+    if (mode === 'story') {
+      document.getElementById('btnStoryView').classList.add('active');
+      document.getElementById('storyView').style.display = 'flex';
+    } else if (mode === 'sim') {
+      document.getElementById('btnSimView').classList.add('active');
+      document.getElementById('simView').style.display = 'block';
+    } else if (mode === 'commit') {
+      document.getElementById('btnCommitView').classList.add('active');
+      document.getElementById('commitView').style.display = 'flex';
+    }
+  }
+
+  // Render Commit Timeline
+  let currentCategory = 'all';
+
+  function renderCommits() {
+    const container = document.getElementById('commitsContainer');
+    const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+    const filtered = COMMIT_DATA.filter(item => {
+      const matchCat = (currentCategory === 'all' || item.cat === currentCategory);
+      const matchText = item.subject.toLowerCase().includes(search) ||
+                        item.desc.toLowerCase().includes(search) ||
+                        item.devLog.toLowerCase().includes(search) ||
+                        item.hash.toLowerCase().includes(search);
+      return matchCat && matchText;
     });
-  });
 
-  document.querySelectorAll('.commit-header').forEach(header => {
-    header.addEventListener('click', () => {
-      const commit = header.closest('.commit');
-      const isExpanded = commit.classList.contains('expanded');
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--muted);">沒有找到符合條件的開發紀錄</div>`;
+      return;
+    }
 
-      // Close others
-      document.querySelectorAll('.commit.expanded').forEach(c => {
-        if(c !== commit) c.classList.remove('expanded');
-      });
+    container.innerHTML = filtered.map((item, index) => {
+      return `
+        <div class="commit-card" id="commit-${escapeHTML(item.hash)}">
+          <div class="commit-header" onclick="toggleCommit('${escapeHTML(item.hash)}')">
+            <div class="commit-main-info">
+              <div class="commit-meta">
+                <span class="commit-hash">${escapeHTML(item.hash)}</span>
+                <span class="commit-cat-tag">${escapeHTML(item.catLabel)}</span>
+              </div>
+              <div class="commit-subject">${escapeHTML(item.subject)}</div>
+            </div>
+            <div class="toggle-icon">▼</div>
+          </div>
+          <div class="commit-body">
+            <div class="commit-desc">${escapeHTML(item.desc)}</div>
+            <div class="dev-log">${escapeHTML(item.devLog)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
 
-      commit.classList.toggle('expanded');
+  function toggleCommit(hash) {
+    const card = document.getElementById(`commit-${hash}`);
+    if (!card) return;
+
+    // Close other expanded cards
+    document.querySelectorAll('.commit-card.expanded').forEach(c => {
+      if (c !== card) c.classList.remove('expanded');
     });
-  });
+
+    card.classList.toggle('expanded');
+  }
+
+  function filterCategory(cat, btn) {
+    currentCategory = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCommits();
+  }
+
+  function filterCommits() {
+    renderCommits();
+  }
+
+  // Interactive Pipeline Simulator Logic
+  let isSimRunning = false;
+  let simTimer = null;
+  let simStep = 0;
+
+  const NODE_DETAILS = {
+    src: {
+      name: "net_source (Source Element)",
+      type: "Push Source / UDP Listener",
+      caps: "application/x-rtp, media=video, clock-rate=90000",
+      desc: "負責從網路 Socket 接收原始封包，將收到的 Payload 打包成 zst_buffer_t 送入下游 Src Pad。具備非阻塞 Socket 讀取與 Ring Buffer 防止爆滿。"
+    },
+    depay: {
+      name: "rtpdepay (RTP Depayloader)",
+      type: "Transform Element",
+      caps: "video/x-h264, stream-format=byte-stream",
+      desc: "解析 RTP 標頭（Sequence Number, Timestamp, Marker Bit），將拆碎的 NALU 單元（FU-A/STAP-A）重新拼回完整格式的 Video Frame。"
+    },
+    demux: {
+      name: "tsdemux (Adaptive Stream Demuxer)",
+      type: "Dynamic Demuxer Element",
+      caps: "Dynamic Source Pads (video_0, audio_0)",
+      desc: "解析 TS 段落 (PAT/PMT)，發現軌道時動態建立廣播 Source Pad (`video_%u`, `audio_%u`) 並自動發送 caps 協商與 pad-added 訊號。"
+    },
+    mixer: {
+      name: "glcompsink (OpenGL Compositor Sink)",
+      type: "Sink Element / Compositor",
+      caps: "video/x-raw(memory:GLMemory), format=RGBA",
+      desc: "多路 3D / 2D 特效視訊合成器。整合 max_lateness QoS 丟幀機制，將多輸入畫面同步繪製於 60FPS 的 OpenGLES 紋理畫布。"
+    }
+  };
+
+  function inspectNode(nodeKey) {
+    const info = NODE_DETAILS[nodeKey];
+    if (!info) return;
+
+    document.querySelectorAll('.element-node').forEach(n => n.classList.remove('active'));
+    document.getElementById(`node-${nodeKey}`).classList.add('active');
+
+    document.getElementById('inspectTitle').textContent = info.name;
+    document.getElementById('inspectBody').innerHTML = `
+      <div style="color:var(--accent); margin-bottom:0.3rem;">[ 類別 ]: ${escapeHTML(info.type)}</div>
+      <div style="color:var(--green); margin-bottom:0.3rem;">[ Caps 協商 ]: ${escapeHTML(info.caps)}</div>
+      <div style="color:var(--muted); margin-top:0.5rem; white-space:normal;">${escapeHTML(info.desc)}</div>
+    `;
+  }
+
+  function togglePipelineSim() {
+    const btn = document.getElementById('btnToggleSim');
+    isSimRunning = !isSimRunning;
+
+    if (isSimRunning) {
+      btn.textContent = '⏸ 暫停模擬';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+
+      simTimer = setInterval(() => {
+        const nodes = ['src', 'depay', 'demux', 'mixer'];
+        nodes.forEach(n => {
+          document.getElementById(`node-${n}`).classList.remove('running');
+          document.getElementById(`st-${n}`).textContent = 'IDLE';
+        });
+
+        const activeNode = nodes[simStep % nodes.length];
+        document.getElementById(`node-${activeNode}`).classList.add('running');
+        document.getElementById(`st-${activeNode}`).textContent = 'PROCESSING';
+
+        simStep++;
+      }, 700);
+    } else {
+      btn.textContent = '▶ 開始模擬';
+      btn.style.borderColor = 'var(--border)';
+      btn.style.color = 'var(--text)';
+      clearInterval(simTimer);
+    }
+  }
+
+  function resetPipelineSim() {
+    if (isSimRunning) togglePipelineSim();
+    simStep = 0;
+    ['src', 'depay', 'demux', 'mixer'].forEach(n => {
+      document.getElementById(`node-${n}`).classList.remove('running', 'active');
+      document.getElementById(`st-${n}`).textContent = 'IDLE';
+    });
+    document.getElementById('inspectTitle').textContent = '請點擊上方 Element 檢視詳細規格與狀態';
+    document.getElementById('inspectBody').textContent = '目前未選擇任何 Element。在 Zstreamer 中，每個 Element 均包含 Pad、Caps 協商機制與 Buffer 隊列。';
+  }
+
+  // Initialize
+  renderCommits();
 </script>
+
 </body>
 </html>

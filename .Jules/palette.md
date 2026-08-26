@@ -45,3 +45,7 @@
 ## 2026-07-17 - Interactive Scientific Process Explainer
  **Learning:** Complex scientific processes with multiple variable dependencies (e.g., egg aging time, thermal shock, pH balance) are best communicated by decoupling interactive simulators (slider & outcome calculation) from interactive SVG visual diagrams. Real-time dynamic SVG geometry and color updates help users build intuitive visual connections with physical phenomena.
  **Action:** Created `boiled-egg.html` featuring a synced SVG cross-section diagram and dual simulation calculators (egg aging + peeling probability) that visually reflect structural changes (air cell growth, membrane adhesion, pH shift) in real time.
+
+## 2026-07-17 - Multi-View Interactive Technical Storytelling & Visualizer
+**Learning:** Combining developer monologues, step-by-step chapter stories, and an interactive pipeline simulator (node inspector + data flow animation) transforms dry git commit histories into an engaging technical portfolio piece.
+**Action:** Implemented a 3-tab view switcher (Story Chapters, Pipeline Simulator, Commit Timeline) in `zstreamer-commits.html`, allowing users to explore high-level system evolution or inspect individual pipeline nodes in real time.
