@@ -49,3 +49,7 @@
 ## 2026-07-20 - Interactive Project Story Timeline
  **Learning:** Combining a categorized git commit history timeline with conversational developer story cards ("開發者的心聲") makes complex technical projects engaging and accessible. Providing search filtering, category pills, and collapsible commit accordions helps users easily digest both high-level story milestones and low-level code commits.
  **Action:** Built `gridsight-commits.html` with interactive category filtering, live search, expandable commit accordions, and narrative developer log notes in Traditional Chinese, linked as project #01 on `index.html`.
+
+## 2026-07-21 - Embedded Linux Deployment Story Timeline
+**Learning:** Extending commit story timelines with domain-specific architecture categories (e.g., A/B Deployment & Persistence) and interactive tags helps bridge low-level system design documents (like architecture plans) into accessible, interactive user portfolio stories.
+**Action:** Added interactive category filtering, atomic deployment commits, and developer mental journey bubbles (`開發者的心聲`) to `zstreamer-commits.html`, aligned with `.Jules/palette.md` conventions.
