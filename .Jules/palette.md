@@ -49,3 +49,7 @@
 ## 2026-07-20 - Interactive Project Story Timeline
  **Learning:** Combining a categorized git commit history timeline with conversational developer story cards ("開發者的心聲") makes complex technical projects engaging and accessible. Providing search filtering, category pills, and collapsible commit accordions helps users easily digest both high-level story milestones and low-level code commits.
  **Action:** Built `gridsight-commits.html` with interactive category filtering, live search, expandable commit accordions, and narrative developer log notes in Traditional Chinese, linked as project #01 on `index.html`.
+
+## 2026-08-27 - Multi-Chapter Interactive Development Story Page
+**Learning:** Presenting complex software engineering journeys through a multi-chapter storytelling structure with embedded architecture diagrams, mode-switch cost models, and interactive timelines provides superior narrative depth compared to flat commit lists.
+**Action:** Updated `gridsight-commits.html` to mirror the full interactive development story page with chapter navigation, cost model comparisons, and consistent back navigation to `index.html`.
